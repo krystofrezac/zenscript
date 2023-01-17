@@ -1,0 +1,27 @@
+BoringLang {
+  space := " " | "\t"
+
+  Program = (Program newLine+ Program) -- mulitpleStatements
+          | Statement -- singleStatement
+
+  Statement = VariableDeclaration
+
+  VariableDeclaration = identifier valueAssignmentOperator Epxression
+
+  Epxression = FunctionDeclaration
+             | functionCall
+             | number
+             | identifier
+  functionCall = identifier"()"
+  identifier = letter+
+  number = digit+
+
+  FunctionDeclaration = "("")""{" newLine* FunctionBody newLine* "}"
+  FunctionBody = Statement* newLine* Epxression
+
+
+  valueAssignmentOperator = "="
+  typeAssignmentOperator = ":"
+
+  newLine = "\n"
+}
