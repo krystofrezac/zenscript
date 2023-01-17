@@ -1,7 +1,7 @@
 BoringLang {
   space := " " | "\t"
 
-  Program = | Statement newLine+ Statement -- statements
+  Program = | Program newLine+ Program -- statements
             | Statement -- endStatement
             | newLine* Program newLine* -- wrappedInEmptyLines
 
@@ -11,12 +11,16 @@ BoringLang {
   VariableDeclaration = identifier valueAssignmentOperator Epxression
 
   Epxression = //FunctionDeclaration
-            //  | functionCall
+             | functionCall
              | number
              | identifier
+             | Block
   functionCall = identifier"()"
   identifier = letter+
   number = digit+
+  Block = "{" newLine* BlockStatement* "}"
+  BlockStatement = | Statement newLine+ BlockStatement -- statements
+                   | Epxression newLine* -- endStatement
 
   // FunctionDeclaration = "("")""{" newLine* FunctionBody newLine* "}"
   // FunctionBody = Statement* newLine* Epxression

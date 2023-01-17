@@ -7,6 +7,9 @@ const myGrammar = ohm.grammar(contents);
 
 const s = myGrammar.createSemantics()
 s.addOperation("transpile", {
+  _iter(...children) {
+    return children.map(c => c.transpile());
+  },
   Program_statements(firstStatement, _newLines, secondStatement){
     return firstStatement.transpile() + secondStatement.transpile()
   },
@@ -27,6 +30,18 @@ s.addOperation("transpile", {
   },
   number(number){
     return number.sourceString;
+  },
+  functionCall(identifier, _params){
+    return identifier.transpile()+"()"
+  },
+  Block(_startCurlyBraces, _startEmptyLines, blockStatements, _endCurlyBraces) {
+    return "(()=>{"+blockStatements.transpile()+"})()"
+  },
+  BlockStatement_statements(statement, _emptyLines, blockStatement){
+    return statement.transpile()+blockStatement.transpile()
+  },
+  BlockStatement_endStatement(expression, _emptyLines){
+    return "return "+expression.transpile()
   }
 })
 
@@ -43,8 +58,12 @@ const parse = (input: string)=>{
 
 
 parse(`
-a=b
+a=2
+b=a
+c = {
+  g = b
+  g
+}
 
-c=2
 `)
 
