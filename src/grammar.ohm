@@ -6,28 +6,36 @@ BoringLang {
             | newLine* Program newLine*                                         -- wrappedInEmptyLines
 
 
-  Statement = VariableDeclaration
+  Statement = | VariableDeclaration
+              | Expression
 
-  VariableDeclaration = identifier valueAssignmentOperator Epxression
+  VariableDeclaration = identifier valueAssignmentOperator Expression
 
-  Epxression = | FunctionDeclaration
-               | functionCall
+  Expression = | FunctionCall
+               | FunctionDeclaration
                | number
                | identifier
                | Block
-  functionCall = identifier"()"
   identifier = letter+
   number = digit+
   Block = "{" newLine* BlockStatement* "}"
   BlockStatement = | Statement newLine+ BlockStatement                          -- statements
-                   | Epxression newLine*                                        -- endStatement
+                   | Expression newLine*                                        -- endStatement
 
   FunctionDeclaration = "(" FunctionParameters ")""{" newLine* FunctionBody "}"
   FunctionBody = | Statement newLine+ FunctionBody                              -- statements
-                 | Epxression newLine*                                          -- endStatement
+                 | Expression newLine*                                          -- endStatement
   FunctionParameters = | FunctionParametr "," FunctionParameters                -- parametr
                        | FunctionParametr                                       --endParametr
+                       | ""                                                     --noParametr
   FunctionParametr = letter+
+
+
+  FunctionCall = identifier"(" FunctionArguments ")"
+  FunctionArguments = | FunctionArgument "," FunctionArguments                  -- arguments
+                      | FunctionArgument                                        --endArgument
+                      | ""                                                      --noArgument
+  FunctionArgument = Expression 
 
 
   valueAssignmentOperator = "="

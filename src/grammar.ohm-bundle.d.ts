@@ -19,8 +19,7 @@ export interface BoringLangActionDict<T> extends ActionDict<T> {
   Program?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   Statement?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   VariableDeclaration?: (this: NonterminalNode, arg0: NonterminalNode, arg1: NonterminalNode, arg2: NonterminalNode) => T;
-  Epxression?: (this: NonterminalNode, arg0: NonterminalNode) => T;
-  functionCall?: (this: NonterminalNode, arg0: NonterminalNode, arg1: TerminalNode) => T;
+  Expression?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   identifier?: (this: NonterminalNode, arg0: IterationNode) => T;
   number?: (this: NonterminalNode, arg0: IterationNode) => T;
   Block?: (this: NonterminalNode, arg0: TerminalNode, arg1: IterationNode, arg2: IterationNode, arg3: TerminalNode) => T;
@@ -33,8 +32,15 @@ export interface BoringLangActionDict<T> extends ActionDict<T> {
   FunctionBody?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   FunctionParameters_parametr?: (this: NonterminalNode, arg0: NonterminalNode, arg1: TerminalNode, arg2: NonterminalNode) => T;
   FunctionParameters_endParametr?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  FunctionParameters_noParametr?: (this: NonterminalNode, arg0: TerminalNode) => T;
   FunctionParameters?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   FunctionParametr?: (this: NonterminalNode, arg0: IterationNode) => T;
+  FunctionCall?: (this: NonterminalNode, arg0: NonterminalNode, arg1: TerminalNode, arg2: NonterminalNode, arg3: TerminalNode) => T;
+  FunctionArguments_arguments?: (this: NonterminalNode, arg0: NonterminalNode, arg1: TerminalNode, arg2: NonterminalNode) => T;
+  FunctionArguments_endArgument?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  FunctionArguments_noArgument?: (this: NonterminalNode, arg0: TerminalNode) => T;
+  FunctionArguments?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  FunctionArgument?: (this: NonterminalNode, arg0: NonterminalNode) => T;
   valueAssignmentOperator?: (this: NonterminalNode, arg0: TerminalNode) => T;
   typeAssignmentOperator?: (this: NonterminalNode, arg0: TerminalNode) => T;
   newLine?: (this: NonterminalNode, arg0: TerminalNode) => T;

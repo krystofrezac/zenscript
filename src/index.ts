@@ -5,6 +5,9 @@ s.addOperation("transpile", {
   _iter(...children) {
     return children.map(c => c.transpile());
   },
+  _terminal(){
+    return this.sourceString
+  },
   NonemptyListOf(items, a, b){
     return items.transpile() +  b.transpile()
   },
@@ -29,9 +32,6 @@ s.addOperation("transpile", {
   number(number){
     return number.sourceString;
   },
-  functionCall(identifier, _params){
-    return identifier.transpile()+"()"
-  },
   Block(_startCurlyBraces, _startEmptyLines, blockStatements, _endCurlyBraces) {
     return "(()=>{\n"+blockStatements.transpile()+"\n})()"
   },
@@ -50,11 +50,26 @@ s.addOperation("transpile", {
   FunctionBody_endStatement(expression, _emptyLines) {
     return "return "+ expression.transpile() 
   },
-  FunctionParameters_parametr(parameter, _comma, parameters) {
-    return parameter.transpile()+", "+ parameters.transpile()
+  FunctionParameters_parametr(parameter, _comma, otherParameters) {
+    return parameter.transpile()+", "+ otherParameters.transpile()
+  },
+  FunctionParameters_noParametr(_) {
+    return "" 
   },
   FunctionParametr(parametr) {
     return parametr.sourceString 
+  },
+  FunctionCall(identifier, _startBracket, params, _endBracket) {
+    return identifier.transpile()+"("+params.transpile()+")"
+  },
+  FunctionArguments_arguments(argument, _comma, otherArguments) {
+    return argument.transpile()+", "+otherArguments.transpile()
+  },
+  FunctionArguments_endArgument(argument) {
+    return argument.sourceString
+  },
+  FunctionArguments_noArgument(_) {
+    return "" 
   },
 })
 
@@ -71,21 +86,11 @@ const parse = (input: string)=>{
 
 
 parse(`
-a=2
-b=a
-c = {
-  g = b
-  g
-}
-
-myFun = (g,j, h){
-  l=a
-  l
-}
-
-myOtherFun = (num){
-  myFun()
-}
-
+  myNum = 1
+  a = (num){
+    c = num
+    c
+  }
+  a(myNum)
 `)
 
