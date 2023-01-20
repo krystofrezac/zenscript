@@ -14,17 +14,17 @@ BoringLang {
   Expression = | FunctionCall
                | FunctionDeclaration
                | number
+               | string
                | identifier
                | Block
-  identifier = letter+
+  identifier = (letter | "!")+
   number = digit+
+  string = "\"" ("\u{0021}" | "\u{0023}".."\u{00FF}")* "\""
   Block = "{" newLine* BlockStatement* "}"
   BlockStatement = | Statement newLine+ BlockStatement                          -- statements
                    | Expression newLine*                                        -- endStatement
 
-  FunctionDeclaration = "(" FunctionParameters ")""{" newLine* FunctionBody "}"
-  FunctionBody = | Statement newLine+ FunctionBody                              -- statements
-                 | Expression newLine*                                          -- endStatement
+  FunctionDeclaration = "(" FunctionParameters ")" Expression
   FunctionParameters = | FunctionParametr "," FunctionParameters                -- parametr
                        | FunctionParametr                                       --endParametr
                        | ""                                                     --noParametr

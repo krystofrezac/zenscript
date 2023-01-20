@@ -1,9 +1,21 @@
-import grammar, { BoringLangSemantics } from './grammar.ohm-bundle'
+import { NonterminalNode } from 'ohm-js'
+import grammar from './grammar.ohm-bundle'
 
-const s: BoringLangSemantics  = grammar.createSemantics()
-s.addOperation("transpile", {
+const semantics = grammar.createSemantics()
+
+const transpileRawFunctionCall = (parameters: NonterminalNode)=>{
+  const transpiledParameters = parameters.transpile()
+  return "eval(" + transpiledParameters + ")"
+}
+
+const transpileStrJoinFunctionCall = (parameters: NonterminalNode)=>{
+  const transpiledParameters = parameters.transpile() as string
+  return transpiledParameters.split(", ").join(" + ")
+}
+
+semantics.addOperation("transpile", {
   _iter(...children) {
-    return children.map(c => c.transpile());
+    return children.map(c => c.transpile())
   },
   _terminal(){
     return this.sourceString
@@ -27,10 +39,13 @@ s.addOperation("transpile", {
     return `const ${identifier.sourceString} = ${expression.transpile()}`
   },
   identifier(identifier){
-    return identifier.sourceString;
+    return identifier.sourceString
   },
   number(number){
-    return number.sourceString;
+    return number.sourceString
+  },
+  string(_startQuotes, value, _endQuotes) {
+    return '"' + value.sourceString + '"'
   },
   Block(_startCurlyBraces, _startEmptyLines, blockStatements, _endCurlyBraces) {
     return "(()=>{\n"+blockStatements.transpile()+"\n})()"
@@ -41,14 +56,8 @@ s.addOperation("transpile", {
   BlockStatement_endStatement(expression, _emptyLines){
     return "return "+expression.transpile()
   },
-  FunctionDeclaration(_startBracket, parameters, _endBracket, _startCurlyBrace, _startEmptyLines, functionBody, _endCurlyBrace) {
-    return "("+parameters.transpile()+")=>{\n"+functionBody.transpile()+"\n}"
-  },
-  FunctionBody_statements(statement, _emptyLines, functionBody) {
-    return statement.transpile()+functionBody.transpile() 
-  },
-  FunctionBody_endStatement(expression, _emptyLines) {
-    return "return "+ expression.transpile() 
+  FunctionDeclaration(_startBracket, parameters, _endBracket, expression) {
+    return "("+parameters.transpile()+")=>"+expression.transpile()
   },
   FunctionParameters_parametr(parameter, _comma, otherParameters) {
     return parameter.transpile()+", "+ otherParameters.transpile()
@@ -59,8 +68,14 @@ s.addOperation("transpile", {
   FunctionParametr(parametr) {
     return parametr.sourceString 
   },
-  FunctionCall(identifier, _startBracket, params, _endBracket) {
-    return identifier.transpile()+"("+params.transpile()+")"
+  FunctionCall(identifier, _startBracket, parameters, _endBracket) {
+    const transpiledIdentifier = identifier.transpile()
+    if(transpiledIdentifier === "raw!")
+      return transpileRawFunctionCall(parameters)
+    if(transpiledIdentifier === "strJoin!")
+      return transpileStrJoinFunctionCall(parameters)
+
+    return transpiledIdentifier+"("+parameters.transpile()+")"
   },
   FunctionArguments_arguments(argument, _comma, otherArguments) {
     return argument.transpile()+", "+otherArguments.transpile()
@@ -74,23 +89,21 @@ s.addOperation("transpile", {
 })
 
 const parse = (input: string)=>{
-  const m = grammar.match(input);
-  if(m.succeeded()){
+  const parsed = grammar.match(input);
+  if(parsed.succeeded()){
     console.log("Parsed successfully\n");
-    const adapter = s(m)
+    const adapter = semantics(parsed)
     console.log((adapter.transpile() as string).split("\n").map(line=>"  "+line).join("\n"))
   } else {
-    console.error("Failed to parse", m.message);
+    console.error("Failed to parse", parsed.message);
   }
 }
 
 
 parse(`
-  myNum = 1
-  a = (num){
-    c = num
-    c
+  hof = (a)(b){
+    b
   }
-  a(myNum)
+  a = hof(1)
+  b = a(2)
 `)
-
