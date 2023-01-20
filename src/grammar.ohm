@@ -10,11 +10,11 @@ BoringLang {
 
   VariableDeclaration = identifier valueAssignmentOperator Epxression
 
-  Epxression = //FunctionDeclaration
-             | functionCall
-             | number
-             | identifier
-             | Block
+  Epxression = | FunctionDeclaration
+               | functionCall
+               | number
+               | identifier
+               | Block
   functionCall = identifier"()"
   identifier = letter+
   number = digit+
@@ -22,8 +22,9 @@ BoringLang {
   BlockStatement = | Statement newLine+ BlockStatement -- statements
                    | Epxression newLine* -- endStatement
 
-  // FunctionDeclaration = "("")""{" newLine* FunctionBody newLine* "}"
-  // FunctionBody = Statement* newLine* Epxression
+  FunctionDeclaration = "("")""{" newLine* FunctionBody "}"
+  FunctionBody = | Statement newLine+ FunctionBody -- statements
+                 | Epxression newLine* -- endStatement
 
 
   valueAssignmentOperator = "="

@@ -1,11 +1,6 @@
-import fs from 'fs';
-import ohm from 'ohm-js';
+import grammar, { BoringLangSemantics } from './grammar.ohm-bundle'
 
-const contents = fs.readFileSync('grammar.ohm', 'utf-8');
-
-const myGrammar = ohm.grammar(contents);
-
-const s = myGrammar.createSemantics()
+const s: BoringLangSemantics  = grammar.createSemantics()
 s.addOperation("transpile", {
   _iter(...children) {
     return children.map(c => c.transpile());
@@ -35,22 +30,31 @@ s.addOperation("transpile", {
     return identifier.transpile()+"()"
   },
   Block(_startCurlyBraces, _startEmptyLines, blockStatements, _endCurlyBraces) {
-    return "(()=>{"+blockStatements.transpile()+"})()"
+    return "(()=>{\n"+blockStatements.transpile()+"\n})()"
   },
   BlockStatement_statements(statement, _emptyLines, blockStatement){
     return statement.transpile()+blockStatement.transpile()
   },
   BlockStatement_endStatement(expression, _emptyLines){
     return "return "+expression.transpile()
-  }
+  },
+  FunctionDeclaration(_startBracket, _endBracket, _startCurlyBrace, _startEmptyLines, functionBody, _endCurlyBrace) {
+    return "()=>{\n"+functionBody.transpile()+"\n}"
+  },
+  FunctionBody_statements(statement, _emptyLines, functionBody) {
+    return statement.transpile()+functionBody.transpile() 
+  },
+  FunctionBody_endStatement(expression, _emptyLines) {
+    return "return "+ expression.transpile() 
+  },
 })
 
 const parse = (input: string)=>{
-  const m = myGrammar.match(input);
+  const m = grammar.match(input);
   if(m.succeeded()){
-    console.log("Parsed successfully");
+    console.log("Parsed successfully\n");
     const adapter = s(m)
-    console.log(adapter.transpile())
+    console.log((adapter.transpile() as string).split("\n").map(line=>"  "+line).join("\n"))
   } else {
     console.error("Failed to parse", m.message);
   }
@@ -63,6 +67,11 @@ b=a
 c = {
   g = b
   g
+}
+
+myFun = (){
+  l=a
+  l
 }
 
 `)
