@@ -1,9 +1,9 @@
 BoringLang {
   space := " " | "\t"
 
-  Program = | Program newLine+ Program -- statements
-            | Statement -- endStatement
-            | newLine* Program newLine* -- wrappedInEmptyLines
+  Program = | Program newLine+ Program                                          -- statements
+            | Statement                                                         -- endStatement
+            | newLine* Program newLine*                                         -- wrappedInEmptyLines
 
 
   Statement = VariableDeclaration
@@ -19,12 +19,15 @@ BoringLang {
   identifier = letter+
   number = digit+
   Block = "{" newLine* BlockStatement* "}"
-  BlockStatement = | Statement newLine+ BlockStatement -- statements
-                   | Epxression newLine* -- endStatement
+  BlockStatement = | Statement newLine+ BlockStatement                          -- statements
+                   | Epxression newLine*                                        -- endStatement
 
-  FunctionDeclaration = "("")""{" newLine* FunctionBody "}"
-  FunctionBody = | Statement newLine+ FunctionBody -- statements
-                 | Epxression newLine* -- endStatement
+  FunctionDeclaration = "(" FunctionParameters ")""{" newLine* FunctionBody "}"
+  FunctionBody = | Statement newLine+ FunctionBody                              -- statements
+                 | Epxression newLine*                                          -- endStatement
+  FunctionParameters = | FunctionParametr "," FunctionParameters                -- parametr
+                       | FunctionParametr                                       --endParametr
+  FunctionParametr = letter+
 
 
   valueAssignmentOperator = "="

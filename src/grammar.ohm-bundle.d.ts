@@ -27,10 +27,14 @@ export interface BoringLangActionDict<T> extends ActionDict<T> {
   BlockStatement_statements?: (this: NonterminalNode, arg0: NonterminalNode, arg1: IterationNode, arg2: NonterminalNode) => T;
   BlockStatement_endStatement?: (this: NonterminalNode, arg0: NonterminalNode, arg1: IterationNode) => T;
   BlockStatement?: (this: NonterminalNode, arg0: NonterminalNode) => T;
-  FunctionDeclaration?: (this: NonterminalNode, arg0: TerminalNode, arg1: TerminalNode, arg2: TerminalNode, arg3: IterationNode, arg4: NonterminalNode, arg5: TerminalNode) => T;
+  FunctionDeclaration?: (this: NonterminalNode, arg0: TerminalNode, arg1: NonterminalNode, arg2: TerminalNode, arg3: TerminalNode, arg4: IterationNode, arg5: NonterminalNode, arg6: TerminalNode) => T;
   FunctionBody_statements?: (this: NonterminalNode, arg0: NonterminalNode, arg1: IterationNode, arg2: NonterminalNode) => T;
   FunctionBody_endStatement?: (this: NonterminalNode, arg0: NonterminalNode, arg1: IterationNode) => T;
   FunctionBody?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  FunctionParameters_parametr?: (this: NonterminalNode, arg0: NonterminalNode, arg1: TerminalNode, arg2: NonterminalNode) => T;
+  FunctionParameters_endParametr?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  FunctionParameters?: (this: NonterminalNode, arg0: NonterminalNode) => T;
+  FunctionParametr?: (this: NonterminalNode, arg0: IterationNode) => T;
   valueAssignmentOperator?: (this: NonterminalNode, arg0: TerminalNode) => T;
   typeAssignmentOperator?: (this: NonterminalNode, arg0: TerminalNode) => T;
   newLine?: (this: NonterminalNode, arg0: TerminalNode) => T;

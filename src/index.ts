@@ -5,6 +5,9 @@ s.addOperation("transpile", {
   _iter(...children) {
     return children.map(c => c.transpile());
   },
+  NonemptyListOf(items, a, b){
+    return items.transpile() +  b.transpile()
+  },
   Program_statements(firstStatement, _newLines, secondStatement){
     return firstStatement.transpile() + secondStatement.transpile()
   },
@@ -38,14 +41,20 @@ s.addOperation("transpile", {
   BlockStatement_endStatement(expression, _emptyLines){
     return "return "+expression.transpile()
   },
-  FunctionDeclaration(_startBracket, _endBracket, _startCurlyBrace, _startEmptyLines, functionBody, _endCurlyBrace) {
-    return "()=>{\n"+functionBody.transpile()+"\n}"
+  FunctionDeclaration(_startBracket, parameters, _endBracket, _startCurlyBrace, _startEmptyLines, functionBody, _endCurlyBrace) {
+    return "("+parameters.transpile()+")=>{\n"+functionBody.transpile()+"\n}"
   },
   FunctionBody_statements(statement, _emptyLines, functionBody) {
     return statement.transpile()+functionBody.transpile() 
   },
   FunctionBody_endStatement(expression, _emptyLines) {
     return "return "+ expression.transpile() 
+  },
+  FunctionParameters_parametr(parameter, _comma, parameters) {
+    return parameter.transpile()+", "+ parameters.transpile()
+  },
+  FunctionParametr(parametr) {
+    return parametr.sourceString 
   },
 })
 
@@ -69,9 +78,13 @@ c = {
   g
 }
 
-myFun = (){
+myFun = (g,j, h){
   l=a
   l
+}
+
+myOtherFun = (num){
+  myFun()
 }
 
 `)
