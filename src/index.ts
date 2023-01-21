@@ -2,8 +2,10 @@ import { check } from './checker'
 import { parse } from './parser'
 
 const code = `
-  c = 1
-  b = a(1,"2")()
+  add = (a)(b) {
+    a
+  }
+  add(1, 2)
 `
 
 const parsed = parse(code)

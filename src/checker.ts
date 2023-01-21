@@ -1,4 +1,4 @@
-import { MatchResult } from "ohm-js";
+import ohm, { MatchResult } from "ohm-js";
 import grammar from "./grammar.ohm-bundle";
 
 type Type = {
@@ -10,7 +10,7 @@ type Type = {
   }  
   | {
     type: "block",
-    content: StatementItem | StatementItem[]
+    body: StatementItem | StatementItem[]
   }  
   | {
     type: "functionCall",
@@ -19,15 +19,17 @@ type Type = {
   }
   | {
     type: "function",
-    parameters: Type[],
+    parameters: string[],
+    returns: Type
   }
 
 type StatementItem = {
   name: string,
   statementType: Type
-} | {
-  statementType: Type
-}
+  } 
+  | {
+    statementType: Type
+  }
 
 declare module 'ohm-js' {
   interface Node {
@@ -43,7 +45,7 @@ const toArray = <T>(item: T | T[]) => Array.isArray(item) ? item : [item]
 const createType = (type: Type)=>type
 const createStatementItem = (item: StatementItem) => item
 
-semantics.addOperation<Type|Type[]>("getType", {
+semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
   _iter(...children) {
     return children.flatMap(c=>c.getType())
   },
@@ -64,7 +66,14 @@ semantics.addOperation<Type|Type[]>("getType", {
     return createType({type: "referenceToVariable", variableName: name.sourceString}) 
   },
   Block(_startCurly, _emptyLines, blockStatement, _endCurly) {
-    return createType({ type: "block", content: blockStatement.getStatementItemInfo()})
+    return createType({ type: "block", body: blockStatement.getStatementItemInfo()})
+  },
+  FunctionDeclaration(_startBrace, parameters, _endBrace, expression) {
+    return createType({
+      type: "function",
+      parameters: parameters.sourceString.split(",").map(parameter=>parameter.trim()),
+      returns: expression.getType() as Type
+    }) 
   },
   FunctionCall_firstCall(identifier, _startBrace, passedArguments, _endBrace) {
     return createType({
@@ -85,7 +94,7 @@ semantics.addOperation<Type|Type[]>("getType", {
   },
 })
 
-semantics.addOperation<StatementItem| StatementItem[]>("getStatementItemInfo", {
+semantics.addOperation<ReturnType<ohm.Node['getStatementItemInfo']>>("getStatementItemInfo", {
   _iter(...children) {
     return children.flatMap(c => {
       return c.getStatementItemInfo()
