@@ -26,15 +26,16 @@ BoringLang {
 
   FunctionDeclaration = "(" FunctionParameters ")" Expression
   FunctionParameters = | FunctionParametr "," FunctionParameters                -- parametr
-                       | FunctionParametr                                       --endParametr
-                       | ""                                                     --noParametr
+                       | FunctionParametr                                       -- endParametr
+                       | ""                                                     -- noParametr
   FunctionParametr = letter+
 
 
-  FunctionCall = identifier"(" FunctionArguments ")"
+  FunctionCall = | FunctionCall"(" FunctionArguments ")"                        -- chainedCall
+                 | identifier"(" FunctionArguments ")"                          -- firstCall
   FunctionArguments = | FunctionArgument "," FunctionArguments                  -- arguments
-                      | FunctionArgument                                        --endArgument
-                      | ""                                                      --noArgument
+                      | FunctionArgument                                        -- endArgument
+                      | ""                                                      -- noArgument
   FunctionArgument = Expression 
 
 

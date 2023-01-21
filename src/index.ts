@@ -1,5 +1,6 @@
 import { NonterminalNode } from 'ohm-js'
 import grammar from './grammar.ohm-bundle'
+import { parse } from './parser'
 
 const semantics = grammar.createSemantics()
 
@@ -88,8 +89,8 @@ semantics.addOperation("transpile", {
   },
 })
 
-const parse = (input: string)=>{
-  const parsed = grammar.match(input);
+const transpile = (input: string)=>{
+  const parsed = parse(input)
   if(parsed.succeeded()){
     console.log("Parsed successfully\n");
     const adapter = semantics(parsed)
@@ -100,7 +101,7 @@ const parse = (input: string)=>{
 }
 
 
-parse(`
+transpile(`
   hof = (a)(b){
     b
   }
