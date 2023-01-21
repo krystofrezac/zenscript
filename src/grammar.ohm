@@ -17,9 +17,11 @@ BoringLang {
                | string
                | identifier
                | Block
+
   identifier = (letter | "!")+
   number = digit+
   string = "\"" ("\u{0021}" | "\u{0023}".."\u{00FF}")* "\""
+
   Block = "{" newLine* BlockStatement* "}"
   BlockStatement = | Statement newLine+ BlockStatement                          -- statements
                    | Expression newLine*                                        -- endStatement
