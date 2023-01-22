@@ -1,9 +1,9 @@
-import { check } from './checker/test'
+import { check } from './checker/check'
 import { parse } from './parser'
 
 const code = `
   a = 1
-  a = 2
+  b: string = a
 `
 
 const parsed = parse(code)

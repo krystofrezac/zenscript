@@ -1,50 +1,18 @@
 import ohm, { MatchResult } from "ohm-js";
 import grammar from "../grammar.ohm-bundle";
+import { findVariableInCurrentScope } from "./helpers/findVariableInCurrenScope";
+import { Type, TypeScope, Error } from "./types";
 
-type TypeTree = {
-    type: "string" | "number";
-  } 
-  | {
-    type: "referenceToVariable",
-    variableName: string
-  }
-  | {
-    type: "function",
-    parameters: string[],
-    returns: TypeTree
-  }
-
-declare module 'ohm-js' {
-  interface Node {
-    getType: () => TypeTree
-    check: () => void
-  }
-}
-
-const semantics = grammar.createSemantics()
-
-type TypeScope = {
-  variables: {
-    name: string, 
-    implicitType: TypeTree
-  }[]
-}
-type Error = {
-  message: string
-}
 
 const typeScopes: TypeScope[] = [{
   variables: []
 }]
 const errors: Error[] = []
-const addVariableToCurrentScope = (name: string, type: TypeTree)=>{
-  typeScopes[typeScopes.length-1].variables.push({name, implicitType: type})
+const addVariableToCurrentScope = (name: string, type: Type)=>{
+  typeScopes[typeScopes.length-1].variables.push({name, type: type})
 }
 const findVariableFromCurrentScope = (name: string)=>{
-  const typeScope = typeScopes[typeScopes.length-1]
-  const foundVariable = typeScope.variables.find(variable=>variable.name===name)
-  if(foundVariable) return foundVariable
-  return undefined
+  return typeScopes.flatMap(typeScope=>typeScope.variables).reverse().find(variable=>variable.name===name)
 }
 const addError = (error: Error)=>{
   errors.push(error)
@@ -53,8 +21,27 @@ const deepCompare = <T>(a: T, b: T)=>{
  return JSON.stringify(a)===JSON.stringify(b)
 }
 
-const createType = (type: TypeTree)=>type
+const createType = (type: Type)=>type
 
+const checkVariable = (name: string, implicitType: Type, explicitType?: Type) =>{
+  if(findVariableInCurrentScope(typeScopes, name)){
+    addError({message: `variable with name '${name}' is already declared in this scope`})
+    return
+  }
+  if(explicitType && !deepCompare(implicitType, explicitType)){
+    addError({message: `variable '${name}' has incorrect type ${JSON.stringify(implicitType)} expected ${JSON.stringify(explicitType)}`})
+  }
+
+  addVariableToCurrentScope(name, explicitType??implicitType)
+}
+
+declare module 'ohm-js' {
+  interface Node {
+    getType: () => Type|undefined
+    check: () => void
+  }
+}
+const semantics = grammar.createSemantics()
 semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
   stringExpression(_startQuotes, _string, _endQuotes) {
     return createType({
@@ -66,8 +53,14 @@ semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
       type: "number"
     })
   },
-  identifier(name) {
-    return createType({type: "referenceToVariable", variableName: name.sourceString}) 
+  identifier(identifier) {
+    const name = identifier.sourceString
+    const referencedVariable = findVariableFromCurrentScope(name)
+
+    if(!referencedVariable) 
+      addError({message: `Variable with name '${name}' could not be found`})
+
+    return referencedVariable?.type;
   },
   ValueAssignment(_equals, expression) {
     return expression.getType() 
@@ -81,26 +74,8 @@ semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
   stringType(_) {
     return createType({type: "string"}) 
   },
-  FunctionDeclaration(_startBrace, parameters, _endBrace, expression) {
-    return createType({
-      type: "function",
-      parameters: parameters.sourceString.split(",").map(parameter=>parameter.trim()),
-      returns: expression.getType() as TypeTree
-    }) 
-  },
 })
 
-const checkVariable = (name: string, implicitType: TypeTree, explicitType?: TypeTree) =>{
-  if(findVariableFromCurrentScope(name)){
-    addError({message: `variable with name '${name}' is already declared in this scope`})
-    return
-  }
-  if(explicitType && !deepCompare(implicitType, explicitType)){
-    addError({message: `variable '${name}' has incorrect type ${JSON.stringify(implicitType)} expected ${JSON.stringify(explicitType)}`})
-  }
-
-  addVariableToCurrentScope(name, explicitType??implicitType)
-}
 
 semantics.addOperation<ReturnType<ohm.Node['check']>>("check", {
   _iter(...children) {
@@ -117,6 +92,8 @@ semantics.addOperation<ReturnType<ohm.Node['check']>>("check", {
     const variableName = identifier.sourceString
     const implicitType = valueAssignment.getType()
 
+    if(!implicitType) return
+
     checkVariable(variableName, implicitType)
   },
   VariableDeclaration_valueAndType(identifier, type, valueAssignment) {
@@ -124,7 +101,23 @@ semantics.addOperation<ReturnType<ohm.Node['check']>>("check", {
     const implicitType = valueAssignment.getType()
     const explicitType = type.getType()
 
+    if(!implicitType) return
+
     checkVariable(variableName, implicitType, explicitType)
+  },
+  FunctionCall_firstCall(identifier, _startBrace, parameters, _endBrace) {
+    const functionName = identifier.sourceString  
+
+    const functionDeclaration = findVariableFromCurrentScope(functionName)
+
+    if(!functionDeclaration){
+      addError({message: `Cannot find variable with name '${functionName}'`})
+    }
+    if(functionDeclaration?.type.type!=="function"){
+      addError({message: `Variable is not '${functionName}' a function`})
+    }
+
+    // TODO: finish when function declaration is ready
   },
 })
 
