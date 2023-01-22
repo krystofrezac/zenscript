@@ -30,16 +30,22 @@ semantics.addOperation("transpile", {
   Statement(statement){
     return statement.transpile()+"\n"
   },
-  VariableDeclaration(identifier, _valueAssignmentOperator, expression){
-    return `const ${identifier.sourceString} = ${expression.transpile()}`
+  VariableDeclaration_onlyValue(identifier, valueAssignment){
+    return `const ${identifier.sourceString} ${valueAssignment.transpile()}`
+  },
+  VariableDeclaration_valueAndType(identifier, _typeAssignment, valueAssignment){
+    return `const ${identifier.sourceString} ${valueAssignment.transpile()}`
+  },
+  ValueAssignment(_equals, expression) {
+    return `= ${expression.transpile()}`
   },
   identifier(identifier){
     return identifier.sourceString
   },
-  number(number){
+  numberExpression(number){
     return number.sourceString
   },
-  string(_startQuotes, value, _endQuotes) {
+  stringExpression(_startQuotes, value, _endQuotes) {
     return '"' + value.sourceString + '"'
   },
   Block(_startCurlyBraces, _startEmptyLines, blockStatements, _endCurlyBraces) {

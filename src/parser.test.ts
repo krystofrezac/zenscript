@@ -25,6 +25,14 @@ describe("parser", ()=>{
       `
       expect(parse(input).succeeded()).toBe(true)
     })
+
+    test("with type", ()=>{
+      const input = `
+        a: string = "abc"  
+        b: number = 123
+      `
+      expect(parse(input).succeeded()).toBe(true)
+    })
   })
 
   describe("block", ()=>{
@@ -43,6 +51,15 @@ describe("parser", ()=>{
           c = b
           c
         }
+      `
+      expect(parse(input).succeeded()).toBe(true)
+    })
+    test("with type", ()=>{
+      const input = `
+        a: number = {
+          b = 1
+          b
+        } 
       `
       expect(parse(input).succeeded()).toBe(true)
     })
@@ -104,6 +121,20 @@ describe("parser", ()=>{
         `
         expect(parse(input).succeeded()).toBe(true)
       }) 
+      // TODO: unskip
+      test.skip("with type", ()=>{
+        const input = `
+          funA: (int)int = (paramA){
+            a = paramA
+            a
+          }
+          funB: (int, string)int = (paramA, paramB){
+            a = paramA
+            a
+          }
+        `
+        expect(parse(input).succeeded()).toBe(true)
+      })
     })
     describe("function call", ()=>{
       test("one argument", ()=>{

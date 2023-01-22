@@ -5,22 +5,29 @@ BoringLang {
             | Statement                                                         -- endStatement
             | newLine* Program newLine*                                         -- wrappedInEmptyLines
 
-
   Statement = | VariableDeclaration
               | Expression
 
-  VariableDeclaration = identifier valueAssignmentOperator Expression
+  valueAssignmentOperator = "="
+  typeAssignmentOperator = ":"
+  newLine = "\n"
+
+  VariableDeclaration = | identifier ValueAssignment                            -- onlyValue
+                        | identifier TypeAssignment ValueAssignment             -- valueAndType
+
+  ValueAssignment = valueAssignmentOperator Expression
+  TypeAssignment = typeAssignmentOperator TypeExpression 
 
   Expression = | FunctionCall
                | FunctionDeclaration
-               | number
-               | string
+               | numberExpression
+               | stringExpression
                | identifier
                | Block
 
   identifier = (letter | "!")+
-  number = digit+
-  string = "\"" ("\u{0021}" | "\u{0023}".."\u{00FF}")* "\""
+  numberExpression = digit+
+  stringExpression = "\"" ("\u{0021}" | "\u{0023}".."\u{00FF}")* "\""
 
   Block = "{" newLine* BlockStatement* "}"
   BlockStatement = | Statement newLine+ BlockStatement                          -- statements
@@ -40,9 +47,9 @@ BoringLang {
                       | ""                                                      -- noArgument
   FunctionArgument = Expression 
 
+  TypeExpression = | stringType
+                   | numberType
 
-  valueAssignmentOperator = "="
-  typeAssignmentOperator = ":"
-
-  newLine = "\n"
+  stringType = "string"
+  numberType = "number"
 }

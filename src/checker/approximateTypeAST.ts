@@ -1,7 +1,7 @@
 import ohm, { MatchResult } from "ohm-js";
-import grammar from "./grammar.ohm-bundle";
+import grammar from "../grammar.ohm-bundle";
 
-type Type = {
+type TypeTree = {
     type: "string" | "number";
   } 
   | {
@@ -14,26 +14,27 @@ type Type = {
   }  
   | {
     type: "functionCall",
-    typeOfCalledExpression: Type,
-    arguments: Type[],
+    typeOfCalledExpression: TypeTree,
+    arguments: TypeTree[],
   }
   | {
     type: "function",
     parameters: string[],
-    returns: Type
+    returns: TypeTree
   }
 
 type StatementItem = {
-  name: string,
-  statementType: Type
+    name: string,
+    explicitType: TypeTree,
+    implicitType: TypeTree
   } 
   | {
-    statementType: Type
+    implicitType: TypeTree
   }
 
 declare module 'ohm-js' {
   interface Node {
-    getType: () => Type|Type[];
+    getType: () => TypeTree|TypeTree[];
     getStatementItemInfo: () => StatementItem|StatementItem[]
   }
 }
@@ -42,7 +43,7 @@ const semantics = grammar.createSemantics()
 
 const toArray = <T>(item: T | T[]) => Array.isArray(item) ? item : [item]
 
-const createType = (type: Type)=>type
+const createType = (type: TypeTree)=>type
 const createStatementItem = (item: StatementItem) => item
 
 semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
@@ -52,18 +53,30 @@ semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
   _terminal(){
     return []
   },
-  string(_startQuotes, _string, _endQuotes) {
+  stringExpression(_startQuotes, _string, _endQuotes) {
     return createType({
       type: "string",
     })
   },
-  number(_number){
+  numberExpression(_number){
     return createType({
       type: "number"
     })
   },
   identifier(name) {
     return createType({type: "referenceToVariable", variableName: name.sourceString}) 
+  },
+  ValueAssignment(_equals, expression) {
+    return expression.getType() 
+  },
+  TypeAssignment(_colon, type) {
+    return type.getType() 
+  },
+  numberType(_) {
+    return createType({type: "number"}) 
+  },
+  stringType(_) {
+    return createType({type: "string"}) 
   },
   Block(_startCurly, _emptyLines, blockStatement, _endCurly) {
     return createType({ type: "block", body: blockStatement.getStatementItemInfo()})
@@ -72,20 +85,20 @@ semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
     return createType({
       type: "function",
       parameters: parameters.sourceString.split(",").map(parameter=>parameter.trim()),
-      returns: expression.getType() as Type
+      returns: expression.getType() as TypeTree
     }) 
   },
   FunctionCall_firstCall(identifier, _startBrace, passedArguments, _endBrace) {
     return createType({
       type: "functionCall", 
-      typeOfCalledExpression: identifier.getType() as Type, 
+      typeOfCalledExpression: identifier.getType() as TypeTree, 
       arguments: toArray(passedArguments.getType())
     }) 
   },
   FunctionCall_chainedCall(previousCall, _startBrace, passedArgument, _endBrace) {
     return createType({
       type: "functionCall", 
-      typeOfCalledExpression: previousCall.getType() as Type, 
+      typeOfCalledExpression: previousCall.getType() as TypeTree, 
       arguments: toArray(passedArgument.getType())
     })
   },
@@ -108,16 +121,23 @@ semantics.addOperation<ReturnType<ohm.Node['getStatementItemInfo']>>("getStateme
     return res.flat();
   },
   Program_wrappedInEmptyLines(_startEmptyLInes, statement, _endEmptyLines) {
-    return statement.getStatementItemInfo()
+    return toArray(statement.getStatementItemInfo())
   },
-  VariableDeclaration(identifier, _equals, expression) {
+  VariableDeclaration_onlyValue(identifier, valueAssignment) {
     return createStatementItem({
       name: identifier.sourceString,
-      statementType: expression.getType() as Type
+      implicitType: valueAssignment.getType() as TypeTree
+    })
+  },
+  VariableDeclaration_valueAndType(identifier, type, valueAssignment) {
+    return createStatementItem({
+      name: identifier.sourceString,
+      implicitType: valueAssignment.getType() as TypeTree,
+      explicitType: type.getType() as TypeTree
     })
   },
   Expression(expression) {
-    return createStatementItem({statementType: expression.getType() as Type}) 
+    return createStatementItem({implicitType: expression.getType() as TypeTree}) 
   },
   BlockStatement_statements(statement, _emptyLines, blockStatement) {
     return [statement.getStatementItemInfo(), blockStatement.getStatementItemInfo()].flat()
@@ -127,7 +147,10 @@ semantics.addOperation<ReturnType<ohm.Node['getStatementItemInfo']>>("getStateme
   },
 })
 
-export const check = (parsedInput: MatchResult) => {
+/**
+ * AST with types that are readable from source code
+ */
+export const getApproximateTypeAST = (parsedInput: MatchResult) => {
   if(parsedInput.succeeded()){
     const adapter = semantics(parsedInput)
     return adapter.getStatementItemInfo()

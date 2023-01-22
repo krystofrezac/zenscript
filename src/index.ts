@@ -1,12 +1,13 @@
-import { check } from './checker'
+import { getApproximateTypeAST } from './checker/approximateTypeAST'
 import { parse } from './parser'
 
 const code = `
-  add = (a)(b) {
-    a
+  a: string = {
+    b: number = 1
+    c = b
+    c
   }
-  add(1, 2)
 `
 
 const parsed = parse(code)
-console.log(JSON.stringify(check(parsed), undefined, 2))
+console.log(JSON.stringify(getApproximateTypeAST(parsed), undefined, 2))
