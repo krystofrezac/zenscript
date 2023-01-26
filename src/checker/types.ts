@@ -4,14 +4,6 @@ export type Type = {
     {
       type: "string" | "number";
     } 
-    | {
-      type: "function",
-      parameters: {
-        name: string,
-        type: Type
-      }[]
-      returns: Type
-    }
   )
 export type Variable = {
   name: string, 

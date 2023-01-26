@@ -3,13 +3,17 @@ import grammar from "../grammar.ohm-bundle";
 import { findVariableInCurrentScope } from "./helpers/findVariableInCurrenScope";
 import { Type, TypeScope, Error, Variable } from "./types";
 
-
 const typeScopes: TypeScope[] = [{
   variables: []
 }]
+const addTypeScope = ()=>{
+  typeScopes.push({variables: []})
+}
 const errors: Error[] = []
 const addVariableToCurrentScope = (variable: Variable)=>{
-  typeScopes[typeScopes.length-1].variables.push(variable)
+  const lastScope = typeScopes[typeScopes.length-1]
+  if(lastScope)
+    lastScope.variables.push(variable)
 }
 const findVariableFromCurrentScope = (name: string)=>{
   return typeScopes.flatMap(typeScope=>typeScope.variables).reverse().find(variable=>variable.name===name)
@@ -24,7 +28,6 @@ const typesAreCompatible = (a: Type, b: Type)=>{
   if(a.type==="string" && b.type==="string") return true
   if(a.type==="number" && b.type==="number") return true
 
-  // TODO: function
   return false
 }
 
@@ -57,10 +60,16 @@ const checkVariableAssignmentTypeAndRegister = ({
 declare module 'ohm-js' {
   interface Node {
     getType: () => Type|undefined
+    getTypes: () => (Type|undefined)[]
     check: () => void
   }
 }
 const semantics = grammar.createSemantics()
+semantics.addOperation<ReturnType<ohm.Node['getTypes']>>("getTypes", {
+  _iter(...children) {
+    return children.map(ch=>ch.getType())
+  },
+})
 semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
   stringExpression(_startQuotes, _string, _endQuotes) {
     return createType({
@@ -100,6 +109,18 @@ semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
       type: "string",
       hasValue: false
     }) 
+  },
+  Block(_startCurly, _emptyLines, statements, _endCurly) {
+    addTypeScope()
+    const types = statements.getTypes()
+    return types[types.length-1]
+  },
+  BlockStatement_statements(statement, _emptyLines, otherStatements) {
+    statement.check() 
+    return otherStatements.getType()
+  },
+  BlockStatement_endStatement(expression, _emptyLines) {
+    return expression.getType()
   },
 })
 
@@ -146,20 +167,6 @@ semantics.addOperation<ReturnType<ohm.Node['check']>>("check", {
     if(!type) return
 
     checkVariableAssignmentTypeAndRegister({name, primaryType: type, secondaryType: valueType })
-  },
-  FunctionCall_firstCall(identifier, _startBrace, parameters, _endBrace) {
-    const functionName = identifier.sourceString  
-
-    const functionDeclaration = findVariableFromCurrentScope(functionName)
-
-    if(!functionDeclaration){
-      addError({message: `Cannot find variable with name '${functionName}'`})
-    }
-    if(functionDeclaration?.type.type!=="function"){
-      addError({message: `Variable is not '${functionName}' a function`})
-    }
-
-    // TODO: finish when function declaration is ready
   },
 })
 

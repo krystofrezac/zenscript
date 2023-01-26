@@ -2,9 +2,12 @@ import { check } from './checker/check'
 import { parse } from './parser'
 
 const code = `
-  a = 1
-  b: string
-  c: b = a
+  a = "1"
+  b = 1
+  c: b = {
+    g = b
+    g
+  }
 `
 
 const parsed = parse(code)
