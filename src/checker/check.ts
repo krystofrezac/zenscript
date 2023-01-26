@@ -1,15 +1,15 @@
 import ohm, { MatchResult } from "ohm-js";
 import grammar from "../grammar.ohm-bundle";
 import { findVariableInCurrentScope } from "./helpers/findVariableInCurrenScope";
-import { Type, TypeScope, Error } from "./types";
+import { Type, TypeScope, Error, Variable } from "./types";
 
 
 const typeScopes: TypeScope[] = [{
   variables: []
 }]
 const errors: Error[] = []
-const addVariableToCurrentScope = (name: string, type: Type)=>{
-  typeScopes[typeScopes.length-1].variables.push({name, type: type})
+const addVariableToCurrentScope = (variable: Variable)=>{
+  typeScopes[typeScopes.length-1].variables.push(variable)
 }
 const findVariableFromCurrentScope = (name: string)=>{
   return typeScopes.flatMap(typeScope=>typeScope.variables).reverse().find(variable=>variable.name===name)
@@ -17,22 +17,41 @@ const findVariableFromCurrentScope = (name: string)=>{
 const addError = (error: Error)=>{
   errors.push(error)
 }
-const deepCompare = <T>(a: T, b: T)=>{
- return JSON.stringify(a)===JSON.stringify(b)
-}
 
 const createType = (type: Type)=>type
 
-const checkVariable = (name: string, implicitType: Type, explicitType?: Type) =>{
+const typesAreCompatible = (a: Type, b: Type)=>{
+  if(a.type==="string" && b.type==="string") return true
+  if(a.type==="number" && b.type==="number") return true
+
+  // TODO: function
+  return false
+}
+
+const checkVariableAssignmentTypeAndRegister = ({
+  name,
+  primaryType, 
+  secondaryType,
+} : {
+    name: string, 
+    primaryType: Type, 
+    secondaryType?: Type,
+}) =>{
   if(findVariableInCurrentScope(typeScopes, name)){
     addError({message: `variable with name '${name}' is already declared in this scope`})
     return
   }
-  if(explicitType && !deepCompare(implicitType, explicitType)){
-    addError({message: `variable '${name}' has incorrect type ${JSON.stringify(implicitType)} expected ${JSON.stringify(explicitType)}`})
+  if(secondaryType && !typesAreCompatible(primaryType, secondaryType)){
+    addError({message: `variable '${name}' has incorrect type ${JSON.stringify(primaryType)} expected ${JSON.stringify(secondaryType)}`})
   }
 
-  addVariableToCurrentScope(name, explicitType??implicitType)
+  addVariableToCurrentScope({
+    name, 
+    type: {
+      ...primaryType,
+      hasValue: secondaryType?.hasValue || primaryType.hasValue
+    } 
+  })
 }
 
 declare module 'ohm-js' {
@@ -46,11 +65,13 @@ semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
   stringExpression(_startQuotes, _string, _endQuotes) {
     return createType({
       type: "string",
+      hasValue: true
     })
   },
   numberExpression(_number){
     return createType({
-      type: "number"
+      type: "number",
+      hasValue: true 
     })
   },
   identifier(identifier) {
@@ -69,10 +90,16 @@ semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
     return type.getType() 
   },
   numberType(_) {
-    return createType({type: "number"}) 
+    return createType({
+      type: "number", 
+      hasValue: false
+    }) 
   },
   stringType(_) {
-    return createType({type: "string"}) 
+    return createType({
+      type: "string",
+      hasValue: false
+    }) 
   },
 })
 
@@ -89,21 +116,36 @@ semantics.addOperation<ReturnType<ohm.Node['check']>>("check", {
     statement.check()
   },
   VariableDeclaration_onlyValue(identifier, valueAssignment) {
-    const variableName = identifier.sourceString
-    const implicitType = valueAssignment.getType()
+    const name = identifier.sourceString
+    const valueType = valueAssignment.getType()
 
-    if(!implicitType) return
+    if(!valueType) return
 
-    checkVariable(variableName, implicitType)
+    if(!valueType.hasValue)
+      addError({message: `Cannot assign expression without value to variable '${name}'`})
+
+    checkVariableAssignmentTypeAndRegister({name, primaryType: valueType })
   },
-  VariableDeclaration_valueAndType(identifier, type, valueAssignment) {
-    const variableName = identifier.sourceString
-    const implicitType = valueAssignment.getType()
-    const explicitType = type.getType()
+  VariableDeclaration_onlyType(identifier, typeAssignment) {
+    const name = identifier.sourceString
+    const type = typeAssignment.getType()
 
-    if(!implicitType) return
+    if(!type) return
 
-    checkVariable(variableName, implicitType, explicitType)
+    checkVariableAssignmentTypeAndRegister({name, primaryType: type })
+  },
+  VariableDeclaration_valueAndType(identifier, typeAssignment, valueAssignment) {
+    const name = identifier.sourceString
+    const type = typeAssignment.getType()
+    const valueType = valueAssignment.getType()
+
+    if(!valueType) return
+    if(!valueType.hasValue)
+      addError({message: `Cannot assign expression without value to variable '${name}'`})
+
+    if(!type) return
+
+    checkVariableAssignmentTypeAndRegister({name, primaryType: type, secondaryType: valueType })
   },
   FunctionCall_firstCall(identifier, _startBrace, parameters, _endBrace) {
     const functionName = identifier.sourceString  

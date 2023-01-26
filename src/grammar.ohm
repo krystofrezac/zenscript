@@ -14,6 +14,7 @@ BoringLang {
 
   VariableDeclaration = | identifier ValueAssignment                            -- onlyValue
                         | identifier TypeAssignment ValueAssignment             -- valueAndType
+                        | identifier TypeAssignment                             -- onlyType
 
   ValueAssignment = valueAssignmentOperator Expression
   TypeAssignment = typeAssignmentOperator TypeExpression 
@@ -49,6 +50,7 @@ BoringLang {
 
   TypeExpression = | stringType
                    | numberType
+                   | identifier
 
   stringType = "string"
   numberType = "number"

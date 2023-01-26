@@ -3,7 +3,8 @@ import { parse } from './parser'
 
 const code = `
   a = 1
-  b: string = a
+  b: string
+  c: b = a
 `
 
 const parsed = parse(code)
