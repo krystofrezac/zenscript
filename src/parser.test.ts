@@ -19,7 +19,7 @@ describe("parser", ()=>{
 
     test("multiple assignments", ()=>{
       const input = `
-        a = "abc"  
+        a = "abc"
         b = 123
         c = 88
       `
@@ -28,9 +28,9 @@ describe("parser", ()=>{
 
     test("with type", ()=>{
       const input = `
-        a: string = "abc"  
+        a: string = "abc"
         b: number = 123
-        c: b = 456 
+        c: b = 88
       `
       expect(parse(input).succeeded()).toBe(true)
     })

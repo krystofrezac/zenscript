@@ -1,16 +1,15 @@
 BoringLang {
-  space := " " | "\t"
+  space := " " | "\t" | newLine
 
-  Program = | Program newLine+ Program                                          -- statements
+  Program = | Program #(newLine) Program                                          -- statements
             | Statement                                                         -- endStatement
-            | newLine* Program newLine*                                         -- wrappedInEmptyLines
 
   Statement = | VariableDeclaration
               | Expression
 
+  newLine = "\n"
   valueAssignmentOperator = "="
   typeAssignmentOperator = ":"
-  newLine = "\n"
 
   VariableDeclaration = | identifier ValueAssignment                            -- onlyValue
                         | identifier TypeAssignment ValueAssignment             -- valueAndType
@@ -37,9 +36,9 @@ BoringLang {
   stringType = "string"
   numberType = "number"
 
-  Block = "{" newLine* BlockStatement* "}"
-  BlockStatement = | Statement newLine+ BlockStatement                          -- statements
-                   | Expression newLine*                                        -- endStatement
+  Block = "{"  BlockStatement* "}"
+  BlockStatement = | Statement #(newLine) BlockStatement                          -- statements
+                   | Expression                                        -- endStatement
 
   FunctionDeclaration<TParameter, TReturnExpression> = "(" FunctionParameters<TParameter> ")" TReturnExpression
   FunctionParameters<TParameter> = | TParameter "," FunctionParameters<TParameter>                -- parametr

@@ -24,9 +24,6 @@ semantics.addOperation("transpile", {
   Program_endStatement(statement){
     return statement.transpile()
   },
-  Program_wrappedInEmptyLines(_startEmptyLines, program, _endEmptyLines){
-    return program.transpile()
-  },
   Statement(statement){
     return statement.transpile()+"\n"
   },
@@ -48,13 +45,13 @@ semantics.addOperation("transpile", {
   stringExpression(_startQuotes, value, _endQuotes) {
     return '"' + value.sourceString + '"'
   },
-  Block(_startCurlyBraces, _startEmptyLines, blockStatements, _endCurlyBraces) {
+  Block(_startCurlyBraces, blockStatements, _endCurlyBraces) {
     return "(()=>{\n"+blockStatements.transpile()+"\n})()"
   },
   BlockStatement_statements(statement, _emptyLines, blockStatement){
     return statement.transpile()+blockStatement.transpile()
   },
-  BlockStatement_endStatement(expression, _emptyLines){
+  BlockStatement_endStatement(expression){
     return "return "+expression.transpile()
   },
   FunctionDeclaration(_startBracket, parameters, _endBracket, expression) {

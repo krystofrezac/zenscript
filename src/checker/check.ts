@@ -110,7 +110,7 @@ semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
       hasValue: false
     }) 
   },
-  Block(_startCurly, _emptyLines, statements, _endCurly) {
+  Block(_startCurly, statements, _endCurly) {
     addTypeScope()
     const types = statements.getTypes()
     return types[types.length-1]
@@ -119,7 +119,7 @@ semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
     statement.check() 
     return otherStatements.getType()
   },
-  BlockStatement_endStatement(expression, _emptyLines) {
+  BlockStatement_endStatement(expression) {
     return expression.getType()
   },
 })
@@ -132,9 +132,6 @@ semantics.addOperation<ReturnType<ohm.Node['check']>>("check", {
   Program_statements(firstStatement, _emptyLines, secondStatement) {
     firstStatement.check()
     secondStatement.check()
-  },
-  Program_wrappedInEmptyLines(_startEmptyLInes, statement, _endEmptyLines) {
-    statement.check()
   },
   VariableDeclaration_onlyValue(identifier, valueAssignment) {
     const name = identifier.sourceString

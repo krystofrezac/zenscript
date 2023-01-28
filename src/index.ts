@@ -4,7 +4,7 @@ import { parse } from './parser'
 const code = `
   a = "1"
   b = 1
-  c: b = {
+  c: a = {
     g = b
     g
   }
