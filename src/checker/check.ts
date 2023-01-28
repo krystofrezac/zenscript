@@ -6,8 +6,11 @@ import { Type, TypeScope, Error, Variable } from "./types";
 const typeScopes: TypeScope[] = [{
   variables: []
 }]
-const addTypeScope = ()=>{
+const pushTypeScope = ()=>{
   typeScopes.push({variables: []})
+}
+const popTypeScope = ()=>{
+  typeScopes.pop()
 }
 const errors: Error[] = []
 const addVariableToCurrentScope = (variable: Variable)=>{
@@ -111,8 +114,9 @@ semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
     }) 
   },
   Block(_startCurly, statements, _endCurly) {
-    addTypeScope()
+    pushTypeScope()
     const types = statements.getTypes()
+    popTypeScope()
     return types[types.length-1]
   },
   BlockStatement_statements(statement, _emptyLines, otherStatements) {
