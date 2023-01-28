@@ -30,6 +30,7 @@ describe("parser", ()=>{
       const input = `
         a: string = "abc"  
         b: number = 123
+        c: b = 456 
       `
       expect(parse(input).succeeded()).toBe(true)
     })
@@ -121,17 +122,17 @@ describe("parser", ()=>{
         `
         expect(parse(input).succeeded()).toBe(true)
       }) 
-      // TODO: unskip
-      test.skip("with type", ()=>{
+      test("with type", ()=>{
         const input = `
-          funA: (int)int = (paramA){
+          funA: (number)number = (paramA){
             a = paramA
             a
           }
-          funB: (int, string)int = (paramA, paramB){
+          funB: (number, string)number = (paramA, paramB){
             a = paramA
             a
           }
+          funC: (number, ()number)number = (paramA, paramB)paramB()
         `
         expect(parse(input).succeeded()).toBe(true)
       })

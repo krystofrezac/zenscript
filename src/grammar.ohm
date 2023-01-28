@@ -20,25 +20,32 @@ BoringLang {
   TypeAssignment = typeAssignmentOperator TypeExpression 
 
   Expression = | FunctionCall
-               | FunctionDeclaration
+               | FunctionDeclaration<FunctionParameter, Expression>
                | numberExpression
                | stringExpression
                | identifier
                | Block
 
+  TypeExpression = | FunctionDeclaration<TypeExpression, TypeExpression>
+                   | stringType
+                   | numberType
+                   | identifier
+
   identifier = (letter | "!")+
   numberExpression = digit+
   stringExpression = "\"" ("\u{0021}" | "\u{0023}".."\u{00FF}")* "\""
+  stringType = "string"
+  numberType = "number"
 
   Block = "{" newLine* BlockStatement* "}"
   BlockStatement = | Statement newLine+ BlockStatement                          -- statements
                    | Expression newLine*                                        -- endStatement
 
-  FunctionDeclaration = "(" FunctionParameters ")" Expression
-  FunctionParameters = | FunctionParametr "," FunctionParameters                -- parametr
-                       | FunctionParametr                                       -- endParametr
-                       | ""                                                     -- noParametr
-  FunctionParametr = letter+
+  FunctionDeclaration<TParameter, TReturnExpression> = "(" FunctionParameters<TParameter> ")" TReturnExpression
+  FunctionParameters<TParameter> = | TParameter "," FunctionParameters<TParameter>                -- parametr
+                                   | TParameter                                       -- endParametr
+                                   | ""                                                     -- noParametr
+  FunctionParameter = letter+
 
 
   FunctionCall = | FunctionCall"(" FunctionArguments ")"                        -- chainedCall
@@ -48,10 +55,4 @@ BoringLang {
                       | ""                                                      -- noArgument
   FunctionArgument = Expression 
 
-  TypeExpression = | stringType
-                   | numberType
-                   | identifier
-
-  stringType = "string"
-  numberType = "number"
 }
