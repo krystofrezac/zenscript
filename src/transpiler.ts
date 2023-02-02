@@ -39,6 +39,9 @@ semantics.addOperation("transpile", {
   identifier(identifier){
     return identifier.sourceString
   },
+  compilerHook(_atSign, identifier) {
+    return identifier.sourceString
+  },
   numberExpression(number){
     return number.sourceString
   },
@@ -63,7 +66,7 @@ semantics.addOperation("transpile", {
   FunctionParameters_noParametr(_) {
     return "" 
   },
-  FunctionParametr(parametr) {
+  FunctionParameter(parametr) {
     return parametr.sourceString 
   },
   FunctionCall_firstCall(identifier, _startBracket, parameters, _endBracket) {
@@ -72,6 +75,11 @@ semantics.addOperation("transpile", {
       return transpileJsExternalFunctionCall(parameters)
 
     return transpiledIdentifier+"("+parameters.transpile()+")"
+  },
+  FunctionCall_firstCallCompilerHook(compilerHook, _startBracket, parameters, _endBracket) {
+    const transpiledCompilerHook = compilerHook.transpile();
+    if(transpiledCompilerHook !== "jsFunction") return transpiledCompilerHook 
+    return parameters.transpile()
   },
   FunctionCall_chainedCall(prevFunctionCall, _startBracket, parameters, _endBracket) {
     return prevFunctionCall.transpile()+"("+parameters.transpile()+")"

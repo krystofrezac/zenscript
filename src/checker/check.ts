@@ -27,9 +27,10 @@ const addError = (error: Error)=>{
 
 const createType = (type: Type)=>type
 
-const typesAreCompatible = (a: Type, b: Type)=>{
-  if(a.type==="string" && b.type==="string") return true
-  if(a.type==="number" && b.type==="number") return true
+const typesAreCompatible = (base: Type, compare: Type)=>{
+  if(compare.type==="unknown") return true
+  if(base.type==="string" && compare.type==="string") return true
+  if(base.type==="number" && compare.type==="number") return true
 
   return false
 }
@@ -62,8 +63,8 @@ const checkVariableAssignmentTypeAndRegister = ({
 
 declare module 'ohm-js' {
   interface Node {
-    getType: () => Type|undefined
-    getTypes: () => (Type|undefined)[]
+    getType: () => Type
+    getTypes: () => (Type)[]
     check: () => void
   }
 }
@@ -72,8 +73,18 @@ semantics.addOperation<ReturnType<ohm.Node['getTypes']>>("getTypes", {
   _iter(...children) {
     return children.map(ch=>ch.getType())
   },
+  _terminal() {
+    return []
+  }
 })
 semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
+  NonemptyListOf(firstItem, _firstItemIterable, tailIterable) {
+    return createType({
+      type: "tuple",
+      items: [firstItem.getType(), ...tailIterable.getTypes()],
+      hasValue: false
+    })
+  },
   stringExpression(_startQuotes, _string, _endQuotes) {
     return createType({
       type: "string",
@@ -90,8 +101,10 @@ semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
     const name = identifier.sourceString
     const referencedVariable = findVariableFromCurrentScope(name)
 
-    if(!referencedVariable) 
+    if(!referencedVariable) {
       addError({message: `Variable with name '${name}' could not be found`})
+      return createType({type: "unknown", hasValue: false})
+    }
 
     return referencedVariable?.type;
   },
@@ -117,7 +130,11 @@ semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
     pushTypeScope()
     const types = statements.getTypes()
     popTypeScope()
-    return types[types.length-1]
+    const lastStatementType = types[types.length-1]
+    if(!lastStatementType)
+      return createType({type: "unknown", hasValue: false})
+
+    return lastStatementType
   },
   BlockStatement_statements(statement, _emptyLines, otherStatements) {
     statement.check() 
@@ -125,6 +142,19 @@ semantics.addOperation<ReturnType<ohm.Node['getType']>>("getType", {
   },
   BlockStatement_endStatement(expression) {
     return expression.getType()
+  },
+  FunctionDeclaration(_startBrace, parameters, _nedBrace, returnExpression) {
+    const returnType = returnExpression.getType()
+
+    return createType({
+      type: "function", 
+      parameters: parameters.getType(),
+      returns: returnType,
+      hasValue: returnType.hasValue
+    })
+  },
+  FunctionCall_firstCallCompilerHook(_compilerHook, _startBrace, _parameters ,_endBrace) {
+    return createType({type: "unknown", hasValue: true}) 
   },
 })
 
@@ -175,9 +205,11 @@ export const check = (parsedInput: MatchResult) => {
   if(parsedInput.succeeded()){
     const adapter = semantics(parsedInput)
     adapter.check()
+    console.log(JSON.stringify(typeScopes, undefined, 2))
     console.log(errors)
+    return errors.length===0;
   } else {
     console.error("Failed to parse", parsedInput.message);
-    return undefined;
+    return false;
   }
 }

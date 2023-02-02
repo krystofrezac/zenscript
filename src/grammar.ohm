@@ -35,20 +35,20 @@ BoringLang {
   stringExpression = "\"" ("\u{0021}" | "\u{0023}".."\u{00FF}")* "\""
   stringType = "string"
   numberType = "number"
+  compilerHook  = "@"letter+
 
   Block = "{"  BlockStatement* "}"
   BlockStatement = | Statement #(newLine) BlockStatement                          -- statements
                    | Expression                                        -- endStatement
 
   FunctionDeclaration<TParameter, TReturnExpression> = "(" FunctionParameters<TParameter> ")" TReturnExpression
-  FunctionParameters<TParameter> = | TParameter "," FunctionParameters<TParameter>                -- parametr
-                                   | TParameter                                       -- endParametr
-                                   | ""                                                     -- noParametr
+  FunctionParameters<TParameter> = ListOf<TParameter, ",">
   FunctionParameter = letter+
 
 
   FunctionCall = | FunctionCall"(" FunctionArguments ")"                        -- chainedCall
-                 | identifier"(" FunctionArguments ")"                          -- firstCall
+                 | identifier "(" FunctionArguments ")"                        -- firstCall
+                 | compilerHook "(" FunctionArguments ")"                      -- firstCallCompilerHook
   FunctionArguments = | FunctionArgument "," FunctionArguments                  -- arguments
                       | FunctionArgument                                        -- endArgument
                       | ""                                                      -- noArgument
