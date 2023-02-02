@@ -3,6 +3,7 @@ import grammar from "../grammar.ohm-bundle";
 import { createCheckTypeOperation } from "../operations/checkOperation";
 import { createGetTypeOperation } from "../operations/getTypeOperation";
 import { createGetTypesOperation } from "../operations/getTypesOperation";
+import { createHasValueOperation } from "../operations/getHasValueOperation";
 import { createTranspileOperation } from "../operations/transpileOperation";
 
 export const createSemantics = (checkerContext: CheckerContext)=>{ 
@@ -11,5 +12,6 @@ export const createSemantics = (checkerContext: CheckerContext)=>{
   createGetTypeOperation(semantics, {checkerContext})
   createGetTypesOperation(semantics)
   createCheckTypeOperation(semantics, {checkerContext})
+  createHasValueOperation(semantics, {checkerContext})
   return semantics;
 }

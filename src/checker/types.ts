@@ -1,20 +1,19 @@
-export type Type = {
-    hasValue: boolean
-  } & (
-    {
-      type: "string" | "number" | "unknown";
-    } | {
-      type: "function", 
-      parameters: Type,
-      returns: Type
-    } | {
-      type: "tuple", 
-      items: Type[]
-    }
-  )
+export type Type = 
+  {
+    type: "string" | "number" | "unknown";
+  } | {
+    type: "function", 
+    parameters: Type,
+    returns: Type
+  } | {
+    type: "tuple", 
+    items: Type[]
+  }
+
 export type Variable = {
   name: string, 
-  type: Type
+  type: Type, 
+  hasValue: boolean
 }
 export type TypeScope = {
   variables: Variable[]

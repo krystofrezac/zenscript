@@ -49,9 +49,7 @@ BoringLang {
   FunctionCall = | FunctionCall"(" FunctionArguments ")"                        -- chainedCall
                  | identifier "(" FunctionArguments ")"                        -- firstCall
                  | compilerHook "(" FunctionArguments ")"                      -- firstCallCompilerHook
-  FunctionArguments = | FunctionArgument "," FunctionArguments                  -- arguments
-                      | FunctionArgument                                        -- endArgument
-                      | ""                                                      -- noArgument
+  FunctionArguments = ListOf<FunctionArgument, ",">
   FunctionArgument = Expression 
 
 }

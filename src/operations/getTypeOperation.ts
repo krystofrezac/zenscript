@@ -1,5 +1,6 @@
 import ohm from "ohm-js";
 import { findVariableFromCurrentScope, addError, pushTypeScope, popTypeScope } from "../checker/checkerContext";
+import { areTypeCompatible } from "../checker/helpers/areTypesCompatible";
 import { createType } from "../checker/helpers/createType";
 import { CheckerContext } from "../checker/types";
 import { BoringLangSemantics } from "../grammar.ohm-bundle";
@@ -17,19 +18,22 @@ export const createGetTypeOperation = (
       return createType({
         type: "tuple",
         items: [firstItem.getType(), ...tailIterable.getTypes()],
-        hasValue: false
       })
     },
+    EmptyListOf() {
+      return createType({
+        type: "tuple", 
+        items: []
+      })
+    }, 
     stringExpression(_startQuotes, _string, _endQuotes) {
       return createType({
         type: "string",
-        hasValue: true
       })
     },
     numberExpression(_number){
       return createType({
         type: "number",
-        hasValue: true 
       })
     },
     identifier(identifier) {
@@ -38,7 +42,7 @@ export const createGetTypeOperation = (
 
       if(!referencedVariable) {
         addError(context, {message: `Variable with name '${name}' could not be found`})
-        return createType({type: "unknown", hasValue: false})
+        return createType({type: "unknown"})
       }
 
       return referencedVariable?.type;
@@ -52,13 +56,11 @@ export const createGetTypeOperation = (
     numberType(_) {
       return createType({
         type: "number", 
-        hasValue: false
       }) 
     },
     stringType(_) {
       return createType({
-        type: "string",
-        hasValue: false
+        type: "string"
       }) 
     },
     Block(_startCurly, statements, _endCurly) {
@@ -67,7 +69,7 @@ export const createGetTypeOperation = (
       popTypeScope(context)
       const lastStatementType = types[types.length-1]
       if(!lastStatementType)
-        return createType({type: "unknown", hasValue: false})
+        return createType({type: "unknown"})
 
       return lastStatementType
     },
@@ -85,10 +87,33 @@ export const createGetTypeOperation = (
         type: "function", 
         parameters: parameters.getType(),
         returns: returnType,
-        hasValue: returnType.hasValue
       })
     },
     FunctionCall_firstCallCompilerHook(_compilerHook, _startBrace, _parameters ,_endBrace) {
-      return createType({type: "unknown", hasValue: true}) 
+      return createType({type: "unknown"}) 
+    },
+    FunctionCall_firstCall(identifier, _startBrace, parameters, _endBrace) {
+      const functionType = identifier.getType()
+      const parametersType = parameters.getType()
+
+      if(functionType.type!=="function"){
+        addError(context, {message: `Variable '${identifier.sourceString}' is not callable`})
+        return createType({type: 'unknown'});
+      }
+
+      if(!parameters.getHasValue()) {
+        addError(context, {message: `Some parameters don't have value`})
+        return createType({type: 'unknown'});
+      } 
+
+      if(!areTypeCompatible(functionType.parameters, parametersType)){
+        addError(context, {message: `You are calling function ${identifier.sourceString} with wrong arguments`+
+          `\n${JSON.stringify(functionType.parameters)}`+
+          `\n${JSON.stringify(parametersType)}`}
+        )
+        return createType({type: 'unknown'});
+      }
+
+      return createType(functionType.returns)
     },
   })

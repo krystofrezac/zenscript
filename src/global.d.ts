@@ -5,5 +5,6 @@ declare module 'ohm-js' {
     getType: () => Type
     getTypes: () => (Type)[]
     checkType: () => void
+    getHasValue: () => boolean
   }
 }

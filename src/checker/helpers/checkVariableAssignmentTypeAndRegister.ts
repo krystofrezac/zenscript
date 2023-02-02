@@ -6,10 +6,12 @@ export const checkVariableAssignmentTypeAndRegister = (context: CheckerContext, 
   name,
   primaryType, 
   secondaryType,
+  hasValue
 } : {
     name: string, 
     primaryType: Type, 
     secondaryType?: Type,
+    hasValue: boolean
 }) =>{
   if(findVariableInCurrentScope(context, name)){
     addError(context, {message: `variable with name '${name}' is already declared in this scope`})
@@ -21,9 +23,7 @@ export const checkVariableAssignmentTypeAndRegister = (context: CheckerContext, 
 
   addVariableToCurrentScope(context, {
     name, 
-    type: {
-      ...primaryType,
-      hasValue: secondaryType?.hasValue || primaryType.hasValue
-    } 
+    type: primaryType,
+    hasValue 
   })
 }

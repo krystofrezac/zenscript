@@ -5,7 +5,10 @@ import { createSemantics } from './semantics';
 import { transpile } from './transpiler';
 
 const code = `
-  a: (string, number)number = @jsFunction("myFun")
+  jsFun: (string, number)number = @jsFunction("myFun")
+  paramA: string = ""
+  paramB = 2
+  result: number = jsFun(paramA, paramB)
 `
 
 const run = ()=>{

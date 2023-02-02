@@ -27,10 +27,10 @@ export const createCheckTypeOperation = (
 
       if(!valueType) return
 
-      if(!valueType.hasValue)
+      if(!valueAssignment.getHasValue())
         addError( context, {message: `Cannot assign expression without value to variable '${name}'`})
 
-      checkVariableAssignmentTypeAndRegister(context, {name, primaryType: valueType })
+      checkVariableAssignmentTypeAndRegister(context, {name, primaryType: valueType, hasValue: true })
     },
     VariableDeclaration_onlyType(identifier, typeAssignment) {
       const name = identifier.sourceString
@@ -38,7 +38,7 @@ export const createCheckTypeOperation = (
 
       if(!type) return
 
-      checkVariableAssignmentTypeAndRegister(context, {name, primaryType: type })
+      checkVariableAssignmentTypeAndRegister(context, {name, primaryType: type, hasValue: false })
     },
     VariableDeclaration_valueAndType(identifier, typeAssignment, valueAssignment) {
       const name = identifier.sourceString
@@ -46,11 +46,11 @@ export const createCheckTypeOperation = (
       const valueType = valueAssignment.getType()
 
       if(!valueType) return
-      if(!valueType.hasValue)
+      if(!valueAssignment.getHasValue())
         addError(context, {message: `Cannot assign expression without value to variable '${name}'`})
 
       if(!type) return
 
-      checkVariableAssignmentTypeAndRegister(context, {name, primaryType: type, secondaryType: valueType })
+      checkVariableAssignmentTypeAndRegister(context, {name, primaryType: type, secondaryType: valueType, hasValue: true })
     },
   })

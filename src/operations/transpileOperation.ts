@@ -11,9 +11,6 @@ export const createTranspileOperation = (semantics: BoringLangSemantics)=>
     _iter(...children) {
       return children.map(c => c.transpile())
     },
-    _terminal(){
-      return this.sourceString
-    },
     NonemptyListOf(items, a, b){
       return items.transpile() +  b.transpile()
     },
@@ -31,6 +28,9 @@ export const createTranspileOperation = (semantics: BoringLangSemantics)=>
     },
     VariableDeclaration_valueAndType(identifier, _typeAssignment, valueAssignment){
       return `const ${identifier.sourceString} ${valueAssignment.transpile()}`
+    },
+    VariableDeclaration_onlyType(_identifier, _typeAssignment) {
+      return '' 
     },
     ValueAssignment(_equals, expression) {
       return `= ${expression.transpile()}`
@@ -76,14 +76,5 @@ export const createTranspileOperation = (semantics: BoringLangSemantics)=>
     },
     FunctionCall_chainedCall(prevFunctionCall, _startBracket, parameters, _endBracket) {
       return prevFunctionCall.transpile()+"("+parameters.transpile()+")"
-    },
-    FunctionArguments_arguments(argument, _comma, otherArguments) {
-      return argument.transpile()+", "+otherArguments.transpile()
-    },
-    FunctionArguments_endArgument(argument) {
-      return argument.sourceString
-    },
-    FunctionArguments_noArgument(_) {
-      return "" 
     },
   })
