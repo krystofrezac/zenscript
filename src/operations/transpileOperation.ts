@@ -11,8 +11,11 @@ export const createTranspileOperation = (semantics: BoringLangSemantics)=>
     _iter(...children) {
       return children.map(c => c.transpile())
     },
-    NonemptyListOf(items, a, b){
-      return items.transpile() +  b.transpile()
+    NonemptyListOf(firstItem, _firstItemIterable, tailIterable){
+      return [firstItem.transpile(), ...tailIterable.transpile()].join(", ")
+    },
+    EmptyListOf() {
+      return ""
     },
     Program_statements(firstStatement, _newLines, secondStatement){
       return firstStatement.transpile() + secondStatement.transpile()

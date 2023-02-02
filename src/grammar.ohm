@@ -7,7 +7,7 @@ BoringLang {
   Statement = | VariableDeclaration
               | Expression
 
-  newLine = "\n"
+  newLine = " "*"\n"" "*
   valueAssignmentOperator = "="
   typeAssignmentOperator = ":"
 

@@ -16,7 +16,7 @@ describe("transpile", ()=>{
   test("variable assignment", ()=>{
     const input = `
       a = 1
-      b = "a" 
+      b = "a"
       c = {
         a = 1
         a
@@ -35,7 +35,7 @@ describe("transpile", ()=>{
 
   test("function declaration", ()=>{
     const input = `
-      a = ()"return" 
+      a = ()"return"
       b = (paramA)paramA
       c = (paramA, paramB)paramB
       d = (paramA, paramB){
@@ -59,9 +59,9 @@ describe("transpile", ()=>{
 
   test("function call", ()=>{
     const input = `
-      a = a() 
-      b = b(1,2) 
-      c = b("a",2) 
+      a = a()
+      b = b(1,2)
+      c = b("a",2)
       d = d(1)()("a")
     `
     expect(toCode(input)).toMatchInlineSnapshot(`
