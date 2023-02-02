@@ -1,8 +1,9 @@
 import { CheckerContext, TypeScope, Variable, Error } from "../types"
+import { checkContextDefaultVariables } from "./defaultVariables"
 
 export const createCheckerContext = ():CheckerContext =>{
   const typeScopes: TypeScope[] = [{
-    variables: []
+    variables: checkContextDefaultVariables
   }]
   const errors: Error[] = []
 
