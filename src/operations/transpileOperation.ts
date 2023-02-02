@@ -1,4 +1,4 @@
-import { NonterminalNode} from "ohm-js"
+import ohm, { NonterminalNode} from "ohm-js"
 import { BoringLangSemantics } from "../grammar.ohm-bundle"
 
 const transpileJsExternalFunctionCall = (parameters: NonterminalNode)=>{
@@ -7,9 +7,10 @@ const transpileJsExternalFunctionCall = (parameters: NonterminalNode)=>{
 }
 
 export const createTranspileOperation = (semantics: BoringLangSemantics)=>
-  semantics.addOperation("transpile", {
+  semantics.addOperation<ReturnType<ohm.Node['transpile']>>("transpile", {
     _iter(...children) {
-      return children.map(c => c.transpile())
+      // TODO:
+      return children.map(c => c.transpile()) as unknown as string
     },
     NonemptyListOf(firstItem, _firstItemIterable, tailIterable){
       return [firstItem.transpile(), ...tailIterable.transpile()].join(", ")
@@ -75,7 +76,8 @@ export const createTranspileOperation = (semantics: BoringLangSemantics)=>
     FunctionCall_firstCallCompilerHook(compilerHook, _startBracket, parameters, _endBracket) {
       const transpiledCompilerHook = compilerHook.transpile();
       if(transpiledCompilerHook !== "jsFunction") return transpiledCompilerHook 
-      return parameters.transpile()
+      const transpiledParameters = parameters.transpile()
+      return transpiledParameters.substring(1,transpiledParameters.length-1)
     },
     FunctionCall_chainedCall(prevFunctionCall, _startBracket, parameters, _endBracket) {
       return prevFunctionCall.transpile()+"("+parameters.transpile()+")"
