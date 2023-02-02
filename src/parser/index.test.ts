@@ -1,5 +1,5 @@
 import {describe, expect, test} from 'vitest'
-import { parse } from './parser'
+import { parse } from '.'
 
 describe("parser", ()=>{
   describe("variable declaration", ()=>{

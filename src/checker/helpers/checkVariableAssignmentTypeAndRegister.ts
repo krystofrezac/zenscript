@@ -1,0 +1,29 @@
+import { findVariableInCurrentScope, addError, addVariableToCurrentScope } from "../checkerContext"
+import { CheckerContext, Type } from "../types"
+import { areTypeCompatible } from "./areTypesCompatible"
+
+export const checkVariableAssignmentTypeAndRegister = (context: CheckerContext, {
+  name,
+  primaryType, 
+  secondaryType,
+} : {
+    name: string, 
+    primaryType: Type, 
+    secondaryType?: Type,
+}) =>{
+  if(findVariableInCurrentScope(context, name)){
+    addError(context, {message: `variable with name '${name}' is already declared in this scope`})
+    return
+  }
+  if(secondaryType && !areTypeCompatible(primaryType, secondaryType)){
+    addError(context, {message: `variable '${name}' has incorrect type ${JSON.stringify(primaryType)} expected ${JSON.stringify(secondaryType)}`})
+  }
+
+  addVariableToCurrentScope(context, {
+    name, 
+    type: {
+      ...primaryType,
+      hasValue: secondaryType?.hasValue || primaryType.hasValue
+    } 
+  })
+}

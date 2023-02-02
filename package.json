@@ -6,7 +6,7 @@
     "dev": "npm run gen:bundle && tsc --watch",
     "start": "node dist/index.js",
     "test": "vitest",
-    "gen:bundle": "ohm generateBundles --withTypes src/*.ohm && cp src/grammar.ohm-bundle.* dist/"
+    "gen:bundle": "ohm generateBundles --withTypes src/*.ohm && mkdir -p dist && cp src/grammar.ohm-bundle.* dist/"
   },
   "dependencies": {
     "ohm-js": "^16.6.0",

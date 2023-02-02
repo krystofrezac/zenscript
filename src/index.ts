@@ -1,13 +1,27 @@
-import { check } from './checker/check'
+import { check } from './checker'
+import { createCheckerContext } from './checker/checkerContext';
 import { parse } from './parser'
-import { transpile } from './transpiler'
+import { createSemantics } from './semantics';
+import { transpile } from './transpiler';
 
 const code = `
   a: (string, number)number = @jsFunction("myFun")
 `
 
-const parsed = parse(code)
-const checked = check(parsed)
-// if(checked){
-//   console.log(transpile(parsed))
-// }
+const run = ()=>{
+  const checkerContext = createCheckerContext()
+
+  const semantics = createSemantics(checkerContext);
+
+  const parsed = parse(code)
+  if(parsed.failed()) {
+    console.log("Parsing failed!")
+    return 
+  }
+  const adapter = semantics(parsed)
+  const checked = check(adapter, checkerContext)
+  if(checked){
+    console.log(transpile(adapter))
+  }
+}
+run();

@@ -22,3 +22,8 @@ export type TypeScope = {
 export type Error = {
   message: string
 }
+
+export type CheckerContext = {
+  typeScopes: TypeScope[]
+  errors: Error[]
+}

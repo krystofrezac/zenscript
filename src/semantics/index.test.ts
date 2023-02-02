@@ -1,10 +1,15 @@
 import { expect } from "vitest";
-import { parse } from "./parser";
-import { transpile } from "./transpiler";
+import { parse } from "../parser";
+import { transpile } from "../transpiler";
 import { describe, test } from "vitest";
+import { createSemantics } from ".";
+import { createCheckerContext } from "../checker/checkerContext";
+
+const semantics = createSemantics(createCheckerContext())
 
 const toCode = (input: string)=>{
-  return transpile(parse(input))
+  const adapter = semantics(parse(input))
+  return transpile(adapter)
 }
 
 describe("transpile", ()=>{
