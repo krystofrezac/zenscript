@@ -1,5 +1,3 @@
-import { Dict } from "ohm-js";
+import { Dict } from 'ohm-js';
 
-export const transpile = (adapter: Dict) => {
-  return adapter.transpile()
-}
+export const transpile = (adapter: Dict) => adapter.transpile();

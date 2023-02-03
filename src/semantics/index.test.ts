@@ -1,19 +1,19 @@
-import { expect } from "vitest";
-import { parse } from "../parser";
-import { transpile } from "../transpiler";
-import { describe, test } from "vitest";
-import { createSemantics } from ".";
-import { createCheckerContext } from "../checker/checkerContext";
+import { expect } from 'vitest';
+import { parse } from '../parser';
+import { transpile } from '../transpiler';
+import { describe, test } from 'vitest';
+import { createSemantics } from '.';
+import { createCheckerContext } from '../checker/checkerContext';
 
-const semantics = createSemantics(createCheckerContext())
+const semantics = createSemantics(createCheckerContext());
 
-const toCode = (input: string)=>{
-  const adapter = semantics(parse(input))
-  return transpile(adapter)
-}
+const toCode = (input: string) => {
+  const adapter = semantics(parse(input));
+  return transpile(adapter);
+};
 
-describe("transpile", ()=>{
-  test("variable assignment", ()=>{
+describe('transpile', () => {
+  test('variable assignment', () => {
     const input = `
       a = 1
       b = "a"
@@ -21,7 +21,7 @@ describe("transpile", ()=>{
         a = 1
         a
       }
-    `
+    `;
     expect(toCode(input)).toMatchInlineSnapshot(`
       "const a = 1
       const b = \\"a\\"
@@ -30,10 +30,10 @@ describe("transpile", ()=>{
       return a
       })()
       "
-    `)
-  })
+    `);
+  });
 
-  test("function declaration", ()=>{
+  test('function declaration', () => {
     const input = `
       a = ()"return"
       b = (paramA)paramA
@@ -43,7 +43,7 @@ describe("transpile", ()=>{
         a
       }
       e = (paramA)(paramB)(paramC)paramC
-    `
+    `;
     expect(toCode(input)).toMatchInlineSnapshot(`
       "const a = ()=>\\"return\\"
       const b = (paramA)=>paramA
@@ -54,22 +54,22 @@ describe("transpile", ()=>{
       })()
       const e = (paramA)=>(paramB)=>(paramC)=>paramC
       "
-    `)
-  })
+    `);
+  });
 
-  test("function call", ()=>{
+  test('function call', () => {
     const input = `
       a = a()
       b = b(1,2)
       c = b("a",2)
       d = d(1)()("a")
-    `
+    `;
     expect(toCode(input)).toMatchInlineSnapshot(`
       "const a = a()
       const b = b(1, 2)
       const c = b(\\"a\\", 2)
       const d = d(1)()(\\"a\\")
       "
-    `)
-  })
-})
+    `);
+  });
+});

@@ -1,20 +1,22 @@
-import { Variable } from "../types";
+import { Variable } from '../types';
 
 export const checkContextDefaultVariables: Variable[] = [
   {
     hasValue: true,
-    name: "@jsFunction", 
+    name: '@jsFunction',
     type: {
-      type: "function",
+      type: 'function',
       parameters: {
-        type: "tuple", 
-        items: [{
-          type: "string"
-        }]
+        type: 'tuple',
+        items: [
+          {
+            type: 'string',
+          },
+        ],
       },
       returns: {
-        type: "unknown"
-      }
-    }
-  }
-]
+        type: 'unknown',
+      },
+    },
+  },
+];

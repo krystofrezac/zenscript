@@ -1,28 +1,30 @@
-export type Type = 
-  {
-    type: "string" | "number" | "unknown";
-  } | {
-    type: "function", 
-    parameters: Type,
-    returns: Type
-  } | {
-    type: "tuple", 
-    items: Type[]
-  }
+export type Type =
+  | {
+      type: 'string' | 'number' | 'unknown';
+    }
+  | {
+      type: 'function';
+      parameters: Type;
+      returns: Type;
+    }
+  | {
+      type: 'tuple';
+      items: Type[];
+    };
 
 export type Variable = {
-  name: string, 
-  type: Type, 
-  hasValue: boolean
-}
+  name: string;
+  type: Type;
+  hasValue: boolean;
+};
 export type TypeScope = {
-  variables: Variable[]
-}
+  variables: Variable[];
+};
 export type Error = {
-  message: string
-}
+  message: string;
+};
 
 export type CheckerContext = {
-  typeScopes: TypeScope[]
-  errors: Error[]
-}
+  typeScopes: TypeScope[];
+  errors: Error[];
+};
