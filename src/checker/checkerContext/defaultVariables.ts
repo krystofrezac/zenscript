@@ -1,6 +1,6 @@
 import { Variable } from '../types';
 
-export const checkContextDefaultVariables: Variable[] = [
+export const getCheckContextDefaultVariables = (): Variable[] => [
   {
     hasValue: true,
     name: '@jsFunction',

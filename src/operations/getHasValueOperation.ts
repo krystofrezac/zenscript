@@ -58,4 +58,5 @@ export const createHasValueOperation = (
       if (!functionDeclaration) return false;
       return functionDeclaration.hasValue;
     },
+    Block: (_startCurly, _statements, _endCurly) => true,
   });

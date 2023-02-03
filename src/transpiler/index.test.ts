@@ -1,8 +1,8 @@
 import { expect } from 'vitest';
 import { parse } from '../parser';
-import { transpile } from '../transpiler';
+import { transpile } from '.';
 import { describe, test } from 'vitest';
-import { createSemantics } from '.';
+import { createSemantics } from '../semantics';
 import { createCheckerContext } from '../checker/checkerContext';
 
 const semantics = createSemantics(createCheckerContext());
