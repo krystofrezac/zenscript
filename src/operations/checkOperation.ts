@@ -1,6 +1,7 @@
 import ohm from 'ohm-js';
 import { addError } from '../checker/checkerContext';
 import { checkVariableAssignmentTypeAndRegister } from '../checker/helpers/checkVariableAssignmentTypeAndRegister';
+import { tryToFigureOutType } from '../checker/helpers/figureOutType';
 import { CheckerContext } from '../checker/types';
 import { BoringLangSemantics } from '../grammar.ohm-bundle';
 
@@ -65,12 +66,17 @@ export const createCheckTypeOperation = (
         });
 
       if (!type) return;
-
+      tryToFigureOutType(type, valueType);
       checkVariableAssignmentTypeAndRegister(context, {
         name,
         primaryType: type,
         secondaryType: valueType,
         hasValue: true,
+      });
+    },
+    Expression: _expression => {
+      addError(context, {
+        message: 'There can be only void expressions in root',
       });
     },
   });

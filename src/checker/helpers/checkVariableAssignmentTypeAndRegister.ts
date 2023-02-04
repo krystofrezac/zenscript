@@ -4,7 +4,7 @@ import {
   addVariableToCurrentScope,
 } from '../checkerContext';
 import { CheckerContext, Type } from '../types';
-import { areTypeCompatible } from './areTypesCompatible';
+import { areTypesCompatible } from './areTypesCompatible';
 
 export const checkVariableAssignmentTypeAndRegister = (
   context: CheckerContext,
@@ -26,7 +26,7 @@ export const checkVariableAssignmentTypeAndRegister = (
     });
     return;
   }
-  if (secondaryType && !areTypeCompatible(primaryType, secondaryType)) {
+  if (secondaryType && !areTypesCompatible(primaryType, secondaryType)) {
     addError(context, {
       message: `variable '${name}' has incorrect type ${JSON.stringify(
         primaryType,

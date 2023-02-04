@@ -4,9 +4,11 @@ import {
   addError,
   pushTypeScope,
   popTypeScope,
+  addVariableToCurrentScope,
 } from '../checker/checkerContext';
-import { areTypeCompatible } from '../checker/helpers/areTypesCompatible';
+import { areTypesCompatible } from '../checker/helpers/areTypesCompatible';
 import { createType } from '../checker/helpers/createType';
+import { tryToFigureOutType } from '../checker/helpers/figureOutType';
 import { CheckerContext } from '../checker/types';
 import { BoringLangSemantics } from '../grammar.ohm-bundle';
 
@@ -37,7 +39,8 @@ export const createGetTypeOperation = (
       return createType({ type: 'unknown' });
     }
 
-    if (!areTypeCompatible(functionType.parameters, parametersType)) {
+    tryToFigureOutType(functionType.parameters, parametersType);
+    if (!areTypesCompatible(functionType.parameters, parametersType)) {
       addError(context, {
         message:
           `You are calling function ${identifier.sourceString} with wrong arguments` +
@@ -117,13 +120,26 @@ export const createGetTypeOperation = (
       _nedBrace,
       returnExpression,
     ) => {
+      pushTypeScope(context);
+      const parametersType = parameters.getType();
       const returnType = returnExpression.getType();
+      popTypeScope(context);
 
       return createType({
         type: 'function',
-        parameters: parameters.getType(),
+        parameters: parametersType,
         returns: returnType,
       });
+    },
+    FunctionParameter: parameter => {
+      const parameterName = parameter.sourceString;
+      const defaultType = createType({ type: 'figureOut' });
+      addVariableToCurrentScope(context, {
+        name: parameterName,
+        type: defaultType,
+        hasValue: true,
+      });
+      return defaultType;
     },
     FunctionCall_firstCallCompilerHook: (
       compilerHook,

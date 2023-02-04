@@ -1,6 +1,6 @@
 export type Type =
   | {
-      type: 'string' | 'number' | 'unknown';
+      type: 'string' | 'number' | 'unknown' | 'figureOut';
     }
   | {
       type: 'function';
