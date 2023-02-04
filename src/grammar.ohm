@@ -1,5 +1,5 @@
 BoringLang {
-  space := " " | "\t" | newLine
+  space := " " | "\t" | newLine | oneLineComment | multiLineComment
 
   Program = | Program #(newLine) Program                                          -- statements
             | Statement                                                         -- endStatement
@@ -10,6 +10,8 @@ BoringLang {
   newLine = " "*"\n"" "*
   valueAssignmentOperator = "="
   typeAssignmentOperator = ":"
+  oneLineComment = "//" (~newLine any)* 
+  multiLineComment = "/*" (~"*/" any)* "*/"
 
   VariableDeclaration = | identifier ValueAssignment                            -- onlyValue
                         | identifier TypeAssignment ValueAssignment             -- valueAndType

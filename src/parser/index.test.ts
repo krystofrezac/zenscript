@@ -158,4 +158,15 @@ describe('parser', () => {
       });
     });
   });
+  test('comments', () => {
+    const input = `
+      // invalid-! 12 234
+      a = 1
+      /* invalid-! 12 234
+        asdf asdf asdf
+      */
+      c = 2
+    `;
+    expect(parse(input).succeeded()).toBe(true);
+  });
 });

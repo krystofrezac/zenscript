@@ -57,7 +57,7 @@ export const createGetTypeOperation = (
 
     if (!referencedVariable) {
       addError(context, {
-        message: `Variable with name '${name}' could not be found`,
+        message: `Variable with name '${identifierName}' could not be found`,
       });
       return createType({ type: 'unknown' });
     }
