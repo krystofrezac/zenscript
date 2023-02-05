@@ -13,6 +13,7 @@ import {
   getDefaultTypeWhenFigureOut,
   tryToFigureOutType,
 } from '../checker/helpers/figureOutType';
+import { getSpecificReturn } from '../checker/helpers/getSpecificReturn';
 import { CheckerContext, GenericType, Type } from '../checker/types';
 import { BoringLangSemantics } from '../grammar.ohm-bundle';
 
@@ -54,7 +55,7 @@ export const createGetTypeOperation = (
       return createType({ type: 'unknown' });
     }
 
-    return createType(functionType.returns);
+    return getSpecificReturn(functionType, parametersType);
   };
   const getIdentifierType = (identifierName: string) => {
     const referencedVariable = findVariableFromCurrentScope(

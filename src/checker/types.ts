@@ -10,7 +10,7 @@ export type FigureOutType = BaseType<'figureOut'> & {
 export type TupleType = BaseType<'tuple'> & {
   items: Type[];
 };
-type FunctionType = BaseType<'function'> & {
+export type FunctionType = BaseType<'function'> & {
   parameters: TupleType;
   returns: Type;
 };

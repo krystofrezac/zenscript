@@ -169,10 +169,10 @@ describe('type checking', () => {
         b = a(1)
 
         c: ('a) 'a = @jsValue("")
-        d = a(1)
+        d = c(1)
 
         e: ('a, 'a) 'a = @jsValue("")
-        d = a(1, 1)
+        f = e(1, 1)
       `;
       expect(checkCode(code)).toBe(true);
     });
@@ -182,7 +182,29 @@ describe('type checking', () => {
         b = a("")
 
         e: ('a, 'a) 'a = @jsValue("")
-        d = a(1, "")
+        d = e(1, "")
+      `;
+      expect(checkCode(code)).toBe(false);
+    });
+  });
+  describe('function return checking', () => {
+    test('valid return', () => {
+      const code = `
+        a: (number) string = @jsValue("")
+        b: string = a(1)
+
+        c: ('a) 'a = @jsValue("")
+        d: number = c(1)
+
+        e: ('a, 'a) 'a = @jsValue("")
+        f: number = e(1, 1)
+      `;
+      expect(checkCode(code)).toBe(true);
+    });
+    test('invalid return', () => {
+      const code = `
+        a: ('a) 'a = @jsValue("")
+        b: string = a(1)
       `;
       expect(checkCode(code)).toBe(false);
     });
