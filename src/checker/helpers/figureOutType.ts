@@ -3,7 +3,9 @@ import { areTuplesCompatible } from './areTypesCompatible';
 
 export const tryToFigureOutType = (baseType: Type, typeToFigureOut: Type) => {
   if (typeToFigureOut.type === 'figureOut') {
-    (typeToFigureOut as Type).type = baseType.type;
+    const figuredOutType = typeToFigureOut as Type;
+    figuredOutType.type = baseType.type;
+
     return;
   }
 
@@ -21,4 +23,7 @@ export const tryToFigureOutType = (baseType: Type, typeToFigureOut: Type) => {
   }
 };
 
-// export transformFigureOutToUnknown =
+export const getDefaultTypeWhenFigureOut = (type: Type) => {
+  if (type.type === 'figureOut') return type.defaultType;
+  return type;
+};

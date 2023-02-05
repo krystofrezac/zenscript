@@ -36,7 +36,7 @@ BoringLang {
                    | genericName
 
   identifier = (letter | "!")+
-  genericName = "'"(letter | "!")+
+  genericName = "'"(letter)+
   numberExpression = digit+
   stringExpression = "\"" ("\u{0021}" | "\u{0023}".."\u{00FF}")* "\""
   booleanExpression = trueExpression | falseExpression
@@ -53,7 +53,7 @@ BoringLang {
 
   FunctionDeclaration<TParameter, TReturnExpression> = "(" FunctionParameters<TParameter> ")" TReturnExpression
   FunctionParameters<TParameter> = ListOf<TParameter, ",">
-  FunctionParameter = letter+
+  FunctionParameter = identifier
 
 
   FunctionCall = | FunctionCall"(" FunctionArguments ")"                        -- chainedCall

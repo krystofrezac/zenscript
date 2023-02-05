@@ -48,38 +48,50 @@ describe('type checking', () => {
     describe('function parameters', () => {
       test('valid direct return inference', () => {
         const code = `
-        add: (number) number = @jsValue("add")
-        myFun: (number) number = (a) add(a)
-      `;
+          add: (number) number = @jsValue("add")
+          myFun: (number) number = (a) add(a)
+        `;
         expect(checkCode(code)).toBe(true);
       });
       test('invalid direct return inference', () => {
         const code = `
-        add: (number) number = @jsValue("add")
-        myFun: (string) number = (a) add(a)
-      `;
+          add: (number) number = @jsValue("add")
+          myFun: (string) number = (a) add(a)
+        `;
         expect(checkCode(code)).toBe(false);
       });
       test('valid block return inference', () => {
         const code = `
-        add: (number) number = @jsValue("add")
-        myFun: (number) number = (a) {
-          b = a 
-          c = add(b)
-          c
-        }
-      `;
+          add: (number) number = @jsValue("add")
+          myFun: (number) number = (a) {
+            b = a 
+            c = add(b)
+            c
+          }
+        `;
         expect(checkCode(code)).toBe(true);
       });
       test('invalid direct return inference', () => {
         const code = `
-        add: (number) number = @jsValue("add")
-        myFun: (string) number = (a) {
-          b = a 
-          c = add(b)
-          c
-        }
-      `;
+          add: (number) number = @jsValue("add")
+          myFun: (string) number = (a) {
+            b = a 
+            c = add(b)
+            c
+          }
+        `;
+        expect(checkCode(code)).toBe(false);
+      });
+      test('valid generic inference', () => {
+        const code = `
+          a: ('a, 'b) 'a = (b, c) b
+        `;
+        expect(checkCode(code)).toBe(false);
+      });
+      test('invalid generic inference', () => {
+        const code = `
+          a: ('a, 'b) 'b = (b, c) b
+        `;
         expect(checkCode(code)).toBe(false);
       });
     });

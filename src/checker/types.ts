@@ -4,13 +4,19 @@ type StringType = BaseType<'string'>;
 type NumberType = BaseType<'number'>;
 type BooleanType = BaseType<'boolean'>;
 type UnknownType = BaseType<'unknown'>;
-type FigureOutType = BaseType<'figureOut'>;
+export type FigureOutType = BaseType<'figureOut'> & {
+  defaultType: Type;
+};
 export type TupleType = BaseType<'tuple'> & {
   items: Type[];
 };
 type FunctionType = BaseType<'function'> & {
   parameters: TupleType;
   returns: Type;
+};
+export type GenericType = BaseType<'generic'> & {
+  name: string;
+  index?: number;
 };
 export type Type =
   | StringType
@@ -19,7 +25,8 @@ export type Type =
   | UnknownType
   | FigureOutType
   | TupleType
-  | FunctionType;
+  | FunctionType
+  | GenericType;
 
 export type Variable = {
   name: string;

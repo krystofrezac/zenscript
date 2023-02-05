@@ -59,8 +59,6 @@ export const createCheckTypeOperation = (
       const type = typeAssignment.getType();
       const valueType = valueAssignment.getType();
 
-      console.log('a', valueAssignment.getHasValue());
-
       if (!valueType) return;
       if (!valueAssignment.getHasValue())
         addError(context, {
