@@ -5,12 +5,8 @@ import { createSemantics } from './semantics';
 import { transpile } from './transpiler';
 
 const code = `
-  add: (number) number = @jsFunction("add")
-  myFun: (number) number = (a) {
-    b = a
-    add(b)
-  }
-  a = myFun(1)
+  a: string = @jsValue("ahoj")
+  b: string = a
 `;
 
 const run = () => {

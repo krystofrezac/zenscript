@@ -45,7 +45,7 @@ export const createHasValueOperation = (
       _startBracket,
       _arguments,
       _endBracket,
-    ) => hookName.sourceString === '@jsFunction',
+    ) => hookName.sourceString === '@jsValue',
     FunctionCall_firstCall: (
       identifier,
       _startBracket,

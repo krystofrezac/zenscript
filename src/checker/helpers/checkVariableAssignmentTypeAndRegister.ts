@@ -26,6 +26,13 @@ export const checkVariableAssignmentTypeAndRegister = (
     });
     return;
   }
+
+  if (primaryType.type === 'unknown') {
+    addError(context, {
+      message: `variable ${name} has invalid type 'unknown'`,
+    });
+  }
+
   if (secondaryType && !areTypesCompatible(primaryType, secondaryType)) {
     addError(context, {
       message: `variable '${name}' has incorrect type ${JSON.stringify(

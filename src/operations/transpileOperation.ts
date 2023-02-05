@@ -59,7 +59,7 @@ export const createTranspileOperation = (semantics: BoringLangSemantics) =>
       _endBracket,
     ) => {
       const transpiledCompilerHook = compilerHook.transpile();
-      if (transpiledCompilerHook !== 'jsFunction')
+      if (transpiledCompilerHook !== 'jsValue')
         return transpiledCompilerHook;
       const transpiledParameters = parameters.transpile();
       return transpiledParameters.substring(1, transpiledParameters.length - 1);

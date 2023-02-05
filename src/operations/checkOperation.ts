@@ -72,6 +72,7 @@ export const createCheckTypeOperation = (
         primaryType: type,
         secondaryType: valueType,
         hasValue: true,
+        // valueCanBeUnknown: true,
       });
     },
     Expression: _expression => {

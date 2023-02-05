@@ -3,7 +3,7 @@ import { Variable } from '../types';
 export const getCheckContextDefaultVariables = (): Variable[] => [
   {
     hasValue: true,
-    name: '@jsFunction',
+    name: '@jsValue',
     type: {
       type: 'function',
       parameters: {
