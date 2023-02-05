@@ -29,7 +29,7 @@ export const checkVariableAssignmentTypeAndRegister = (
 
   if (primaryType.type === 'unknown') {
     addError(context, {
-      message: `variable ${name} has invalid type 'unknown'`,
+      message: `variable '${name}' has invalid type 'unknown'`,
     });
   }
 

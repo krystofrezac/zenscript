@@ -5,7 +5,12 @@ import { createSemantics } from './semantics';
 import { transpile } from './transpiler';
 
 const code = `
-  a: number = @if(true, 1, 1)
+  add: (number, number) number = @jsValue("add")
+  callFunctionWithCommonArguments = (fun) { 
+    fun(1)
+  }
+  funToCall = (a) add(1, a)
+  result = callFunctionWithCommonArguments(funToCall)
 `;
 
 const run = () => {

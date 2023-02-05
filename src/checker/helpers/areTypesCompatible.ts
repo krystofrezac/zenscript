@@ -1,4 +1,5 @@
 import { GenericType, Type } from '../types';
+import { typeToString } from './typeToString';
 
 type Comparator = (base: Type, compare: Type) => boolean;
 type ComparatorContext = {

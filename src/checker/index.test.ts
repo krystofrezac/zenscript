@@ -94,6 +94,17 @@ describe('type checking', () => {
         `;
         expect(checkCode(code)).toBe(false);
       });
+      test('valid complex generic inference', () => {
+        const code = `
+          add: (number, number) number = @jsValue("add")
+          callFunctionWithCommonArguments = (fun) { 
+            fun(1)
+          }
+          funToCall = (a) add(1, a)
+          result = callFunctionWithCommonArguments(funToCall)
+        `;
+        expect(checkCode(code)).toBe(true);
+      });
     });
   });
 

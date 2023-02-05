@@ -14,6 +14,7 @@ import {
   tryToFigureOutType,
 } from '../checker/helpers/figureOutType';
 import { getSpecificReturn } from '../checker/helpers/getSpecificReturn';
+import { typeToString } from '../checker/helpers/typeToString';
 import { CheckerContext, GenericType, Type } from '../checker/types';
 import { BoringLangSemantics } from '../grammar.ohm-bundle';
 
@@ -31,6 +32,21 @@ export const createGetTypeOperation = (
   ) => {
     const functionType = identifier.getType();
     const parametersType = parameters.getType();
+    if (parametersType.type !== 'tuple') return createType({ type: 'unknown' });
+
+    if (functionType.type === 'figureOut') {
+      tryToFigureOutType(
+        createType({
+          type: 'function',
+          parameters: parametersType,
+          returns: createType({
+            type: 'figureOut',
+            defaultType: createType({ type: 'generic', name: 'a', index: 0 }),
+          }),
+        }),
+        functionType,
+      );
+    }
 
     if (functionType.type !== 'function') {
       addError(context, {
@@ -44,17 +60,19 @@ export const createGetTypeOperation = (
       return createType({ type: 'unknown' });
     }
 
+    // figure arguments based on parameters
     tryToFigureOutType(functionType.parameters, parametersType);
     if (!areTypesCompatible(functionType.parameters, parametersType)) {
       addError(context, {
         message:
           `You are calling function ${identifier.sourceString} with wrong arguments` +
-          `\n${JSON.stringify(functionType.parameters)}` +
-          `\n${JSON.stringify(parametersType)}`,
+          `\nexpected: ${typeToString(functionType.parameters)}` +
+          `\nactual: ${typeToString(parametersType)}`,
       });
       return createType({ type: 'unknown' });
     }
 
+    functionType.returns = getDefaultTypeWhenFigureOut(functionType.returns);
     return getSpecificReturn(functionType, parametersType);
   };
   const getIdentifierType = (identifierName: string) => {
