@@ -39,6 +39,7 @@ export const createHasValueOperation = (
       expression.getHasValue(),
     stringExpression: (_startQuotes, _content, _endQuotes) => true,
     numberExpression: _number => true,
+    booleanExpression: _boolean => true,
     FunctionDeclaration: (_startBrace, _parameters, _endBrace, _return) => true,
     FunctionCall_firstCallCompilerHook: (
       hookName,

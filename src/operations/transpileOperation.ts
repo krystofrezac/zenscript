@@ -31,6 +31,8 @@ export const createTranspileOperation = (semantics: BoringLangSemantics) =>
     numberExpression: number => number.sourceString,
     stringExpression: (_startQuotes, value, _endQuotes) =>
       '"' + value.sourceString + '"',
+    trueExpression: _true => 'true',
+    falseExpression: _false => 'false',
     Block: (_startCurlyBraces, blockStatements, _endCurlyBraces) =>
       '(()=>{\n' + blockStatements.transpile() + '\n})()',
     BlockStatement_statements: (statement, _emptyLines, blockStatement) =>
@@ -59,8 +61,7 @@ export const createTranspileOperation = (semantics: BoringLangSemantics) =>
       _endBracket,
     ) => {
       const transpiledCompilerHook = compilerHook.transpile();
-      if (transpiledCompilerHook !== 'jsValue')
-        return transpiledCompilerHook;
+      if (transpiledCompilerHook !== 'jsValue') return transpiledCompilerHook;
       const transpiledParameters = parameters.transpile();
       return transpiledParameters.substring(1, transpiledParameters.length - 1);
     },

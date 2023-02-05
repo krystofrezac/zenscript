@@ -24,19 +24,25 @@ BoringLang {
                | FunctionDeclaration<FunctionParameter, Expression>
                | numberExpression
                | stringExpression
+               | booleanExpression 
                | identifier
                | Block
 
   TypeExpression = | FunctionDeclaration<TypeExpression, TypeExpression>
                    | stringType
                    | numberType
+                   | booleanType
                    | identifier
 
   identifier = (letter | "!")+
   numberExpression = digit+
   stringExpression = "\"" ("\u{0021}" | "\u{0023}".."\u{00FF}")* "\""
+  booleanExpression = trueExpression | falseExpression
+  trueExpression = "true"
+  falseExpression = "false"
   stringType = "string"
   numberType = "number"
+  booleanType = "boolean"
   compilerHook  = "@"letter+
 
   Block = "{"  BlockStatement* "}"

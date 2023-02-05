@@ -21,6 +21,7 @@ describe('transpile', () => {
         a = 1
         a
       }
+      d = true
     `;
     expect(toCode(input)).toMatchInlineSnapshot(`
       "const a = 1
@@ -29,6 +30,7 @@ describe('transpile', () => {
       const a = 1
       return a
       })()
+      const d = true
       "
     `);
   });

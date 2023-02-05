@@ -28,6 +28,13 @@ describe('type checking', () => {
       `;
       expect(checkCode(code)).toBe(true);
     });
+    test('boolean', () => {
+      const code = `
+        a = true
+        b: boolean = a
+      `;
+      expect(checkCode(code)).toBe(true);
+    });
     test('block', () => {
       const code = `
         a = {

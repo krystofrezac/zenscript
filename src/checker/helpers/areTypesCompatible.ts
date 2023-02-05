@@ -6,6 +6,7 @@ export const areTypesCompatible: Comparator = (base, compare) => {
   if (compare.type === 'unknown') return true;
   if (base.type === 'string' && compare.type === 'string') return true;
   if (base.type === 'number' && compare.type === 'number') return true;
+  if (base.type === 'boolean' && compare.type === 'boolean') return true;
   if (base.type === 'tuple' && compare.type === 'tuple') {
     return areTuplesCompatible(base, compare, areTypesCompatible);
   }

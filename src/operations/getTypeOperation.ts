@@ -87,6 +87,10 @@ export const createGetTypeOperation = (
       createType({
         type: 'number',
       }),
+    booleanExpression: _value =>
+      createType({
+        type: 'boolean',
+      }),
     identifier: identifier => getIdentifierType(identifier.sourceString),
     compilerHook: (_at, compilerHook) =>
       getIdentifierType('@' + compilerHook.sourceString),
@@ -99,6 +103,10 @@ export const createGetTypeOperation = (
     stringType: _ =>
       createType({
         type: 'string',
+      }),
+    booleanType: _value =>
+      createType({
+        type: 'boolean',
       }),
     Block: (_startCurly, statements, _endCurly) => {
       pushTypeScope(context);
@@ -124,6 +132,9 @@ export const createGetTypeOperation = (
       const parametersType = parameters.getType();
       const returnType = returnExpression.getType();
       popTypeScope(context);
+
+      if (parametersType.type !== 'tuple')
+        return createType({ type: 'unknown' });
 
       return createType({
         type: 'function',

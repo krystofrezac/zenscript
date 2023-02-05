@@ -16,6 +16,14 @@ describe('parser', () => {
       `;
       expect(parse(input).succeeded()).toBe(true);
     });
+    test('assigning boolean', () => {
+      const input = `
+        a = true
+        b = false
+      `;
+      expect(parse(input).succeeded()).toBe(true);
+    });
+
 
     test('multiple assignments', () => {
       const input = `
@@ -31,6 +39,7 @@ describe('parser', () => {
         a: string = "abc"
         b: number = 123
         c: b = 88
+        d: boolean = true
       `;
       expect(parse(input).succeeded()).toBe(true);
     });
