@@ -5,6 +5,7 @@ import {
 } from '../checkerContext';
 import { CheckerContext, Type } from '../types';
 import { areTypesCompatible } from './areTypesCompatible';
+import { typeToString } from './typeToString';
 
 export const checkVariableAssignmentTypeAndRegister = (
   context: CheckerContext,
@@ -35,9 +36,9 @@ export const checkVariableAssignmentTypeAndRegister = (
 
   if (secondaryType && !areTypesCompatible(primaryType, secondaryType)) {
     addError(context, {
-      message: `variable '${name}' has incorrect type ${JSON.stringify(
+      message: `variable '${name}' has incorrect type ${typeToString(
         primaryType,
-      )} expected ${JSON.stringify(secondaryType)}`,
+      )} expected ${typeToString(secondaryType)}`,
     });
   }
 
