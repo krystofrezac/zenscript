@@ -21,4 +21,4 @@ export const tryToFigureOutType = (baseType: Type, typeToFigureOut: Type) => {
   }
 };
 
-// export transformFigureOutToUnknown = 
+// export transformFigureOutToUnknown =

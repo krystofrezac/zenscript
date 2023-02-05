@@ -20,7 +20,7 @@ export const createGetTypeOperation = (
   semantics: BoringLangSemantics,
   { checkerContext: context }: CreateGetTypeOperationOptions,
 ) => {
-  const checkFirstFunctionCall = (
+  const getFirstFunctionCallType = (
     identifier: NonterminalNode,
     parameters: NonterminalNode,
   ) => {
@@ -157,11 +157,8 @@ export const createGetTypeOperation = (
       _startBrace,
       parameters,
       _endBrace,
-    ) => {
-      checkFirstFunctionCall(compilerHook, parameters);
-      return createType({ type: 'unknown' });
-    },
+    ) => getFirstFunctionCallType(compilerHook, parameters),
     FunctionCall_firstCall: (identifier, _startBrace, parameters, _endBrace) =>
-      checkFirstFunctionCall(identifier, parameters),
+      getFirstFunctionCallType(identifier, parameters),
   });
 };

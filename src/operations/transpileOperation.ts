@@ -61,9 +61,23 @@ export const createTranspileOperation = (semantics: BoringLangSemantics) =>
       _endBracket,
     ) => {
       const transpiledCompilerHook = compilerHook.transpile();
-      if (transpiledCompilerHook !== 'jsValue') return transpiledCompilerHook;
-      const transpiledParameters = parameters.transpile();
-      return transpiledParameters.substring(1, transpiledParameters.length - 1);
+      const transpiledParameters = parameters
+        .asIteration()
+        .children.map(ch => ch.transpile());
+
+      if (transpiledCompilerHook === 'jsValue') {
+        const valueName = transpiledParameters[0] ?? '';
+        return valueName.substring(1, valueName.length - 1);
+      }
+      if (transpiledCompilerHook === 'if') {
+        const conditionExpression = transpiledParameters[0] ?? '';
+        const thenExpression = transpiledParameters[1] ?? '';
+        const elseExpression = transpiledParameters[2] ?? '';
+
+        return `${conditionExpression} ? ${thenExpression} : ${elseExpression}`;
+      }
+
+      return '';
     },
     FunctionCall_chainedCall: (
       prevFunctionCall,

@@ -6,7 +6,7 @@ import { transpile } from './transpiler';
 
 const code = `
   a = true
-  b: boolean = a
+  b: number = @if(a, 1, 2) 
 `;
 
 const run = () => {

@@ -24,7 +24,6 @@ describe('parser', () => {
       expect(parse(input).succeeded()).toBe(true);
     });
 
-
     test('multiple assignments', () => {
       const input = `
         a = "abc"
