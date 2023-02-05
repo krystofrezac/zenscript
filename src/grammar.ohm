@@ -33,8 +33,10 @@ BoringLang {
                    | numberType
                    | booleanType
                    | identifier
+                   | genericName
 
   identifier = (letter | "!")+
+  genericName = "'"(letter | "!")+
   numberExpression = digit+
   stringExpression = "\"" ("\u{0021}" | "\u{0023}".."\u{00FF}")* "\""
   booleanExpression = trueExpression | falseExpression

@@ -39,6 +39,7 @@ describe('parser', () => {
         b: number = 123
         c: b = 88
         d: boolean = true
+        e: 'a = true
       `;
       expect(parse(input).succeeded()).toBe(true);
     });
