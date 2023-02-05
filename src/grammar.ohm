@@ -21,14 +21,14 @@ BoringLang {
   TypeAssignment = typeAssignmentOperator TypeExpression 
 
   Expression = | FunctionCall
-               | FunctionDeclaration<FunctionParameter, Expression>
+               | FunctionValueDeclaration
                | numberExpression
                | stringExpression
                | booleanExpression 
                | identifier
                | Block
 
-  TypeExpression = | FunctionDeclaration<TypeExpression, TypeExpression>
+  TypeExpression = | FunctionTypeDeclaration
                    | stringType
                    | numberType
                    | booleanType
@@ -51,10 +51,8 @@ BoringLang {
   BlockStatement = | Statement #(newLine) BlockStatement                          -- statements
                    | Expression                                        -- endStatement
 
-  FunctionDeclaration<TParameter, TReturnExpression> = "(" FunctionParameters<TParameter> ")" TReturnExpression
-  FunctionParameters<TParameter> = ListOf<TParameter, ",">
-  FunctionParameter = identifier
-
+  FunctionValueDeclaration = "(" ListOf<identifier, ","> ")" Expression
+  FunctionTypeDeclaration = "(" ListOf<TypeExpression, ","> ")" TypeExpression
 
   FunctionCall = | FunctionCall"(" FunctionArguments ")"                        -- chainedCall
                  | identifier "(" FunctionArguments ")"                        -- firstCall
