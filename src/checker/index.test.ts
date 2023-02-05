@@ -86,7 +86,7 @@ describe('type checking', () => {
         const code = `
           a: ('a, 'b) 'a = (b, c) b
         `;
-        expect(checkCode(code)).toBe(false);
+        expect(checkCode(code)).toBe(true);
       });
       test('invalid generic inference', () => {
         const code = `
@@ -158,6 +158,31 @@ describe('type checking', () => {
       const code = `
         a = 1 
         a = 2
+      `;
+      expect(checkCode(code)).toBe(false);
+    });
+  });
+  describe('function argument checking', () => {
+    test('valid arguments', () => {
+      const code = `
+        a: (number) string = @jsValue("")
+        b = a(1)
+
+        c: ('a) 'a = @jsValue("")
+        d = a(1)
+
+        e: ('a, 'a) 'a = @jsValue("")
+        d = a(1, 1)
+      `;
+      expect(checkCode(code)).toBe(true);
+    });
+    test('invalid arguments', () => {
+      const code = `
+        a: (number) string = @jsValue("")
+        b = a("")
+
+        e: ('a, 'a) 'a = @jsValue("")
+        d = a(1, "")
       `;
       expect(checkCode(code)).toBe(false);
     });

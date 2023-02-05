@@ -20,11 +20,7 @@ export const createHasValueOperation = (
   return semantics.addOperation<ReturnType<ohm.Node['getHasValue']>>(
     'getHasValue',
     {
-      _iter: (...children) =>
-        children.every(ch => {
-          console.log(ch.sourceString);
-          return ch.getHasValue();
-        }),
+      _iter: (...children) => children.every(ch => ch.getHasValue()),
       NonemptyListOf: (firstItem, _firstItemIterable, tailIterable) =>
         firstItem.getHasValue() && tailIterable.getHasValue(),
       EmptyListOf: () => true,

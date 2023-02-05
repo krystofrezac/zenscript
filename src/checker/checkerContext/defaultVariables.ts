@@ -12,11 +12,11 @@ export const getCheckContextDefaultVariables = (): Variable[] => [
           {
             type: 'boolean',
           },
-          { type: 'number' },
-          { type: 'number' },
+          { type: 'generic', name: 'a', index: 0 },
+          { type: 'generic', name: 'a', index: 0 },
         ],
       },
-      returns: { type: 'number' },
+      returns: { type: 'generic', name: 'a', index: 0 },
     },
   },
   {

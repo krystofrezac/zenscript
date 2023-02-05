@@ -15,6 +15,7 @@ type FunctionType = BaseType<'function'> & {
   returns: Type;
 };
 export type GenericType = BaseType<'generic'> & {
+  // TODO: somehow refactor
   name: string;
   index?: number;
 };
