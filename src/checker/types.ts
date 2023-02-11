@@ -15,9 +15,11 @@ export type FunctionType = BaseType<'function'> & {
   returns: Type;
 };
 export type GenericType = BaseType<'generic'> & {
-  // TODO: somehow refactor
+  id: number;
+};
+export type NamedGenericType = BaseType<'namedGeneric'> & {
+  id: number;
   name: string;
-  index?: number;
 };
 export type Type =
   | StringType
@@ -27,7 +29,8 @@ export type Type =
   | FigureOutType
   | TupleType
   | FunctionType
-  | GenericType;
+  | GenericType
+  | NamedGenericType;
 
 export type Variable = {
   name: string;
@@ -44,4 +47,5 @@ export type Error = {
 export type CheckerContext = {
   typeScopes: TypeScope[];
   errors: Error[];
+  genericIdCounter: number;
 };

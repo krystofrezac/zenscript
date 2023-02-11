@@ -28,8 +28,12 @@ import { transpile } from './transpiler';
 // c = a(true)
 
 const code = `
-  myFun: ('a, 'a) number = @jsValue("")
-  a: (number) number = (param) myFun(1, param)
+  myFun: ('a, 'b) 'b = @jsValue("")
+  myFuna: ('a, 'b) 'a = @jsValue("")
+  b = myFun(2, 1)
+  c = myFuna(2, "")
+  d = (a)myFun(1, a)
+  e = d("")
 `;
 
 const run = () => {

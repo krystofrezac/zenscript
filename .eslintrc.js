@@ -9,7 +9,10 @@ module.exports = {
   rules: {
     'prettier/prettier': 'error',
 
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+    ],
 
     'prefer-arrow-functions/prefer-arrow-functions': [
       'error',

@@ -1,11 +1,12 @@
 import { FunctionType, Type } from '../types';
+import { isTypeGeneric } from './isTypeGeneric';
 
 export const getSpecificReturn = (
   functionType: FunctionType,
   calledWithTuple: Type,
 ) => {
   const returnType = functionType.returns;
-  if (returnType.type !== 'generic' || calledWithTuple.type !== 'tuple')
+  if (!isTypeGeneric(returnType) || calledWithTuple.type !== 'tuple')
     return functionType.returns;
 
   const calledWithArguments = calledWithTuple.items;
@@ -13,13 +14,10 @@ export const getSpecificReturn = (
   const specificType = getFirst(
     functionType.parameters.items,
     (parameter, index) => {
-      if (parameter.type === 'generic' && parameter.index === returnType.index)
+      if (isTypeGeneric(parameter) && parameter.id === returnType.id)
         return calledWithArguments[index];
 
-      if (
-        parameter.type === 'function' &&
-        parameter.returns.type === 'generic'
-      ) {
+      if (parameter.type === 'function' && isTypeGeneric(parameter.returns)) {
         const innerParameter = calledWithArguments[index];
         if (innerParameter && innerParameter.type === 'function')
           return innerParameter.returns;

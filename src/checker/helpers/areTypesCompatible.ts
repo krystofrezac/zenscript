@@ -1,9 +1,11 @@
-import { GenericType, Type } from '../types';
+import { Type } from '../types';
+import { isTypeGeneric } from './isTypeGeneric';
 import { typeToString } from './typeToString';
 
 type Comparator = (base: Type, compare: Type) => boolean;
 type ComparatorContext = {
   genericTypes: { genericTypeIndex: number; realType: Type }[];
+  genericTypesIdOffset: number | null;
 };
 
 const findGenericTypeByIndex = (context: ComparatorContext, index: number) =>
@@ -28,11 +30,17 @@ const areTypesCompatibleWithContext =
     if (base.type === 'string' && compare.type === 'string') return true;
     if (base.type === 'number' && compare.type === 'number') return true;
     if (base.type === 'boolean' && compare.type === 'boolean') return true;
-    if (base.type === 'generic' && compare.type === 'generic') {
-      return base.index === compare.index;
+    if (isTypeGeneric(base) && isTypeGeneric(compare)) {
+      if (context.genericTypesIdOffset === null) {
+        context.genericTypesIdOffset = compare.id - base.id;
+        return true;
+      }
+      return base.id + context.genericTypesIdOffset === compare.id;
     }
-    if (base.type === 'generic') {
-      const genericIndex = base.index ?? -1;
+    // if we have a generic and some type, update the generic to match the type
+    if (isTypeGeneric(base)) {
+      console.log(typeToString(base), typeToString(compare));
+      const genericIndex = base.id ?? -1;
       const alreadyRegisteredType = findGenericTypeByIndex(
         context,
         genericIndex,
@@ -71,6 +79,7 @@ const areTypesCompatibleWithContext =
   };
 export const areTypesCompatible = areTypesCompatibleWithContext({
   genericTypes: [],
+  genericTypesIdOffset: null,
 });
 
 export const areTuplesCompatible = (

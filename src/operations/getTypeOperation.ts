@@ -4,8 +4,6 @@ import {
   addError,
   pushTypeScope,
   popTypeScope,
-  addVariableToCurrentScope,
-  findVariableInCurrentScope,
 } from '../checker/checkerContext';
 import { areTypesCompatible } from '../checker/helpers/areTypesCompatible';
 import { createType } from '../checker/helpers/createType';
@@ -13,9 +11,12 @@ import {
   getDefaultTypeWhenFigureOut,
   tryToFigureOutType,
 } from '../checker/helpers/figureOutType';
+import { getFunctionTypeParametersType } from '../checker/helpers/getFunctionTypeParametersType';
+import { getFunctionTypeReturnType } from '../checker/helpers/getFunctionTypeReturnType';
+import { getFunctionValueParametersType } from '../checker/helpers/getFunctionValueParametersType';
 import { getSpecificReturn } from '../checker/helpers/getSpecificReturn';
 import { typeToString } from '../checker/helpers/typeToString';
-import { CheckerContext, GenericType, Type } from '../checker/types';
+import { CheckerContext } from '../checker/types';
 import { BoringLangSemantics } from '../grammar.ohm-bundle';
 
 type CreateGetTypeOperationOptions = {
@@ -28,20 +29,24 @@ export const createGetTypeOperation = (
 ) => {
   const getFirstFunctionCallType = (
     identifier: NonterminalNode,
-    parameters: NonterminalNode,
+    calledWithParameters: NonterminalNode,
   ) => {
     const functionType = identifier.getType();
-    const parametersType = parameters.getType();
-    if (parametersType.type !== 'tuple') return createType({ type: 'unknown' });
+    const calledWithParametersType = calledWithParameters.getType();
+    if (calledWithParametersType.type !== 'tuple')
+      return createType({ type: 'unknown' });
 
     if (functionType.type === 'figureOut') {
       tryToFigureOutType(
         createType({
           type: 'function',
-          parameters: parametersType,
+          parameters: calledWithParametersType,
           returns: createType({
             type: 'figureOut',
-            defaultType: createType({ type: 'generic', name: 'a', index: 0 }),
+            defaultType: createType({
+              type: 'generic',
+              id: -1,
+            }),
           }),
         }),
         functionType,
@@ -55,25 +60,27 @@ export const createGetTypeOperation = (
       return createType({ type: 'unknown' });
     }
 
-    if (!parameters.getHasValue()) {
+    if (!calledWithParameters.getHasValue()) {
       addError(context, { message: `Some parameters don't have value` });
       return createType({ type: 'unknown' });
     }
 
     // figure arguments based on parameters
-    tryToFigureOutType(functionType.parameters, parametersType);
-    if (!areTypesCompatible(functionType.parameters, parametersType)) {
+    tryToFigureOutType(functionType.parameters, calledWithParametersType);
+    if (
+      !areTypesCompatible(functionType.parameters, calledWithParametersType)
+    ) {
       addError(context, {
         message:
           `You are calling function ${identifier.sourceString} with wrong arguments` +
           `\nexpected: ${typeToString(functionType.parameters)}` +
-          `\nactual: ${typeToString(parametersType)}`,
+          `\nactual: ${typeToString(calledWithParametersType)}`,
       });
       return createType({ type: 'unknown' });
     }
 
     functionType.returns = getDefaultTypeWhenFigureOut(functionType.returns);
-    return getSpecificReturn(functionType, parametersType);
+    return getSpecificReturn(functionType, calledWithParametersType);
   };
   const getIdentifierType = (identifierName: string) => {
     const referencedVariable = findVariableFromCurrentScope(
@@ -89,36 +96,6 @@ export const createGetTypeOperation = (
     }
 
     return referencedVariable?.type;
-  };
-  const getFunctionValueParametersType = (parameters: NonterminalNode) => {
-    const parametersTypes = parameters
-      .asIteration()
-      .children.map((parameter, index) => {
-        const parameterName = parameter.getName();
-        const defaultType = createType({
-          type: 'figureOut',
-          defaultType: createType({
-            type: 'generic',
-            index,
-            name: parameterName,
-          }),
-        });
-
-        if (findVariableInCurrentScope(context, parameterName)) {
-          addError(context, {
-            message: `variable with name '${parameterName}' is already declared in this scope`,
-          });
-          return defaultType;
-        }
-
-        addVariableToCurrentScope(context, {
-          name: parameterName,
-          type: defaultType,
-          hasValue: true,
-        });
-        return defaultType;
-      });
-    return createType({ type: 'tuple', items: parametersTypes });
   };
 
   semantics.addOperation<ReturnType<ohm.Node['getType']>>('getType', {
@@ -162,7 +139,7 @@ export const createGetTypeOperation = (
         type: 'boolean',
       }),
     genericName: (_apostrophe, name) =>
-      createType({ type: 'generic', name: name.sourceString }),
+      createType({ type: 'namedGeneric', id: -1, name: name.sourceString }),
     Block: (_startCurly, statements, _endCurly) => {
       pushTypeScope(context);
       const types = statements.getTypes();
@@ -184,14 +161,17 @@ export const createGetTypeOperation = (
       returnExpression,
     ) => {
       pushTypeScope(context);
-      const figureOutParametersType =
-        getFunctionValueParametersType(parameters);
+      const figureOutParametersType = getFunctionValueParametersType(
+        context,
+        parameters,
+      );
       const returnType = returnExpression.getType();
       popTypeScope(context);
 
       if (figureOutParametersType.type !== 'tuple')
         return createType({ type: 'unknown' });
 
+      // TODO: if it still 'figureOut' than it's unused and probably should cause error
       const parametersItemsType = figureOutParametersType.items.map(
         getDefaultTypeWhenFigureOut,
       );
@@ -208,44 +188,11 @@ export const createGetTypeOperation = (
       _endBrace,
       returnExpression,
     ) => {
-      const parametersItemsWithoutIndexType = parameters.getTypes();
-      const parametersItemsType = parametersItemsWithoutIndexType.reduce<
-        Type[]
-      >((acc, current, index) => {
-        if (current.type === 'generic') {
-          const sameGeneric = acc.find(
-            accItem =>
-              accItem.type === 'generic' && accItem.name === current.name,
-          ) as GenericType | undefined;
-          acc.push({ ...current, index: sameGeneric?.index ?? index });
-        } else acc.push(current);
-        return acc;
-      }, []);
-      const parametersType = createType({
-        type: 'tuple',
-        items: parametersItemsType,
+      const parametersType = getFunctionTypeParametersType(context, parameters);
+      const returnType = getFunctionTypeReturnType(context, {
+        parametersType,
+        returnExpression,
       });
-
-      const getReturnType = () => {
-        const returnMaybeWithoutIndexType = returnExpression.getType();
-        // return generic type doesn't have correct index
-        if (
-          returnMaybeWithoutIndexType.type === 'generic' &&
-          returnMaybeWithoutIndexType.index === undefined
-        ) {
-          const matchingParameter = parametersItemsType.find(
-            parameter =>
-              parameter.type === 'generic' &&
-              parameter.name === returnMaybeWithoutIndexType.name,
-          ) as GenericType | undefined;
-          return {
-            ...returnMaybeWithoutIndexType,
-            index: matchingParameter?.index,
-          };
-        }
-        return returnMaybeWithoutIndexType;
-      };
-      const returnType = getReturnType();
 
       return createType({
         type: 'function',

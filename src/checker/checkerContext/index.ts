@@ -2,14 +2,18 @@ import { CheckerContext, TypeScope, Variable, Error } from '../types';
 import { getCheckContextDefaultVariables } from './defaultVariables';
 
 export const createCheckerContext = (): CheckerContext => {
+  const genericIdCounterDefault = 0;
+  const { genericIdCounter, defaultVariables } =
+    getCheckContextDefaultVariables(genericIdCounterDefault);
+
   const typeScopes: TypeScope[] = [
     {
-      variables: getCheckContextDefaultVariables(),
+      variables: defaultVariables,
     },
   ];
   const errors: Error[] = [];
 
-  return { typeScopes, errors };
+  return { typeScopes, errors, genericIdCounter };
 };
 
 export const pushTypeScope = (context: CheckerContext) => {
@@ -48,4 +52,9 @@ export const findVariableInCurrentScope = (
 };
 export const addError = (context: CheckerContext, error: Error) => {
   context.errors.push(error);
+};
+export const getNewGenericsId = (context: CheckerContext) => {
+  const current = context.genericIdCounter;
+  context.genericIdCounter++;
+  return current;
 };
