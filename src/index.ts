@@ -3,7 +3,7 @@ import { parse } from './parser';
 import { createSemantics } from './semantics';
 
 const code = `  
-  a = "ahoj"
+  a = 1
 `;
 
 const run = () => {

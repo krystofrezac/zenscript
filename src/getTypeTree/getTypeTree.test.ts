@@ -110,3 +110,86 @@ describe('string tree', () => {
     expect(result).toEqual(expected);
   });
 });
+
+describe('number tree', () => {
+  test('only number', () => {
+    const input = '1';
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [{ name: 'number', hasValue: true }],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('number assigned to variable', () => {
+    const input = 'a = 1';
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'variableAssignment',
+          variableName: 'a',
+          implicitTypeNode: { name: 'number', hasValue: true },
+          hasValue: true,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('number assigned to variable with same explicit type', () => {
+    const input = 'a: number = 1';
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'variableAssignment',
+          variableName: 'a',
+          implicitTypeNode: { name: 'number', hasValue: true },
+          explicitTypeNode: { name: 'number', hasValue: false },
+          hasValue: true,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('number assigned to variable with different explicit type', () => {
+    const input = 'a: string = 1';
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'variableAssignment',
+          variableName: 'a',
+          implicitTypeNode: { name: 'number', hasValue: true },
+          explicitTypeNode: { name: 'string', hasValue: false },
+          hasValue: true,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('number type assigned to variable', () => {
+    const input = 'a: number';
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'variableAssignment',
+          variableName: 'a',
+          explicitTypeNode: { name: 'number', hasValue: false },
+          hasValue: false,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+});
