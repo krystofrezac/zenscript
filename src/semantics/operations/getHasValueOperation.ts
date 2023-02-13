@@ -1,7 +1,7 @@
 import ohm from 'ohm-js';
-import { findVariableFromCurrentScope } from '../checker/checkerContext';
-import { CheckerContext } from '../checker/types';
-import { BoringLangSemantics } from '../grammar.ohm-bundle';
+import { findVariableFromCurrentScope } from '../../checker/checkerContext';
+import { CheckerContext } from '../../checker/types';
+import { BoringLangSemantics } from '../../grammar.ohm-bundle';
 
 type CreateHasValueOperationOptions = {
   checkerContext: CheckerContext;

@@ -4,20 +4,20 @@ import {
   addError,
   pushTypeScope,
   popTypeScope,
-} from '../checker/checkerContext';
-import { areTypesCompatible } from '../checker/helpers/areTypesCompatible';
-import { createType } from '../checker/helpers/createType';
+} from '../../checker/checkerContext';
+import { areTypesCompatible } from '../../checker/helpers/areTypesCompatible';
+import { createType } from '../../checker/helpers/createType';
 import {
   getDefaultTypeWhenFigureOut,
   tryToFigureOutType,
-} from '../checker/helpers/figureOutType';
-import { getFunctionTypeParametersType } from '../checker/helpers/getFunctionTypeParametersType';
-import { getFunctionTypeReturnType } from '../checker/helpers/getFunctionTypeReturnType';
-import { getFunctionValueParametersType } from '../checker/helpers/getFunctionValueParametersType';
-import { getSpecificReturn } from '../checker/helpers/getSpecificReturn';
-import { typeToString } from '../checker/helpers/typeToString';
-import { CheckerContext } from '../checker/types';
-import { BoringLangSemantics } from '../grammar.ohm-bundle';
+} from '../../checker/helpers/figureOutType';
+import { getFunctionTypeParametersType } from '../../checker/helpers/getFunctionTypeParametersType';
+import { getFunctionTypeReturnType } from '../../checker/helpers/getFunctionTypeReturnType';
+import { getFunctionValueParametersType } from '../../checker/helpers/getFunctionValueParametersType';
+import { getSpecificReturn } from '../../checker/helpers/getSpecificReturn';
+import { typeToString } from '../../checker/helpers/typeToString';
+import { CheckerContext } from '../../checker/types';
+import { BoringLangSemantics } from '../../grammar.ohm-bundle';
 
 type CreateGetTypeOperationOptions = {
   checkerContext: CheckerContext;

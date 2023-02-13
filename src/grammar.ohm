@@ -1,8 +1,7 @@
 BoringLang {
   space := " " | "\t" | newLine | oneLineComment | multiLineComment
 
-  Program = | Program #(newLine) Program                                          -- statements
-            | Statement                                                         -- endStatement
+  Program = ListOf<Statement, #(newLine)>
 
   Statement = | VariableDeclaration
               | Expression
@@ -38,7 +37,10 @@ BoringLang {
   identifier = (letter | "!")+
   genericName = "'"(letter)+
   numberExpression = digit+
-  stringExpression = "\"" ("\u{0021}" | "\u{0023}".."\u{00FF}")* "\""
+
+  stringExpression = "\"" stringCharacter* "\""
+  stringCharacter =  ~("\"" | "\\" | newLine) any
+
   booleanExpression = trueExpression | falseExpression
   trueExpression = "true"
   falseExpression = "false"

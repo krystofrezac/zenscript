@@ -1,5 +1,5 @@
 import ohm from 'ohm-js';
-import { BoringLangSemantics } from '../grammar.ohm-bundle';
+import { BoringLangSemantics } from '../../grammar.ohm-bundle';
 
 export const createGetTypesOperation = (semantics: BoringLangSemantics) =>
   semantics.addOperation<ReturnType<ohm.Node['getTypes']>>('getTypes', {

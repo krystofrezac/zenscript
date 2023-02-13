@@ -1,5 +1,5 @@
 import ohm, { NonterminalNode } from 'ohm-js';
-import { BoringLangSemantics } from '../grammar.ohm-bundle';
+import { BoringLangSemantics } from '../../grammar.ohm-bundle';
 
 const transpileJsExternalFunctionCall = (parameters: NonterminalNode) => {
   const transpiledParameters = parameters.transpile() as string;

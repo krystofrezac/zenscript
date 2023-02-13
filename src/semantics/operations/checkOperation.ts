@@ -1,9 +1,9 @@
 import ohm from 'ohm-js';
-import { addError } from '../checker/checkerContext';
-import { checkVariableAssignmentTypeAndRegister } from '../checker/helpers/checkVariableAssignmentTypeAndRegister';
-import { tryToFigureOutType } from '../checker/helpers/figureOutType';
-import { CheckerContext } from '../checker/types';
-import { BoringLangSemantics } from '../grammar.ohm-bundle';
+import { addError } from '../../checker/checkerContext';
+import { checkVariableAssignmentTypeAndRegister } from '../../checker/helpers/checkVariableAssignmentTypeAndRegister';
+import { tryToFigureOutType } from '../../checker/helpers/figureOutType';
+import { CheckerContext } from '../../checker/types';
+import { BoringLangSemantics } from '../../grammar.ohm-bundle';
 
 type CreateCheckTypeOperationOptions = {
   checkerContext: CheckerContext;
