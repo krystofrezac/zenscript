@@ -10,6 +10,9 @@ type BlockTypeNode = BaseNode<'block'> & {
 };
 type StringTypeNode = BaseNode<'string'>;
 type NumberTypeNode = BaseNode<'number'>;
+type TupleTypeNode = BaseNode<'tuple'> & {
+  items: TypeNode[];
+};
 type VariableReferenceNOde = BaseNodeWithoutHasName<'variableReference'> & {
   identifierName: string;
 };
@@ -17,6 +20,7 @@ export type TypeNode =
   | BlockTypeNode
   | StringTypeNode
   | NumberTypeNode
+  | TupleTypeNode
   | VariableReferenceNOde;
 
 type VariableAssignmentNode = BaseNode<'variableAssignment'> & {

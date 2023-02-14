@@ -4,7 +4,9 @@ import {
   createInvalidTreeNode,
   createTypeTreeNode,
 } from './helpers/createTypeTreeNode';
+import { getTupleItemsTypes } from './helpers/getTupleItemsTypes';
 import { isTypeNode } from './helpers/isTypeNode';
+import { TypeNode } from './types';
 
 export const createGetTypeTreeNodeOperation = (
   semantics: BoringLangSemantics,
@@ -35,12 +37,30 @@ export const createGetTypeTreeNodeOperation = (
           children: content.getTypeTreeNodes(),
           hasValue: true,
         }),
+      TupleExpression: (_startBrace, items, _endBrace) => {
+        const itemsTypes = getTupleItemsTypes(items);
+
+        return createTypeTreeNode({
+          name: 'tuple',
+          items: itemsTypes,
+          hasValue: true,
+        });
+      },
 
       // types
       stringType: _content =>
         createTypeTreeNode({ name: 'string', hasValue: false }),
       numberType: _content =>
         createTypeTreeNode({ name: 'number', hasValue: false }),
+      TupleType: (_startBrace, items, _endBrace) => {
+        const itemsTypes = getTupleItemsTypes(items);
+
+        return createTypeTreeNode({
+          name: 'tuple',
+          items: itemsTypes,
+          hasValue: false,
+        });
+      },
 
       // expressions and types
       identifier: identifier =>

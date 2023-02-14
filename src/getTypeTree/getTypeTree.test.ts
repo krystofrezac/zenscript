@@ -427,3 +427,125 @@ describe('block tree', () => {
     expect(result).toEqual(expected);
   });
 });
+
+describe('tuple tree', () => {
+  test('empty tuple', () => {
+    const input = '()';
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [{ name: 'tuple', items: [], hasValue: true }],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('one item tuple', () => {
+    const input = '(1)';
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'tuple',
+          items: [{ name: 'number', hasValue: true }],
+          hasValue: true,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('multiple items tuple', () => {
+    const input = '(1, "", (1))';
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'tuple',
+          items: [
+            { name: 'number', hasValue: true },
+            { name: 'string', hasValue: true },
+            {
+              name: 'tuple',
+              items: [{ name: 'number', hasValue: true }],
+              hasValue: true,
+            },
+          ],
+          hasValue: true,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('tuple assigned to variable', () => {
+    const input = 'a = (1)';
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'variableAssignment',
+          variableName: 'a',
+          implicitTypeNode: {
+            name: 'tuple',
+            items: [{ name: 'number', hasValue: true }],
+            hasValue: true,
+          },
+          hasValue: true,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('tuple assigned to variable with same explicit type', () => {
+    const input = 'a: (number) = (1)';
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'variableAssignment',
+          variableName: 'a',
+          explicitTypeNode: {
+            name: 'tuple',
+            items: [{ name: 'number', hasValue: false }],
+            hasValue: false,
+          },
+          implicitTypeNode: {
+            name: 'tuple',
+            items: [{ name: 'number', hasValue: true }],
+            hasValue: true,
+          },
+          hasValue: true,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('tuple assigned to variable with different explicit type', () => {
+    const input = 'a: number = (1)';
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'variableAssignment',
+          variableName: 'a',
+          explicitTypeNode: { name: 'number', hasValue: false },
+          implicitTypeNode: {
+            name: 'tuple',
+            items: [{ name: 'number', hasValue: true }],
+            hasValue: true,
+          },
+          hasValue: true,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+});

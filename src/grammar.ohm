@@ -26,6 +26,7 @@ BoringLang {
                | booleanExpression 
                | identifier
                | Block
+               | TupleExpression
 
   TypeExpression = | FunctionTypeDeclaration
                    | stringType
@@ -33,6 +34,7 @@ BoringLang {
                    | booleanType
                    | identifier
                    | genericName
+                   | TupleType
 
   identifier = (letter | "!")+
   genericName = "'"(letter)+
@@ -40,6 +42,9 @@ BoringLang {
 
   stringExpression = "\"" stringCharacter* "\""
   stringCharacter =  ~("\"" | "\\" | newLine) any
+
+  Block = "{" ListOf<Statement, #(newLine)> "}"
+  TupleExpression = "(" ListOf<Expression, ","> ")"
 
   booleanExpression = trueExpression | falseExpression
   trueExpression = "true"
@@ -49,7 +54,7 @@ BoringLang {
   booleanType = "boolean"
   compilerHook  = "@"letter+
 
-  Block = "{" ListOf<Statement, #(newLine)> "}"
+  TupleType = "(" ListOf<TypeExpression, ","> ")"
 
   FunctionValueDeclaration = "(" ListOf<identifier, ","> ")" Expression
   FunctionTypeDeclaration = "(" ListOf<TypeExpression, ","> ")" TypeExpression
