@@ -24,21 +24,28 @@ export const createGetTypeTreeNodeOperation = (
       EmptyListOf: () =>
         createTypeTreeNode({ name: 'block', children: [], hasValue: true }),
 
-      // basic expressions
+      // expressions
       stringExpression: (_startQuotes, _content, _endQuotes) =>
         createTypeTreeNode({ name: 'string', hasValue: true }),
       numberExpression: _content =>
         createTypeTreeNode({ name: 'number', hasValue: true }),
+      Block: (_startCurly, content, _endCurly) =>
+        createTypeTreeNode({
+          name: 'block',
+          children: content.getTypeTreeNodes(),
+          hasValue: true,
+        }),
 
-      //basic types
+      // types
       stringType: _content =>
         createTypeTreeNode({ name: 'string', hasValue: false }),
       numberType: _content =>
         createTypeTreeNode({ name: 'number', hasValue: false }),
 
+      // expressions and types
       identifier: identifier =>
         createTypeTreeNode({
-          name: 'identifier',
+          name: 'variableReference',
           identifierName: identifier.sourceString,
         }),
 

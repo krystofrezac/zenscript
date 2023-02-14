@@ -8,5 +8,10 @@ export const createGetTypeTreeNodesOperation = (
     'getTypeTreeNodes',
     {
       _iter: (...children) => children.map(ch => ch.getTypeTreeNode()),
+      NonemptyListOf: (firstItem, _firstItemIterable, tailIterable) => [
+        firstItem.getTypeTreeNode(),
+        ...tailIterable.getTypeTreeNodes(),
+      ],
+      EmptyListOf: () => [],
     },
   );

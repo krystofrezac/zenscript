@@ -7,6 +7,8 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'spaced-comment': ['error', 'always'],
+
     'prettier/prettier': 'error',
 
     '@typescript-eslint/no-unused-vars': [

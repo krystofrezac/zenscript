@@ -212,7 +212,7 @@ describe('variable reference tree', () => {
         {
           name: 'variableAssignment',
           variableName: 'b',
-          implicitTypeNode: { name: 'identifier', identifierName: 'a' },
+          implicitTypeNode: { name: 'variableReference', identifierName: 'a' },
           hasValue: true,
         },
       ],
@@ -238,7 +238,7 @@ describe('variable reference tree', () => {
         {
           name: 'variableAssignment',
           variableName: 'b',
-          explicitTypeNode: { name: 'identifier', identifierName: 'a' },
+          explicitTypeNode: { name: 'variableReference', identifierName: 'a' },
           hasValue: false,
         },
       ],
@@ -271,8 +271,8 @@ describe('variable reference tree', () => {
         {
           name: 'variableAssignment',
           variableName: 'c',
-          explicitTypeNode: { name: 'identifier', identifierName: 'b' },
-          implicitTypeNode: { name: 'identifier', identifierName: 'a' },
+          explicitTypeNode: { name: 'variableReference', identifierName: 'b' },
+          implicitTypeNode: { name: 'variableReference', identifierName: 'a' },
           hasValue: true,
         },
       ],
@@ -283,7 +283,7 @@ describe('variable reference tree', () => {
   });
 });
 
-describe.skip('block tree', () => {
+describe('block tree', () => {
   test('empty block', () => {
     const input = '{}';
     const expected = createTypeTreeNode({
@@ -337,7 +337,87 @@ describe.skip('block tree', () => {
       children: [
         {
           name: 'block',
-          children: [{ name: 'number', hasValue: true }],
+          children: [
+            {
+              name: 'variableAssignment',
+              variableName: 'a',
+              implicitTypeNode: { name: 'number', hasValue: true },
+              hasValue: true,
+            },
+            {
+              name: 'variableAssignment',
+              variableName: 'b',
+              implicitTypeNode: { name: 'number', hasValue: true },
+              hasValue: true,
+            },
+            {
+              name: 'variableReference',
+              identifierName: 'b',
+            },
+          ],
+          hasValue: true,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('block assigned to variable', () => {
+    const input = 'a = {1}';
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'variableAssignment',
+          variableName: 'a',
+          implicitTypeNode: {
+            name: 'block',
+            children: [{ name: 'number', hasValue: true }],
+            hasValue: true,
+          },
+          hasValue: true,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('nested blocks', () => {
+    const input = `
+      {
+        a = 1
+        {
+          a = "hello"
+        }
+      }
+    `;
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'block',
+          children: [
+            {
+              name: 'variableAssignment',
+              variableName: 'a',
+              implicitTypeNode: { name: 'number', hasValue: true },
+              hasValue: true,
+            },
+            {
+              name: 'block',
+              children: [
+                {
+                  name: 'variableAssignment',
+                  variableName: 'a',
+                  implicitTypeNode: { name: 'string', hasValue: true },
+                  hasValue: true,
+                },
+              ],
+              hasValue: true,
+            },
+          ],
           hasValue: true,
         },
       ],
