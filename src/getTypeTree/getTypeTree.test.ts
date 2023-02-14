@@ -193,3 +193,157 @@ describe('number tree', () => {
     expect(result).toEqual(expected);
   });
 });
+
+describe('variable reference tree', () => {
+  test('referencing value', () => {
+    const input = `
+      a = 1
+      b = a
+    `;
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'variableAssignment',
+          variableName: 'a',
+          implicitTypeNode: { name: 'number', hasValue: true },
+          hasValue: true,
+        },
+        {
+          name: 'variableAssignment',
+          variableName: 'b',
+          implicitTypeNode: { name: 'identifier', identifierName: 'a' },
+          hasValue: true,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('referencing type', () => {
+    const input = `
+      a = 1
+      b: a 
+    `;
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'variableAssignment',
+          variableName: 'a',
+          implicitTypeNode: { name: 'number', hasValue: true },
+          hasValue: true,
+        },
+        {
+          name: 'variableAssignment',
+          variableName: 'b',
+          explicitTypeNode: { name: 'identifier', identifierName: 'a' },
+          hasValue: false,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('referencing value and type', () => {
+    const input = `
+      a = 1
+      b: number
+      c: b = a
+    `;
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'variableAssignment',
+          variableName: 'a',
+          implicitTypeNode: { name: 'number', hasValue: true },
+          hasValue: true,
+        },
+        {
+          name: 'variableAssignment',
+          variableName: 'b',
+          explicitTypeNode: { name: 'number', hasValue: false },
+          hasValue: false,
+        },
+        {
+          name: 'variableAssignment',
+          variableName: 'c',
+          explicitTypeNode: { name: 'identifier', identifierName: 'b' },
+          implicitTypeNode: { name: 'identifier', identifierName: 'a' },
+          hasValue: true,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+});
+
+describe.skip('block tree', () => {
+  test('empty block', () => {
+    const input = '{}';
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [{ name: 'block', children: [], hasValue: true }],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('block with string value', () => {
+    const input = '{""}';
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'block',
+          children: [{ name: 'string', hasValue: true }],
+          hasValue: true,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('block with number value', () => {
+    const input = '{1}';
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'block',
+          children: [{ name: 'number', hasValue: true }],
+          hasValue: true,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('block with variable assignments', () => {
+    const input = `{
+      a = 1
+      b = 2
+      b
+    }`;
+    const expected = createTypeTreeNode({
+      name: 'block',
+      children: [
+        {
+          name: 'block',
+          children: [{ name: 'number', hasValue: true }],
+          hasValue: true,
+        },
+      ],
+      hasValue: true,
+    });
+    const result = getTree(input);
+    expect(result).toEqual(expected);
+  });
+});

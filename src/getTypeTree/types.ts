@@ -10,7 +10,14 @@ type BlockTypeNode = BaseNode<'block'> & {
 };
 type StringTypeNode = BaseNode<'string'>;
 type NumberTypeNode = BaseNode<'number'>;
-export type TypeNode = BlockTypeNode | StringTypeNode | NumberTypeNode;
+type IdentifierNode = BaseNodeWithoutHasName<'identifier'> & {
+  identifierName: string;
+};
+export type TypeNode =
+  | BlockTypeNode
+  | StringTypeNode
+  | NumberTypeNode
+  | IdentifierNode;
 
 type VariableAssignmentNode = BaseNode<'variableAssignment'> & {
   variableName: string;

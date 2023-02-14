@@ -36,6 +36,12 @@ export const createGetTypeTreeNodeOperation = (
       numberType: _content =>
         createTypeTreeNode({ name: 'number', hasValue: false }),
 
+      identifier: identifier =>
+        createTypeTreeNode({
+          name: 'identifier',
+          identifierName: identifier.sourceString,
+        }),
+
       // variable assignments
       VariableDeclaration_onlyValue: (identifier, valueAssignment) => {
         const valueType = valueAssignment.getTypeTreeNode();
