@@ -33,8 +33,9 @@ BoringLang {
                    | numberType
                    | booleanType
                    | genericName
-                   | identifier
                    | TupleType
+                   | FunctionTypeCall
+                   | identifier
 
   identifier = letter+
   genericName = "'" identifier
@@ -60,5 +61,6 @@ BoringLang {
   FunctionValueDeclaration = "(" ListOf<FunctionParameter, ","> ")" Expression
   FunctionTypeDeclaration = TupleType TypeExpression
 
-  FunctionValueCall = Expression "(" ListOf<Expression, ","> ")"                        
+  FunctionValueCall = Expression TupleExpression
+  FunctionTypeCall = TypeExpression TupleType
 }

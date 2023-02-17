@@ -73,9 +73,22 @@ export const createGetTypeTreeNodeOperation = (
         });
 
         return createTypeTreeNode({
-          name: 'function',
+          name: 'functionDeclaration',
           parameters: parametersTupleType,
           return: returnType,
+          hasValue: true,
+        });
+      },
+      FunctionValueCall: (callee, argumentsExpression) => {
+        const calleeType = callee.getTypeTreeNode();
+        const argumentsType = argumentsExpression.getTypeTreeNode();
+        if (!isTypeNode(calleeType) || argumentsType.name !== 'tuple')
+          return createInvalidTreeNode();
+
+        return createTypeTreeNode({
+          name: 'functionCall',
+          callee: calleeType,
+          arguments: argumentsType,
           hasValue: true,
         });
       },
@@ -101,7 +114,7 @@ export const createGetTypeTreeNodeOperation = (
           return createInvalidTreeNode();
 
         return createTypeTreeNode({
-          name: 'function',
+          name: 'functionDeclaration',
           parameters: parametersType,
           return: returnType,
           hasValue: false,
@@ -113,6 +126,19 @@ export const createGetTypeTreeNodeOperation = (
           genericName: name.getName(),
           hasValue: false,
         }),
+      FunctionTypeCall: (callee, argumentsTuple) => {
+        const calleeType = callee.getTypeTreeNode();
+        const argumentsType = argumentsTuple.getTypeTreeNode();
+        if (!isTypeNode(calleeType) || argumentsType.name !== 'tuple')
+          return createInvalidTreeNode();
+
+        return createTypeTreeNode({
+          name: 'functionCall',
+          callee: calleeType,
+          arguments: argumentsType,
+          hasValue: false,
+        });
+      },
 
       // expressions and types
       identifier: identifier =>

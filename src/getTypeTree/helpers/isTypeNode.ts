@@ -7,7 +7,8 @@ export const isTypeNode = (node: TypeTreeNode): node is TypeNode =>
     'number',
     'tuple',
     'variableReference',
-    'function',
+    'functionDeclaration',
+    'functionCall',
     'parameter',
     'generic',
   ].includes(node.name);

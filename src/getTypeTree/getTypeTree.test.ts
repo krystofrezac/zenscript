@@ -11,7 +11,7 @@ const getTree = (input: string) => {
   return getTypeTree(adapter);
 };
 
-describe('empty tree', () => {
+describe('empty', () => {
   const expected = createTypeTreeNode({
     name: 'block',
     children: [],
@@ -28,7 +28,7 @@ describe('empty tree', () => {
     expect(result).toEqual(expected);
   });
 });
-describe('string tree', () => {
+describe('string', () => {
   test('only string', () => {
     const input = '"Hello, World!"';
     const expected = createTypeTreeNode({
@@ -111,7 +111,7 @@ describe('string tree', () => {
   });
 });
 
-describe('number tree', () => {
+describe('number', () => {
   test('only number', () => {
     const input = '1';
     const expected = createTypeTreeNode({
@@ -194,7 +194,7 @@ describe('number tree', () => {
   });
 });
 
-describe('variable reference tree', () => {
+describe('variable reference', () => {
   test('referencing value', () => {
     const input = `
       a = 1
@@ -283,7 +283,7 @@ describe('variable reference tree', () => {
   });
 });
 
-describe('block tree', () => {
+describe('block', () => {
   test('empty block', () => {
     const input = '{}';
     const expected = createTypeTreeNode({
@@ -428,7 +428,7 @@ describe('block tree', () => {
   });
 });
 
-describe('tuple tree', () => {
+describe('tuple', () => {
   test('empty tuple', () => {
     const input = '()';
     const expected = createTypeTreeNode({
@@ -550,199 +550,378 @@ describe('tuple tree', () => {
   });
 });
 
-describe('function value tree', () => {
-  test('without parameters', () => {
-    const input = '() 1';
-    const expected = createTypeTreeNode({
-      name: 'block',
-      children: [
-        {
-          name: 'function',
-          parameters: { name: 'tuple', items: [], hasValue: true },
-          return: { name: 'number', hasValue: true },
-          hasValue: true,
-        },
-      ],
-      hasValue: true,
-    });
-    const result = getTree(input);
-    expect(result).toEqual(expected);
-  });
-  test('with parameters', () => {
-    const input = '(a, b) b';
-    const expected = createTypeTreeNode({
-      name: 'block',
-      children: [
-        {
-          name: 'function',
-          parameters: {
-            name: 'tuple',
-            items: [
-              {
-                name: 'parameter',
-                parameterName: 'a',
-              },
-              {
-                name: 'parameter',
-                parameterName: 'b',
-              },
-            ],
+describe('function', () => {
+  describe('value', () => {
+    test('without parameters', () => {
+      const input = '() 1';
+      const expected = createTypeTreeNode({
+        name: 'block',
+        children: [
+          {
+            name: 'functionDeclaration',
+            parameters: { name: 'tuple', items: [], hasValue: true },
+            return: { name: 'number', hasValue: true },
             hasValue: true,
           },
-          return: { name: 'variableReference', variableName: 'b' },
-          hasValue: true,
-        },
-      ],
-      hasValue: true,
+        ],
+        hasValue: true,
+      });
+      const result = getTree(input);
+      expect(result).toEqual(expected);
     });
-    const result = getTree(input);
-    expect(result).toEqual(expected);
-  });
-  test('with complex return', () => {
-    const input = `
+    test('with parameters', () => {
+      const input = '(a, b) b';
+      const expected = createTypeTreeNode({
+        name: 'block',
+        children: [
+          {
+            name: 'functionDeclaration',
+            parameters: {
+              name: 'tuple',
+              items: [
+                {
+                  name: 'parameter',
+                  parameterName: 'a',
+                },
+                {
+                  name: 'parameter',
+                  parameterName: 'b',
+                },
+              ],
+              hasValue: true,
+            },
+            return: { name: 'variableReference', variableName: 'b' },
+            hasValue: true,
+          },
+        ],
+        hasValue: true,
+      });
+      const result = getTree(input);
+      expect(result).toEqual(expected);
+    });
+    test('with complex return', () => {
+      const input = `
       (a, b) {
         c = a
         c
       }
     `;
-    const expected = createTypeTreeNode({
-      name: 'block',
-      children: [
-        {
-          name: 'function',
-          parameters: {
-            name: 'tuple',
-            items: [
-              {
-                name: 'parameter',
-                parameterName: 'a',
-              },
-              {
-                name: 'parameter',
-                parameterName: 'b',
-              },
-            ],
-            hasValue: true,
-          },
-          return: {
-            name: 'block',
-            children: [
-              {
-                name: 'variableAssignment',
-                variableName: 'c',
-                implicitTypeNode: {
-                  name: 'variableReference',
-                  variableName: 'a',
+      const expected = createTypeTreeNode({
+        name: 'block',
+        children: [
+          {
+            name: 'functionDeclaration',
+            parameters: {
+              name: 'tuple',
+              items: [
+                {
+                  name: 'parameter',
+                  parameterName: 'a',
                 },
-                hasValue: true,
-              },
-              {
-                name: 'variableReference',
-                variableName: 'c',
-              },
-            ],
+                {
+                  name: 'parameter',
+                  parameterName: 'b',
+                },
+              ],
+              hasValue: true,
+            },
+            return: {
+              name: 'block',
+              children: [
+                {
+                  name: 'variableAssignment',
+                  variableName: 'c',
+                  implicitTypeNode: {
+                    name: 'variableReference',
+                    variableName: 'a',
+                  },
+                  hasValue: true,
+                },
+                {
+                  name: 'variableReference',
+                  variableName: 'c',
+                },
+              ],
+              hasValue: true,
+            },
             hasValue: true,
           },
-          hasValue: true,
-        },
-      ],
-      hasValue: true,
+        ],
+        hasValue: true,
+      });
+      const result = getTree(input);
+      expect(result).toEqual(expected);
     });
-    const result = getTree(input);
-    expect(result).toEqual(expected);
+  });
+
+  describe('type', () => {
+    test('without parameters', () => {
+      const input = 'a: () number';
+      const expected = createTypeTreeNode({
+        name: 'block',
+        children: [
+          {
+            name: 'variableAssignment',
+            variableName: 'a',
+            explicitTypeNode: {
+              name: 'functionDeclaration',
+              parameters: { name: 'tuple', items: [], hasValue: false },
+              return: { name: 'number', hasValue: false },
+              hasValue: false,
+            },
+            hasValue: false,
+          },
+        ],
+        hasValue: true,
+      });
+      const result = getTree(input);
+      expect(result).toEqual(expected);
+    });
+    test('with simple parameters', () => {
+      const input = 'a: (number) number';
+      const expected = createTypeTreeNode({
+        name: 'block',
+        children: [
+          {
+            name: 'variableAssignment',
+            variableName: 'a',
+            explicitTypeNode: {
+              name: 'functionDeclaration',
+              parameters: {
+                name: 'tuple',
+                items: [
+                  {
+                    name: 'number',
+                    hasValue: false,
+                  },
+                ],
+                hasValue: false,
+              },
+              return: { name: 'number', hasValue: false },
+              hasValue: false,
+            },
+            hasValue: false,
+          },
+        ],
+        hasValue: true,
+      });
+      const result = getTree(input);
+      expect(result).toEqual(expected);
+    });
+    test('with generic parameters', () => {
+      const input = "a: ('a) 'a";
+      const expected = createTypeTreeNode({
+        name: 'block',
+        children: [
+          {
+            name: 'variableAssignment',
+            variableName: 'a',
+            explicitTypeNode: {
+              name: 'functionDeclaration',
+              parameters: {
+                name: 'tuple',
+                items: [
+                  {
+                    name: 'generic',
+                    genericName: 'a',
+                    hasValue: false,
+                  },
+                ],
+                hasValue: false,
+              },
+              return: {
+                name: 'generic',
+                genericName: 'a',
+                hasValue: false,
+              },
+              hasValue: false,
+            },
+            hasValue: false,
+          },
+        ],
+        hasValue: true,
+      });
+      const result = getTree(input);
+      expect(result).toEqual(expected);
+    });
   });
 });
 
-describe('function type tree', () => {
-  test('without parameters', () => {
-    const input = 'a: () number';
-    const expected = createTypeTreeNode({
-      name: 'block',
-      children: [
-        {
-          name: 'variableAssignment',
-          variableName: 'a',
-          explicitTypeNode: {
-            name: 'function',
-            parameters: { name: 'tuple', items: [], hasValue: false },
-            return: { name: 'number', hasValue: false },
-            hasValue: false,
+describe('function call', () => {
+  describe('value', () => {
+    test('without parameters', () => {
+      const input = 'a()';
+      const expected = createTypeTreeNode({
+        name: 'block',
+        children: [
+          {
+            name: 'functionCall',
+            callee: {
+              name: 'variableReference',
+              variableName: 'a',
+            },
+            arguments: { name: 'tuple', items: [], hasValue: true },
+            hasValue: true,
           },
-          hasValue: false,
-        },
-      ],
-      hasValue: true,
+        ],
+        hasValue: true,
+      });
+      const result = getTree(input);
+      expect(result).toEqual(expected);
     });
-    const result = getTree(input);
-    expect(result).toEqual(expected);
-  });
-  test('with simple parameters', () => {
-    const input = 'a: (number) number';
-    const expected = createTypeTreeNode({
-      name: 'block',
-      children: [
-        {
-          name: 'variableAssignment',
-          variableName: 'a',
-          explicitTypeNode: {
-            name: 'function',
-            parameters: {
+    test('with parameters', () => {
+      const input = 'a(1)';
+      const expected = createTypeTreeNode({
+        name: 'block',
+        children: [
+          {
+            name: 'functionCall',
+            callee: {
+              name: 'variableReference',
+              variableName: 'a',
+            },
+            arguments: {
               name: 'tuple',
               items: [
                 {
                   name: 'number',
-                  hasValue: false,
+                  hasValue: true,
                 },
               ],
-              hasValue: false,
+              hasValue: true,
             },
-            return: { name: 'number', hasValue: false },
-            hasValue: false,
+            hasValue: true,
           },
-          hasValue: false,
-        },
-      ],
-      hasValue: true,
+        ],
+        hasValue: true,
+      });
+      const result = getTree(input);
+      expect(result).toEqual(expected);
     });
-    const result = getTree(input);
-    expect(result).toEqual(expected);
-  });
-  test('with generic parameters', () => {
-    const input = "a: ('a) 'a";
-    const expected = createTypeTreeNode({
-      name: 'block',
-      children: [
-        {
-          name: 'variableAssignment',
-          variableName: 'a',
-          explicitTypeNode: {
-            name: 'function',
-            parameters: {
+    test('chained', () => {
+      const input = 'a()()';
+      const expected = createTypeTreeNode({
+        name: 'block',
+        children: [
+          {
+            name: 'functionCall',
+            callee: {
+              name: 'functionCall',
+              callee: {
+                name: 'variableReference',
+                variableName: 'a',
+              },
+              arguments: {
+                name: 'tuple',
+                items: [],
+                hasValue: true,
+              },
+              hasValue: true,
+            },
+            arguments: {
               name: 'tuple',
-              items: [
-                {
-                  name: 'generic',
-                  genericName: 'a',
-                  hasValue: false,
-                },
-              ],
-              hasValue: false,
+              items: [],
+              hasValue: true,
             },
-            return: {
-              name: 'generic',
-              genericName: 'a',
+            hasValue: true,
+          },
+        ],
+        hasValue: true,
+      });
+      const result = getTree(input);
+      expect(result).toEqual(expected);
+    });
+  });
+
+  describe('type', () => {
+    test('without parameters', () => {
+      const input = 'a: b()';
+      const expected = createTypeTreeNode({
+        name: 'block',
+        children: [
+          {
+            name: 'variableAssignment',
+            variableName: 'a',
+            explicitTypeNode: {
+              name: 'functionCall',
+              callee: {
+                name: 'variableReference',
+                variableName: 'b',
+              },
+              arguments: { name: 'tuple', items: [], hasValue: false },
               hasValue: false,
             },
             hasValue: false,
           },
-          hasValue: false,
-        },
-      ],
-      hasValue: true,
+        ],
+        hasValue: true,
+      });
+      const result = getTree(input);
+      expect(result).toEqual(expected);
     });
-    const result = getTree(input);
-    expect(result).toEqual(expected);
+    test('with parameters', () => {
+      const input = 'a: b(number)';
+      const expected = createTypeTreeNode({
+        name: 'block',
+        children: [
+          {
+            name: 'variableAssignment',
+            variableName: 'a',
+            explicitTypeNode: {
+              name: 'functionCall',
+              callee: {
+                name: 'variableReference',
+                variableName: 'b',
+              },
+              arguments: {
+                name: 'tuple',
+                items: [
+                  {
+                    name: 'number',
+                    hasValue: false,
+                  },
+                ],
+                hasValue: false,
+              },
+              hasValue: false,
+            },
+            hasValue: false,
+          },
+        ],
+        hasValue: true,
+      });
+      const result = getTree(input);
+      expect(result).toEqual(expected);
+    });
+    test('chained', () => {
+      const input = 'a: b()()';
+      const expected = createTypeTreeNode({
+        name: 'block',
+        children: [
+          {
+            name: 'variableAssignment',
+            variableName: 'a',
+            explicitTypeNode: {
+              name: 'functionCall',
+              callee: {
+                name: 'functionCall',
+                callee: {
+                  name: 'variableReference',
+                  variableName: 'b',
+                },
+                arguments: { name: 'tuple', items: [], hasValue: false },
+                hasValue: false,
+              },
+              arguments: { name: 'tuple', items: [], hasValue: false },
+              hasValue: false,
+            },
+            hasValue: false,
+          },
+        ],
+        hasValue: true,
+      });
+      const result = getTree(input);
+      expect(result).toEqual(expected);
+    });
   });
 });
-
-// TODO: function calls
