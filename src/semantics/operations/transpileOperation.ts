@@ -39,12 +39,7 @@ export const createTranspileOperation = (semantics: BoringLangSemantics) =>
       statement.transpile() + blockStatement.transpile(),
     BlockStatement_endStatement: expression =>
       'return ' + expression.transpile(),
-    FunctionValueDeclaration: (
-      _startBracket,
-      parameters,
-      _endBracket,
-      expression,
-    ) => '(' + parameters.transpile() + ')=>' + expression.transpile(),
+    FunctionValueDeclaration: (_parametersTuple, _expression) => '', //      '(' + parameters.transpile() + ')=>' + expression.transpile(),
     FunctionCall_firstCall: (
       identifier,
       _startBracket,

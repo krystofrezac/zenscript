@@ -1,6 +1,5 @@
 import { NonterminalNode } from 'ohm-js';
 import { TypeNode } from '../types';
-import { createInvalidTreeNode } from './createTypeTreeNode';
 import { isTypeNode } from './isTypeNode';
 
 export const getTupleItemsTypes = (items: NonterminalNode) => {

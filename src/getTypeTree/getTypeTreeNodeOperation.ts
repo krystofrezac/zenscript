@@ -37,12 +37,45 @@ export const createGetTypeTreeNodeOperation = (
           children: content.getTypeTreeNodes(),
           hasValue: true,
         }),
-      TupleExpression: (_startBrace, items, _endBrace) => {
+      TupleExpression: (_startBracket, items, _endBracket) => {
         const itemsTypes = getTupleItemsTypes(items);
 
         return createTypeTreeNode({
           name: 'tuple',
           items: itemsTypes,
+          hasValue: true,
+        });
+      },
+      FunctionParameter: name =>
+        createTypeTreeNode({
+          name: 'parameter',
+          parameterName: name.getName(),
+        }),
+      FunctionValueDeclaration: (
+        _startBracket,
+        parameters,
+        _endBracket,
+        returnExpression,
+      ) => {
+        const parametersTypes = parameters.getTypeTreeNodes();
+        const returnType = returnExpression.getTypeTreeNode();
+
+        if (
+          parametersTypes.some(parameterType => !isTypeNode(parameterType)) ||
+          !isTypeNode(returnType)
+        )
+          return createInvalidTreeNode();
+
+        const parametersTupleType = createTypeTreeNode({
+          name: 'tuple',
+          items: parametersTypes as TypeNode[], // checked above
+          hasValue: true,
+        });
+
+        return createTypeTreeNode({
+          name: 'function',
+          parameters: parametersTupleType,
+          return: returnType,
           hasValue: true,
         });
       },
@@ -52,7 +85,7 @@ export const createGetTypeTreeNodeOperation = (
         createTypeTreeNode({ name: 'string', hasValue: false }),
       numberType: _content =>
         createTypeTreeNode({ name: 'number', hasValue: false }),
-      TupleType: (_startBrace, items, _endBrace) => {
+      TupleType: (_startBracket, items, _endBracket) => {
         const itemsTypes = getTupleItemsTypes(items);
 
         return createTypeTreeNode({
@@ -61,12 +94,31 @@ export const createGetTypeTreeNodeOperation = (
           hasValue: false,
         });
       },
+      FunctionTypeDeclaration: (parametersTuple, returnExpression) => {
+        const parametersType = parametersTuple.getTypeTreeNode();
+        const returnType = returnExpression.getTypeTreeNode();
+        if (parametersType.name !== 'tuple' || !isTypeNode(returnType))
+          return createInvalidTreeNode();
+
+        return createTypeTreeNode({
+          name: 'function',
+          parameters: parametersType,
+          return: returnType,
+          hasValue: false,
+        });
+      },
+      genericName: (_apostrophe, name) =>
+        createTypeTreeNode({
+          name: 'generic',
+          genericName: name.getName(),
+          hasValue: false,
+        }),
 
       // expressions and types
       identifier: identifier =>
         createTypeTreeNode({
           name: 'variableReference',
-          identifierName: identifier.sourceString,
+          variableName: identifier.sourceString,
         }),
 
       // variable assignments

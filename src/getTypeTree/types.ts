@@ -13,15 +13,28 @@ type NumberTypeNode = BaseNode<'number'>;
 type TupleTypeNode = BaseNode<'tuple'> & {
   items: TypeNode[];
 };
-type VariableReferenceNOde = BaseNodeWithoutHasName<'variableReference'> & {
-  identifierName: string;
+type FunctionTypeNode = BaseNode<'function'> & {
+  parameters: TupleTypeNode;
+  return: TypeNode;
+};
+type ParameterTypeNode = BaseNodeWithoutHasName<'parameter'> & {
+  parameterName: string;
+};
+type VariableReferenceNode = BaseNodeWithoutHasName<'variableReference'> & {
+  variableName: string;
+};
+type GenericTypeNode = BaseNode<'generic'> & {
+  genericName: string;
 };
 export type TypeNode =
   | BlockTypeNode
   | StringTypeNode
   | NumberTypeNode
   | TupleTypeNode
-  | VariableReferenceNOde;
+  | FunctionTypeNode
+  | ParameterTypeNode
+  | VariableReferenceNode
+  | GenericTypeNode;
 
 type VariableAssignmentNode = BaseNode<'variableAssignment'> & {
   variableName: string;

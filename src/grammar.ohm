@@ -19,7 +19,7 @@ BoringLang {
   ValueAssignment = valueAssignmentOperator Expression
   TypeAssignment = typeAssignmentOperator TypeExpression 
 
-  Expression = | FunctionCall
+  Expression = | FunctionValueCall
                | FunctionValueDeclaration
                | numberExpression
                | stringExpression
@@ -32,12 +32,12 @@ BoringLang {
                    | stringType
                    | numberType
                    | booleanType
-                   | identifier
                    | genericName
+                   | identifier
                    | TupleType
 
-  identifier = (letter | "!")+
-  genericName = "'"(letter)+
+  identifier = letter+
+  genericName = "'" identifier
   numberExpression = digit+
 
   stringExpression = "\"" stringCharacter* "\""
@@ -56,12 +56,9 @@ BoringLang {
 
   TupleType = "(" ListOf<TypeExpression, ","> ")"
 
-  FunctionValueDeclaration = "(" ListOf<identifier, ","> ")" Expression
-  FunctionTypeDeclaration = "(" ListOf<TypeExpression, ","> ")" TypeExpression
+  FunctionParameter = identifier
+  FunctionValueDeclaration = "(" ListOf<FunctionParameter, ","> ")" Expression
+  FunctionTypeDeclaration = TupleType TypeExpression
 
-  FunctionCall = | FunctionCall"(" FunctionArguments ")"                        -- chainedCall
-                 | identifier "(" FunctionArguments ")"                        -- firstCall
-                 | compilerHook "(" FunctionArguments ")"                      -- firstCallCompilerHook
-  FunctionArguments = ListOf<FunctionArgument, ",">
-  FunctionArgument = Expression 
+  FunctionValueCall = Expression "(" ListOf<Expression, ","> ")"                        
 }
