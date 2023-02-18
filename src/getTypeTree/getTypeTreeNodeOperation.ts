@@ -6,7 +6,7 @@ import {
 } from './helpers/createTypeTreeNode';
 import { getTupleItemsTypes } from './helpers/getTupleItemsTypes';
 import { isTypeNode } from './helpers/isTypeNode';
-import { TypeNode } from './types';
+import { TypeNode, TypeTreeNodeName } from './types';
 
 export const createGetTypeTreeNodeOperation = (
   semantics: BoringLangSemantics,
@@ -16,7 +16,7 @@ export const createGetTypeTreeNodeOperation = (
     {
       NonemptyListOf: (firstItem, _firstItemIterable, tailIterable) =>
         createTypeTreeNode({
-          name: 'block',
+          name: TypeTreeNodeName.Block,
           children: [
             firstItem.getTypeTreeNode(),
             ...tailIterable.getTypeTreeNodes(),
@@ -24,16 +24,20 @@ export const createGetTypeTreeNodeOperation = (
           hasValue: true,
         }),
       EmptyListOf: () =>
-        createTypeTreeNode({ name: 'block', children: [], hasValue: true }),
+        createTypeTreeNode({
+          name: TypeTreeNodeName.Block,
+          children: [],
+          hasValue: true,
+        }),
 
       // expressions
       stringExpression: (_startQuotes, _content, _endQuotes) =>
-        createTypeTreeNode({ name: 'string', hasValue: true }),
+        createTypeTreeNode({ name: TypeTreeNodeName.String, hasValue: true }),
       numberExpression: _content =>
-        createTypeTreeNode({ name: 'number', hasValue: true }),
+        createTypeTreeNode({ name: TypeTreeNodeName.Number, hasValue: true }),
       Block: (_startCurly, content, _endCurly) =>
         createTypeTreeNode({
-          name: 'block',
+          name: TypeTreeNodeName.Block,
           children: content.getTypeTreeNodes(),
           hasValue: true,
         }),
@@ -41,14 +45,14 @@ export const createGetTypeTreeNodeOperation = (
         const itemsTypes = getTupleItemsTypes(items);
 
         return createTypeTreeNode({
-          name: 'tuple',
+          name: TypeTreeNodeName.Tuple,
           items: itemsTypes,
           hasValue: true,
         });
       },
       FunctionParameter: name =>
         createTypeTreeNode({
-          name: 'parameter',
+          name: TypeTreeNodeName.Parameter,
           parameterName: name.getName(),
         }),
       FunctionValueDeclaration: (
@@ -67,13 +71,13 @@ export const createGetTypeTreeNodeOperation = (
           return createInvalidTreeNode();
 
         const parametersTupleType = createTypeTreeNode({
-          name: 'tuple',
+          name: TypeTreeNodeName.Tuple,
           items: parametersTypes as TypeNode[], // checked above
           hasValue: true,
         });
 
         return createTypeTreeNode({
-          name: 'functionDeclaration',
+          name: TypeTreeNodeName.FunctionDeclaration,
           parameters: parametersTupleType,
           return: returnType,
           hasValue: true,
@@ -82,11 +86,14 @@ export const createGetTypeTreeNodeOperation = (
       FunctionValueCall: (callee, argumentsExpression) => {
         const calleeType = callee.getTypeTreeNode();
         const argumentsType = argumentsExpression.getTypeTreeNode();
-        if (!isTypeNode(calleeType) || argumentsType.name !== 'tuple')
+        if (
+          !isTypeNode(calleeType) ||
+          argumentsType.name !== TypeTreeNodeName.Tuple
+        )
           return createInvalidTreeNode();
 
         return createTypeTreeNode({
-          name: 'functionCall',
+          name: TypeTreeNodeName.FunctionCall,
           callee: calleeType,
           arguments: argumentsType,
           hasValue: true,
@@ -95,14 +102,14 @@ export const createGetTypeTreeNodeOperation = (
 
       // types
       stringType: _content =>
-        createTypeTreeNode({ name: 'string', hasValue: false }),
+        createTypeTreeNode({ name: TypeTreeNodeName.String, hasValue: false }),
       numberType: _content =>
-        createTypeTreeNode({ name: 'number', hasValue: false }),
+        createTypeTreeNode({ name: TypeTreeNodeName.Number, hasValue: false }),
       TupleType: (_startBracket, items, _endBracket) => {
         const itemsTypes = getTupleItemsTypes(items);
 
         return createTypeTreeNode({
-          name: 'tuple',
+          name: TypeTreeNodeName.Tuple,
           items: itemsTypes,
           hasValue: false,
         });
@@ -110,11 +117,14 @@ export const createGetTypeTreeNodeOperation = (
       FunctionTypeDeclaration: (parametersTuple, returnExpression) => {
         const parametersType = parametersTuple.getTypeTreeNode();
         const returnType = returnExpression.getTypeTreeNode();
-        if (parametersType.name !== 'tuple' || !isTypeNode(returnType))
+        if (
+          parametersType.name !== TypeTreeNodeName.Tuple ||
+          !isTypeNode(returnType)
+        )
           return createInvalidTreeNode();
 
         return createTypeTreeNode({
-          name: 'functionDeclaration',
+          name: TypeTreeNodeName.FunctionDeclaration,
           parameters: parametersType,
           return: returnType,
           hasValue: false,
@@ -122,18 +132,21 @@ export const createGetTypeTreeNodeOperation = (
       },
       genericName: (_apostrophe, name) =>
         createTypeTreeNode({
-          name: 'generic',
+          name: TypeTreeNodeName.Generic,
           genericName: name.getName(),
           hasValue: false,
         }),
       FunctionTypeCall: (callee, argumentsTuple) => {
         const calleeType = callee.getTypeTreeNode();
         const argumentsType = argumentsTuple.getTypeTreeNode();
-        if (!isTypeNode(calleeType) || argumentsType.name !== 'tuple')
+        if (
+          !isTypeNode(calleeType) ||
+          argumentsType.name !== TypeTreeNodeName.Tuple
+        )
           return createInvalidTreeNode();
 
         return createTypeTreeNode({
-          name: 'functionCall',
+          name: TypeTreeNodeName.FunctionCall,
           callee: calleeType,
           arguments: argumentsType,
           hasValue: false,
@@ -143,7 +156,7 @@ export const createGetTypeTreeNodeOperation = (
       // expressions and types
       identifier: identifier =>
         createTypeTreeNode({
-          name: 'variableReference',
+          name: TypeTreeNodeName.VariableReference,
           variableName: identifier.sourceString,
         }),
 
@@ -153,7 +166,7 @@ export const createGetTypeTreeNodeOperation = (
         if (!isTypeNode(valueType)) return createInvalidTreeNode();
 
         return createTypeTreeNode({
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: identifier.getName(),
           implicitTypeNode: valueType,
           hasValue: true,
@@ -171,7 +184,7 @@ export const createGetTypeTreeNodeOperation = (
           return createInvalidTreeNode();
 
         return createTypeTreeNode({
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: identifier.getName(),
           explicitTypeNode: typeAssignmentType,
           implicitTypeNode: valueAssignmentType,
@@ -184,7 +197,7 @@ export const createGetTypeTreeNodeOperation = (
         if (!isTypeNode(typeAssignmentType)) return createInvalidTreeNode();
 
         return createTypeTreeNode({
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: identifier.getName(),
           explicitTypeNode: typeAssignmentType,
           hasValue: false,

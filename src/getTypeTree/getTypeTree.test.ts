@@ -3,6 +3,7 @@ import { getTypeTree } from '.';
 import { parse } from '../parser';
 import { createSemantics } from '../semantics';
 import { createTypeTreeNode } from './helpers/createTypeTreeNode';
+import { TypeTreeNodeName } from './types';
 
 const semantics = createSemantics();
 const getTree = (input: string) => {
@@ -13,7 +14,7 @@ const getTree = (input: string) => {
 
 describe('empty', () => {
   const expected = createTypeTreeNode({
-    name: 'block',
+    name: TypeTreeNodeName.Block,
     children: [],
     hasValue: true,
   });
@@ -32,8 +33,8 @@ describe('string', () => {
   test('only string', () => {
     const input = '"Hello, World!"';
     const expected = createTypeTreeNode({
-      name: 'block',
-      children: [{ name: 'string', hasValue: true }],
+      name: TypeTreeNodeName.Block,
+      children: [{ name: TypeTreeNodeName.String, hasValue: true }],
       hasValue: true,
     });
     const result = getTree(input);
@@ -42,12 +43,12 @@ describe('string', () => {
   test('string assigned to variable', () => {
     const input = 'a = "Hello, World!"';
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'a',
-          implicitTypeNode: { name: 'string', hasValue: true },
+          implicitTypeNode: { name: TypeTreeNodeName.String, hasValue: true },
           hasValue: true,
         },
       ],
@@ -59,13 +60,13 @@ describe('string', () => {
   test('string assigned to variable with same explicit type', () => {
     const input = 'a: string = "Hello, World!"';
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'a',
-          implicitTypeNode: { name: 'string', hasValue: true },
-          explicitTypeNode: { name: 'string', hasValue: false },
+          implicitTypeNode: { name: TypeTreeNodeName.String, hasValue: true },
+          explicitTypeNode: { name: TypeTreeNodeName.String, hasValue: false },
           hasValue: true,
         },
       ],
@@ -77,13 +78,13 @@ describe('string', () => {
   test('string assigned to variable with different explicit type', () => {
     const input = 'a: number = "Hello, World!"';
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'a',
-          implicitTypeNode: { name: 'string', hasValue: true },
-          explicitTypeNode: { name: 'number', hasValue: false },
+          implicitTypeNode: { name: TypeTreeNodeName.String, hasValue: true },
+          explicitTypeNode: { name: TypeTreeNodeName.Number, hasValue: false },
           hasValue: true,
         },
       ],
@@ -95,12 +96,12 @@ describe('string', () => {
   test('string type assigned to variable', () => {
     const input = 'a: string';
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'a',
-          explicitTypeNode: { name: 'string', hasValue: false },
+          explicitTypeNode: { name: TypeTreeNodeName.String, hasValue: false },
           hasValue: false,
         },
       ],
@@ -115,8 +116,8 @@ describe('number', () => {
   test('only number', () => {
     const input = '1';
     const expected = createTypeTreeNode({
-      name: 'block',
-      children: [{ name: 'number', hasValue: true }],
+      name: TypeTreeNodeName.Block,
+      children: [{ name: TypeTreeNodeName.Number, hasValue: true }],
       hasValue: true,
     });
     const result = getTree(input);
@@ -125,12 +126,12 @@ describe('number', () => {
   test('number assigned to variable', () => {
     const input = 'a = 1';
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'a',
-          implicitTypeNode: { name: 'number', hasValue: true },
+          implicitTypeNode: { name: TypeTreeNodeName.Number, hasValue: true },
           hasValue: true,
         },
       ],
@@ -142,13 +143,13 @@ describe('number', () => {
   test('number assigned to variable with same explicit type', () => {
     const input = 'a: number = 1';
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'a',
-          implicitTypeNode: { name: 'number', hasValue: true },
-          explicitTypeNode: { name: 'number', hasValue: false },
+          implicitTypeNode: { name: TypeTreeNodeName.Number, hasValue: true },
+          explicitTypeNode: { name: TypeTreeNodeName.Number, hasValue: false },
           hasValue: true,
         },
       ],
@@ -160,13 +161,13 @@ describe('number', () => {
   test('number assigned to variable with different explicit type', () => {
     const input = 'a: string = 1';
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'a',
-          implicitTypeNode: { name: 'number', hasValue: true },
-          explicitTypeNode: { name: 'string', hasValue: false },
+          implicitTypeNode: { name: TypeTreeNodeName.Number, hasValue: true },
+          explicitTypeNode: { name: TypeTreeNodeName.String, hasValue: false },
           hasValue: true,
         },
       ],
@@ -178,12 +179,12 @@ describe('number', () => {
   test('number type assigned to variable', () => {
     const input = 'a: number';
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'a',
-          explicitTypeNode: { name: 'number', hasValue: false },
+          explicitTypeNode: { name: TypeTreeNodeName.Number, hasValue: false },
           hasValue: false,
         },
       ],
@@ -201,18 +202,21 @@ describe('variable reference', () => {
       b = a
     `;
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'a',
-          implicitTypeNode: { name: 'number', hasValue: true },
+          implicitTypeNode: { name: TypeTreeNodeName.Number, hasValue: true },
           hasValue: true,
         },
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'b',
-          implicitTypeNode: { name: 'variableReference', variableName: 'a' },
+          implicitTypeNode: {
+            name: TypeTreeNodeName.VariableReference,
+            variableName: 'a',
+          },
           hasValue: true,
         },
       ],
@@ -227,18 +231,21 @@ describe('variable reference', () => {
       b: a 
     `;
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'a',
-          implicitTypeNode: { name: 'number', hasValue: true },
+          implicitTypeNode: { name: TypeTreeNodeName.Number, hasValue: true },
           hasValue: true,
         },
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'b',
-          explicitTypeNode: { name: 'variableReference', variableName: 'a' },
+          explicitTypeNode: {
+            name: TypeTreeNodeName.VariableReference,
+            variableName: 'a',
+          },
           hasValue: false,
         },
       ],
@@ -254,25 +261,31 @@ describe('variable reference', () => {
       c: b = a
     `;
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'a',
-          implicitTypeNode: { name: 'number', hasValue: true },
+          implicitTypeNode: { name: TypeTreeNodeName.Number, hasValue: true },
           hasValue: true,
         },
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'b',
-          explicitTypeNode: { name: 'number', hasValue: false },
+          explicitTypeNode: { name: TypeTreeNodeName.Number, hasValue: false },
           hasValue: false,
         },
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'c',
-          explicitTypeNode: { name: 'variableReference', variableName: 'b' },
-          implicitTypeNode: { name: 'variableReference', variableName: 'a' },
+          explicitTypeNode: {
+            name: TypeTreeNodeName.VariableReference,
+            variableName: 'b',
+          },
+          implicitTypeNode: {
+            name: TypeTreeNodeName.VariableReference,
+            variableName: 'a',
+          },
           hasValue: true,
         },
       ],
@@ -287,8 +300,10 @@ describe('block', () => {
   test('empty block', () => {
     const input = '{}';
     const expected = createTypeTreeNode({
-      name: 'block',
-      children: [{ name: 'block', children: [], hasValue: true }],
+      name: TypeTreeNodeName.Block,
+      children: [
+        { name: TypeTreeNodeName.Block, children: [], hasValue: true },
+      ],
       hasValue: true,
     });
     const result = getTree(input);
@@ -297,11 +312,11 @@ describe('block', () => {
   test('block with string value', () => {
     const input = '{""}';
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'block',
-          children: [{ name: 'string', hasValue: true }],
+          name: TypeTreeNodeName.Block,
+          children: [{ name: TypeTreeNodeName.String, hasValue: true }],
           hasValue: true,
         },
       ],
@@ -313,11 +328,11 @@ describe('block', () => {
   test('block with number value', () => {
     const input = '{1}';
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'block',
-          children: [{ name: 'number', hasValue: true }],
+          name: TypeTreeNodeName.Block,
+          children: [{ name: TypeTreeNodeName.Number, hasValue: true }],
           hasValue: true,
         },
       ],
@@ -333,25 +348,31 @@ describe('block', () => {
       b
     }`;
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'block',
+          name: TypeTreeNodeName.Block,
           children: [
             {
-              name: 'variableAssignment',
+              name: TypeTreeNodeName.VariableAssignment,
               variableName: 'a',
-              implicitTypeNode: { name: 'number', hasValue: true },
+              implicitTypeNode: {
+                name: TypeTreeNodeName.Number,
+                hasValue: true,
+              },
               hasValue: true,
             },
             {
-              name: 'variableAssignment',
+              name: TypeTreeNodeName.VariableAssignment,
               variableName: 'b',
-              implicitTypeNode: { name: 'number', hasValue: true },
+              implicitTypeNode: {
+                name: TypeTreeNodeName.Number,
+                hasValue: true,
+              },
               hasValue: true,
             },
             {
-              name: 'variableReference',
+              name: TypeTreeNodeName.VariableReference,
               variableName: 'b',
             },
           ],
@@ -366,14 +387,14 @@ describe('block', () => {
   test('block assigned to variable', () => {
     const input = 'a = {1}';
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'a',
           implicitTypeNode: {
-            name: 'block',
-            children: [{ name: 'number', hasValue: true }],
+            name: TypeTreeNodeName.Block,
+            children: [{ name: TypeTreeNodeName.Number, hasValue: true }],
             hasValue: true,
           },
           hasValue: true,
@@ -394,24 +415,30 @@ describe('block', () => {
       }
     `;
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'block',
+          name: TypeTreeNodeName.Block,
           children: [
             {
-              name: 'variableAssignment',
+              name: TypeTreeNodeName.VariableAssignment,
               variableName: 'a',
-              implicitTypeNode: { name: 'number', hasValue: true },
+              implicitTypeNode: {
+                name: TypeTreeNodeName.Number,
+                hasValue: true,
+              },
               hasValue: true,
             },
             {
-              name: 'block',
+              name: TypeTreeNodeName.Block,
               children: [
                 {
-                  name: 'variableAssignment',
+                  name: TypeTreeNodeName.VariableAssignment,
                   variableName: 'a',
-                  implicitTypeNode: { name: 'string', hasValue: true },
+                  implicitTypeNode: {
+                    name: TypeTreeNodeName.String,
+                    hasValue: true,
+                  },
                   hasValue: true,
                 },
               ],
@@ -432,8 +459,8 @@ describe('tuple', () => {
   test('empty tuple', () => {
     const input = '()';
     const expected = createTypeTreeNode({
-      name: 'block',
-      children: [{ name: 'tuple', items: [], hasValue: true }],
+      name: TypeTreeNodeName.Block,
+      children: [{ name: TypeTreeNodeName.Tuple, items: [], hasValue: true }],
       hasValue: true,
     });
     const result = getTree(input);
@@ -442,11 +469,11 @@ describe('tuple', () => {
   test('one item tuple', () => {
     const input = '(1)';
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'tuple',
-          items: [{ name: 'number', hasValue: true }],
+          name: TypeTreeNodeName.Tuple,
+          items: [{ name: TypeTreeNodeName.Number, hasValue: true }],
           hasValue: true,
         },
       ],
@@ -458,16 +485,16 @@ describe('tuple', () => {
   test('multiple items tuple', () => {
     const input = '(1, "", (1))';
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'tuple',
+          name: TypeTreeNodeName.Tuple,
           items: [
-            { name: 'number', hasValue: true },
-            { name: 'string', hasValue: true },
+            { name: TypeTreeNodeName.Number, hasValue: true },
+            { name: TypeTreeNodeName.String, hasValue: true },
             {
-              name: 'tuple',
-              items: [{ name: 'number', hasValue: true }],
+              name: TypeTreeNodeName.Tuple,
+              items: [{ name: TypeTreeNodeName.Number, hasValue: true }],
               hasValue: true,
             },
           ],
@@ -482,14 +509,14 @@ describe('tuple', () => {
   test('tuple assigned to variable', () => {
     const input = 'a = (1)';
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'a',
           implicitTypeNode: {
-            name: 'tuple',
-            items: [{ name: 'number', hasValue: true }],
+            name: TypeTreeNodeName.Tuple,
+            items: [{ name: TypeTreeNodeName.Number, hasValue: true }],
             hasValue: true,
           },
           hasValue: true,
@@ -503,19 +530,19 @@ describe('tuple', () => {
   test('tuple assigned to variable with same explicit type', () => {
     const input = 'a: (number) = (1)';
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'a',
           explicitTypeNode: {
-            name: 'tuple',
-            items: [{ name: 'number', hasValue: false }],
+            name: TypeTreeNodeName.Tuple,
+            items: [{ name: TypeTreeNodeName.Number, hasValue: false }],
             hasValue: false,
           },
           implicitTypeNode: {
-            name: 'tuple',
-            items: [{ name: 'number', hasValue: true }],
+            name: TypeTreeNodeName.Tuple,
+            items: [{ name: TypeTreeNodeName.Number, hasValue: true }],
             hasValue: true,
           },
           hasValue: true,
@@ -529,15 +556,15 @@ describe('tuple', () => {
   test('tuple assigned to variable with different explicit type', () => {
     const input = 'a: number = (1)';
     const expected = createTypeTreeNode({
-      name: 'block',
+      name: TypeTreeNodeName.Block,
       children: [
         {
-          name: 'variableAssignment',
+          name: TypeTreeNodeName.VariableAssignment,
           variableName: 'a',
-          explicitTypeNode: { name: 'number', hasValue: false },
+          explicitTypeNode: { name: TypeTreeNodeName.Number, hasValue: false },
           implicitTypeNode: {
-            name: 'tuple',
-            items: [{ name: 'number', hasValue: true }],
+            name: TypeTreeNodeName.Tuple,
+            items: [{ name: TypeTreeNodeName.Number, hasValue: true }],
             hasValue: true,
           },
           hasValue: true,
@@ -555,12 +582,16 @@ describe('function', () => {
     test('without parameters', () => {
       const input = '() 1';
       const expected = createTypeTreeNode({
-        name: 'block',
+        name: TypeTreeNodeName.Block,
         children: [
           {
-            name: 'functionDeclaration',
-            parameters: { name: 'tuple', items: [], hasValue: true },
-            return: { name: 'number', hasValue: true },
+            name: TypeTreeNodeName.FunctionDeclaration,
+            parameters: {
+              name: TypeTreeNodeName.Tuple,
+              items: [],
+              hasValue: true,
+            },
+            return: { name: TypeTreeNodeName.Number, hasValue: true },
             hasValue: true,
           },
         ],
@@ -572,25 +603,28 @@ describe('function', () => {
     test('with parameters', () => {
       const input = '(a, b) b';
       const expected = createTypeTreeNode({
-        name: 'block',
+        name: TypeTreeNodeName.Block,
         children: [
           {
-            name: 'functionDeclaration',
+            name: TypeTreeNodeName.FunctionDeclaration,
             parameters: {
-              name: 'tuple',
+              name: TypeTreeNodeName.Tuple,
               items: [
                 {
-                  name: 'parameter',
+                  name: TypeTreeNodeName.Parameter,
                   parameterName: 'a',
                 },
                 {
-                  name: 'parameter',
+                  name: TypeTreeNodeName.Parameter,
                   parameterName: 'b',
                 },
               ],
               hasValue: true,
             },
-            return: { name: 'variableReference', variableName: 'b' },
+            return: {
+              name: TypeTreeNodeName.VariableReference,
+              variableName: 'b',
+            },
             hasValue: true,
           },
         ],
@@ -607,38 +641,38 @@ describe('function', () => {
       }
     `;
       const expected = createTypeTreeNode({
-        name: 'block',
+        name: TypeTreeNodeName.Block,
         children: [
           {
-            name: 'functionDeclaration',
+            name: TypeTreeNodeName.FunctionDeclaration,
             parameters: {
-              name: 'tuple',
+              name: TypeTreeNodeName.Tuple,
               items: [
                 {
-                  name: 'parameter',
+                  name: TypeTreeNodeName.Parameter,
                   parameterName: 'a',
                 },
                 {
-                  name: 'parameter',
+                  name: TypeTreeNodeName.Parameter,
                   parameterName: 'b',
                 },
               ],
               hasValue: true,
             },
             return: {
-              name: 'block',
+              name: TypeTreeNodeName.Block,
               children: [
                 {
-                  name: 'variableAssignment',
+                  name: TypeTreeNodeName.VariableAssignment,
                   variableName: 'c',
                   implicitTypeNode: {
-                    name: 'variableReference',
+                    name: TypeTreeNodeName.VariableReference,
                     variableName: 'a',
                   },
                   hasValue: true,
                 },
                 {
-                  name: 'variableReference',
+                  name: TypeTreeNodeName.VariableReference,
                   variableName: 'c',
                 },
               ],
@@ -658,15 +692,19 @@ describe('function', () => {
     test('without parameters', () => {
       const input = 'a: () number';
       const expected = createTypeTreeNode({
-        name: 'block',
+        name: TypeTreeNodeName.Block,
         children: [
           {
-            name: 'variableAssignment',
+            name: TypeTreeNodeName.VariableAssignment,
             variableName: 'a',
             explicitTypeNode: {
-              name: 'functionDeclaration',
-              parameters: { name: 'tuple', items: [], hasValue: false },
-              return: { name: 'number', hasValue: false },
+              name: TypeTreeNodeName.FunctionDeclaration,
+              parameters: {
+                name: TypeTreeNodeName.Tuple,
+                items: [],
+                hasValue: false,
+              },
+              return: { name: TypeTreeNodeName.Number, hasValue: false },
               hasValue: false,
             },
             hasValue: false,
@@ -680,24 +718,24 @@ describe('function', () => {
     test('with simple parameters', () => {
       const input = 'a: (number) number';
       const expected = createTypeTreeNode({
-        name: 'block',
+        name: TypeTreeNodeName.Block,
         children: [
           {
-            name: 'variableAssignment',
+            name: TypeTreeNodeName.VariableAssignment,
             variableName: 'a',
             explicitTypeNode: {
-              name: 'functionDeclaration',
+              name: TypeTreeNodeName.FunctionDeclaration,
               parameters: {
-                name: 'tuple',
+                name: TypeTreeNodeName.Tuple,
                 items: [
                   {
-                    name: 'number',
+                    name: TypeTreeNodeName.Number,
                     hasValue: false,
                   },
                 ],
                 hasValue: false,
               },
-              return: { name: 'number', hasValue: false },
+              return: { name: TypeTreeNodeName.Number, hasValue: false },
               hasValue: false,
             },
             hasValue: false,
@@ -711,18 +749,18 @@ describe('function', () => {
     test('with generic parameters', () => {
       const input = "a: ('a) 'a";
       const expected = createTypeTreeNode({
-        name: 'block',
+        name: TypeTreeNodeName.Block,
         children: [
           {
-            name: 'variableAssignment',
+            name: TypeTreeNodeName.VariableAssignment,
             variableName: 'a',
             explicitTypeNode: {
-              name: 'functionDeclaration',
+              name: TypeTreeNodeName.FunctionDeclaration,
               parameters: {
-                name: 'tuple',
+                name: TypeTreeNodeName.Tuple,
                 items: [
                   {
-                    name: 'generic',
+                    name: TypeTreeNodeName.Generic,
                     genericName: 'a',
                     hasValue: false,
                   },
@@ -730,7 +768,7 @@ describe('function', () => {
                 hasValue: false,
               },
               return: {
-                name: 'generic',
+                name: TypeTreeNodeName.Generic,
                 genericName: 'a',
                 hasValue: false,
               },
@@ -752,15 +790,19 @@ describe('function call', () => {
     test('without parameters', () => {
       const input = 'a()';
       const expected = createTypeTreeNode({
-        name: 'block',
+        name: TypeTreeNodeName.Block,
         children: [
           {
-            name: 'functionCall',
+            name: TypeTreeNodeName.FunctionCall,
             callee: {
-              name: 'variableReference',
+              name: TypeTreeNodeName.VariableReference,
               variableName: 'a',
             },
-            arguments: { name: 'tuple', items: [], hasValue: true },
+            arguments: {
+              name: TypeTreeNodeName.Tuple,
+              items: [],
+              hasValue: true,
+            },
             hasValue: true,
           },
         ],
@@ -772,19 +814,19 @@ describe('function call', () => {
     test('with parameters', () => {
       const input = 'a(1)';
       const expected = createTypeTreeNode({
-        name: 'block',
+        name: TypeTreeNodeName.Block,
         children: [
           {
-            name: 'functionCall',
+            name: TypeTreeNodeName.FunctionCall,
             callee: {
-              name: 'variableReference',
+              name: TypeTreeNodeName.VariableReference,
               variableName: 'a',
             },
             arguments: {
-              name: 'tuple',
+              name: TypeTreeNodeName.Tuple,
               items: [
                 {
-                  name: 'number',
+                  name: TypeTreeNodeName.Number,
                   hasValue: true,
                 },
               ],
@@ -801,25 +843,25 @@ describe('function call', () => {
     test('chained', () => {
       const input = 'a()()';
       const expected = createTypeTreeNode({
-        name: 'block',
+        name: TypeTreeNodeName.Block,
         children: [
           {
-            name: 'functionCall',
+            name: TypeTreeNodeName.FunctionCall,
             callee: {
-              name: 'functionCall',
+              name: TypeTreeNodeName.FunctionCall,
               callee: {
-                name: 'variableReference',
+                name: TypeTreeNodeName.VariableReference,
                 variableName: 'a',
               },
               arguments: {
-                name: 'tuple',
+                name: TypeTreeNodeName.Tuple,
                 items: [],
                 hasValue: true,
               },
               hasValue: true,
             },
             arguments: {
-              name: 'tuple',
+              name: TypeTreeNodeName.Tuple,
               items: [],
               hasValue: true,
             },
@@ -837,18 +879,22 @@ describe('function call', () => {
     test('without parameters', () => {
       const input = 'a: b()';
       const expected = createTypeTreeNode({
-        name: 'block',
+        name: TypeTreeNodeName.Block,
         children: [
           {
-            name: 'variableAssignment',
+            name: TypeTreeNodeName.VariableAssignment,
             variableName: 'a',
             explicitTypeNode: {
-              name: 'functionCall',
+              name: TypeTreeNodeName.FunctionCall,
               callee: {
-                name: 'variableReference',
+                name: TypeTreeNodeName.VariableReference,
                 variableName: 'b',
               },
-              arguments: { name: 'tuple', items: [], hasValue: false },
+              arguments: {
+                name: TypeTreeNodeName.Tuple,
+                items: [],
+                hasValue: false,
+              },
               hasValue: false,
             },
             hasValue: false,
@@ -862,22 +908,22 @@ describe('function call', () => {
     test('with parameters', () => {
       const input = 'a: b(number)';
       const expected = createTypeTreeNode({
-        name: 'block',
+        name: TypeTreeNodeName.Block,
         children: [
           {
-            name: 'variableAssignment',
+            name: TypeTreeNodeName.VariableAssignment,
             variableName: 'a',
             explicitTypeNode: {
-              name: 'functionCall',
+              name: TypeTreeNodeName.FunctionCall,
               callee: {
-                name: 'variableReference',
+                name: TypeTreeNodeName.VariableReference,
                 variableName: 'b',
               },
               arguments: {
-                name: 'tuple',
+                name: TypeTreeNodeName.Tuple,
                 items: [
                   {
-                    name: 'number',
+                    name: TypeTreeNodeName.Number,
                     hasValue: false,
                   },
                 ],
@@ -896,23 +942,31 @@ describe('function call', () => {
     test('chained', () => {
       const input = 'a: b()()';
       const expected = createTypeTreeNode({
-        name: 'block',
+        name: TypeTreeNodeName.Block,
         children: [
           {
-            name: 'variableAssignment',
+            name: TypeTreeNodeName.VariableAssignment,
             variableName: 'a',
             explicitTypeNode: {
-              name: 'functionCall',
+              name: TypeTreeNodeName.FunctionCall,
               callee: {
-                name: 'functionCall',
+                name: TypeTreeNodeName.FunctionCall,
                 callee: {
-                  name: 'variableReference',
+                  name: TypeTreeNodeName.VariableReference,
                   variableName: 'b',
                 },
-                arguments: { name: 'tuple', items: [], hasValue: false },
+                arguments: {
+                  name: TypeTreeNodeName.Tuple,
+                  items: [],
+                  hasValue: false,
+                },
                 hasValue: false,
               },
-              arguments: { name: 'tuple', items: [], hasValue: false },
+              arguments: {
+                name: TypeTreeNodeName.Tuple,
+                items: [],
+                hasValue: false,
+              },
               hasValue: false,
             },
             hasValue: false,
