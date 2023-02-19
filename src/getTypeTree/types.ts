@@ -57,11 +57,12 @@ export type TypeNode =
   | VariableReferenceTypeNode
   | GenericTypeNode;
 
-type VariableAssignmentNode = BaseNode<TypeTreeNodeName.VariableAssignment> & {
-  variableName: string;
-  implicitTypeNode?: TypeNode;
-  explicitTypeNode?: TypeNode;
-};
+export type VariableAssignmentNode =
+  BaseNode<TypeTreeNodeName.VariableAssignment> & {
+    variableName: string;
+    implicitTypeNode?: TypeNode;
+    explicitTypeNode?: TypeNode;
+  };
 
 // just for development
 type InvalidNode = BaseNodeWithoutHasName<TypeTreeNodeName.Invalid>;

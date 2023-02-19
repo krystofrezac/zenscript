@@ -1,15 +1,78 @@
 import { checkTypeTreeNode } from '.';
-import { TypeTreeNodeName } from '../../getTypeTree/types';
-import { CheckTypeTreeNode, TypeTreeCheckerContext, Variable } from '../types';
+import {
+  TypeTreeNodeName,
+  VariableAssignmentNode,
+} from '../../getTypeTree/types';
+import {
+  CheckTypeTreeNode,
+  CheckTypeTreeNodeReturn,
+  TypeTreeCheckerContext,
+  Variable,
+} from '../types';
 import { TypeTreeCheckerErrorName } from '../types/errors';
 import { CheckerTypeNames } from '../types/types';
-import { addError } from './helpers/addError';
+import { addError, addErrors } from './helpers/addError';
 import { findVariableInCurrentScope } from './helpers/findVariableInCurrentScope';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 
 export const checkVariableAssignmentNode: CheckTypeTreeNode<
   TypeTreeNodeName.VariableAssignment
 > = (context, variableAssignment) => {
+  const alreadyDeclaredError = checkIfVariableWithNameIsAlreadyDeclared(
+    context,
+    variableAssignment,
+  );
+  if (alreadyDeclaredError) return alreadyDeclaredError;
+
+  const explicitNodeContext =
+    variableAssignment.explicitTypeNode &&
+    checkTypeTreeNode(context, variableAssignment.explicitTypeNode);
+  const implicitNodeContext =
+    variableAssignment.implicitTypeNode &&
+    checkTypeTreeNode(context, variableAssignment.implicitTypeNode);
+
+  const implicitExplicitErrors = [
+    ...(implicitNodeContext?.errors ?? []),
+    ...(explicitNodeContext?.errors ?? []),
+  ];
+  if (implicitExplicitErrors.length > 0) {
+    const contextWithErrors = addErrors(context, implicitExplicitErrors);
+    return getCheckNodeReturn(contextWithErrors, {
+      name: CheckerTypeNames.Empty,
+      hasValue: false,
+    });
+  }
+
+  const contextWithWithoutValueError = maybeAddWithoutValueError(
+    context,
+    implicitNodeContext,
+  );
+
+  const valueContext = explicitNodeContext ?? implicitNodeContext;
+  if (!valueContext)
+    return getCheckNodeReturn(contextWithWithoutValueError, {
+      name: CheckerTypeNames.Empty,
+      hasValue: false,
+    });
+
+  const contextWithVariable = addVariableToContext(
+    contextWithWithoutValueError,
+    {
+      variableName: variableAssignment.variableName,
+      variableType: valueContext.nodeType,
+    },
+  );
+
+  return getCheckNodeReturn(contextWithVariable, {
+    name: CheckerTypeNames.Empty,
+    hasValue: false,
+  });
+};
+
+const checkIfVariableWithNameIsAlreadyDeclared = (
+  context: TypeTreeCheckerContext,
+  variableAssignment: VariableAssignmentNode,
+) => {
   const foundVariableInCurrentScope = findVariableInCurrentScope(
     context,
     variableAssignment.variableName,
@@ -21,27 +84,22 @@ export const checkVariableAssignmentNode: CheckTypeTreeNode<
     });
     return getCheckNodeReturn(contextWithError, {
       name: CheckerTypeNames.Empty,
+      hasValue: false,
     });
   }
+};
 
-  const explicitNodeContext =
-    variableAssignment.explicitTypeNode &&
-    checkTypeTreeNode(context, variableAssignment.explicitTypeNode);
-  const implicitNodeContext =
-    variableAssignment.implicitTypeNode &&
-    checkTypeTreeNode(context, variableAssignment.implicitTypeNode);
-  const valueContext = explicitNodeContext ?? implicitNodeContext;
-  if (!valueContext)
-    return getCheckNodeReturn(context, { name: CheckerTypeNames.Empty });
-
-  const contextWithVariable = addVariableToContext(valueContext, {
-    variableName: variableAssignment.variableName,
-    variableType: valueContext.nodeType,
-  });
-
-  return getCheckNodeReturn(contextWithVariable, {
-    name: CheckerTypeNames.Empty,
-  });
+const maybeAddWithoutValueError = (
+  context: TypeTreeCheckerContext,
+  implicitNodeContext?: CheckTypeTreeNodeReturn,
+) => {
+  if (implicitNodeContext && !implicitNodeContext.nodeType.hasValue) {
+    return addError(context, {
+      name: TypeTreeCheckerErrorName.ExpressionWithoutValueUsedAsValue,
+      data: { expressionType: implicitNodeContext.nodeType },
+    });
+  }
+  return context;
 };
 
 const addVariableToContext = (

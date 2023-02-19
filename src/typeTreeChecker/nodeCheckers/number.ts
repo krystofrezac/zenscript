@@ -5,5 +5,9 @@ import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 
 export const checkNumberNode: CheckTypeTreeNode<TypeTreeNodeName.Number> = (
   context,
-  _number,
-) => getCheckNodeReturn(context, { name: CheckerTypeNames.Number });
+  number,
+) =>
+  getCheckNodeReturn(context, {
+    name: CheckerTypeNames.Number,
+    hasValue: number.hasValue,
+  });

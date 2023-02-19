@@ -6,12 +6,15 @@ export enum CheckerTypeNames {
 
 type CheckerTypeBase<TName extends CheckerTypeNames> = {
   name: TName;
+  hasValue: boolean;
 };
 
 type CheckerNumberType = CheckerTypeBase<CheckerTypeNames.Number>;
 type CheckerStringType = CheckerTypeBase<CheckerTypeNames.String>;
 
-type CheckerEmptyType = CheckerTypeBase<CheckerTypeNames.Empty>;
+type CheckerEmptyType = CheckerTypeBase<CheckerTypeNames.Empty> & {
+  hasValue: false;
+};
 
 export type CheckerType =
   | CheckerNumberType

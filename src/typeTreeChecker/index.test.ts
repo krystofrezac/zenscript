@@ -4,6 +4,7 @@ import { getTypeTree } from '../getTypeTree';
 import { parse } from '../parser';
 import { createSemantics } from '../semantics';
 import { TypeTreeCheckerErrorName } from './types/errors';
+import { CheckerTypeNames } from './types/types';
 
 const semantics = createSemantics();
 const getInput = (code: string) => {
@@ -12,7 +13,7 @@ const getInput = (code: string) => {
   return getTypeTree(adapter);
 };
 
-describe('assigning to variable', () => {
+describe('assigning to variable - non type checks', () => {
   test('assigning expression', () => {
     const input = getInput('a = 1');
     const expected: CheckTypeTreeReturn = { errors: [] };
@@ -65,6 +66,24 @@ describe('assigning to variable', () => {
       }
     `);
     const expected: CheckTypeTreeReturn = { errors: [] };
+    const result = checkTypeTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('assigning variable without value', () => {
+    const input = getInput(`
+      a: number 
+      b = a
+    `);
+    const expected: CheckTypeTreeReturn = {
+      errors: [
+        {
+          name: TypeTreeCheckerErrorName.ExpressionWithoutValueUsedAsValue,
+          data: {
+            expressionType: { name: CheckerTypeNames.Number, hasValue: false },
+          },
+        },
+      ],
+    };
     const result = checkTypeTree(input);
     expect(result).toEqual(expected);
   });

@@ -20,6 +20,7 @@ export const checkBlockNode: CheckTypeTreeNode<TypeTreeNodeName.Block> = (
     (previousContext, child) => checkTypeTreeNode(previousContext, child),
     getCheckNodeReturn(contextWithAddedVariableScope, {
       name: CheckerTypeNames.Empty,
+      hasValue: false,
     }),
   );
   const contextWithRemovedVariableScope: TypeTreeCheckerContext = {

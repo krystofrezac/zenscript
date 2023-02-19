@@ -20,6 +20,7 @@ export const checkVariableReferenceNode: CheckTypeTreeNode<
     });
     return getCheckNodeReturn(contextWithError, {
       name: CheckerTypeNames.Empty,
+      hasValue: false,
     });
   }
 

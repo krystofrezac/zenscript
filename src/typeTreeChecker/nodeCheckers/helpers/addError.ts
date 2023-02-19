@@ -8,3 +8,11 @@ export const addError = (
   ...context,
   errors: [...context.errors, error],
 });
+
+export const addErrors = (
+  context: TypeTreeCheckerContext,
+  errors: TypeTreeCheckerError[],
+): TypeTreeCheckerContext => ({
+  ...context,
+  errors: [...context.errors, ...errors],
+});
