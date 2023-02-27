@@ -15,6 +15,7 @@ module.exports = {
       'error',
       { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
     ],
+    '@typescript-eslint/no-duplicate-enum-values': 'error',
 
     'prefer-arrow-functions/prefer-arrow-functions': [
       'error',

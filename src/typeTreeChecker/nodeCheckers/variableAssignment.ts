@@ -12,6 +12,7 @@ import {
 import { TypeTreeCheckerErrorName } from '../types/errors';
 import { CheckerTypeNames } from '../types/types';
 import { addError, addErrors } from './helpers/addError';
+import { areTypesCompatible } from './helpers/areTypesCompatible';
 import { findVariableInCurrentScope } from './helpers/findVariableInCurrentScope';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 
@@ -55,8 +56,13 @@ export const checkVariableAssignmentNode: CheckTypeTreeNode<
       hasValue: false,
     });
 
-  const contextWithVariable = addVariableToContext(
+  const contextWithTypeMismatchError = maybeAddTypeMismatchError(
     contextWithWithoutValueError,
+    { explicitNodeContext, implicitNodeContext },
+  );
+
+  const contextWithVariable = addVariableToContext(
+    contextWithTypeMismatchError,
     {
       variableName: variableAssignment.variableName,
       variableType: valueContext.nodeType,
@@ -97,6 +103,34 @@ const maybeAddWithoutValueError = (
     return addError(context, {
       name: TypeTreeCheckerErrorName.ExpressionWithoutValueUsedAsValue,
       data: { expressionType: implicitNodeContext.nodeType },
+    });
+  }
+  return context;
+};
+
+const maybeAddTypeMismatchError = (
+  context: TypeTreeCheckerContext,
+  {
+    explicitNodeContext,
+    implicitNodeContext,
+  }: {
+    explicitNodeContext?: CheckTypeTreeNodeReturn;
+    implicitNodeContext?: CheckTypeTreeNodeReturn;
+  },
+) => {
+  if (!explicitNodeContext || !implicitNodeContext) return context;
+  if (
+    !areTypesCompatible(
+      explicitNodeContext.nodeType,
+      implicitNodeContext?.nodeType,
+    )
+  ) {
+    return addError(context, {
+      name: TypeTreeCheckerErrorName.TypeMismatch,
+      data: {
+        expected: explicitNodeContext.nodeType,
+        received: implicitNodeContext.nodeType,
+      },
     });
   }
   return context;

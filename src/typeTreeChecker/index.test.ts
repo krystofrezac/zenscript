@@ -88,6 +88,32 @@ describe('assigning to variable - non type checks', () => {
     expect(result).toEqual(expected);
   });
 });
+describe('assigning to variable - basic type checks', () => {
+  test('assigning same value and type', () => {
+    const input = getInput('a: number = 1');
+    const expected: CheckTypeTreeReturn = {
+      errors: [],
+    };
+    const result = checkTypeTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('assigning different value and type', () => {
+    const input = getInput('a: string = 1');
+    const expected: CheckTypeTreeReturn = {
+      errors: [
+        {
+          name: TypeTreeCheckerErrorName.TypeMismatch,
+          data: {
+            expected: { name: CheckerTypeNames.String, hasValue: false },
+            received: { name: CheckerTypeNames.Number, hasValue: true },
+          },
+        },
+      ],
+    };
+    const result = checkTypeTree(input);
+    expect(result).toEqual(expected);
+  });
+});
 describe('string', () => {
   test('assigning only value', () => {
     const input = getInput('a = ""');
