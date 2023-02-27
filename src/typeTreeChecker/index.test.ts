@@ -88,3 +88,29 @@ describe('assigning to variable - non type checks', () => {
     expect(result).toEqual(expected);
   });
 });
+describe('string', () => {
+  test('assigning only value', () => {
+    const input = getInput('a = ""');
+    const expected: CheckTypeTreeReturn = {
+      errors: [],
+    };
+    const result = checkTypeTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('assigning only type', () => {
+    const input = getInput('a: string');
+    const expected: CheckTypeTreeReturn = {
+      errors: [],
+    };
+    const result = checkTypeTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('assigning same value and type', () => {
+    const input = getInput('a: string = ""');
+    const expected: CheckTypeTreeReturn = {
+      errors: [],
+    };
+    const result = checkTypeTree(input);
+    expect(result).toEqual(expected);
+  });
+});
