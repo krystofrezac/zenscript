@@ -172,3 +172,29 @@ describe('string', () => {
     expect(result).toEqual(expected);
   });
 });
+describe('number', () => {
+  test('assigning only value', () => {
+    const input = getInput('a = 1');
+    const expected: CheckTypeTreeReturn = {
+      errors: [],
+    };
+    const result = checkTypeTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('assigning only type', () => {
+    const input = getInput('a: number');
+    const expected: CheckTypeTreeReturn = {
+      errors: [],
+    };
+    const result = checkTypeTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('assigning same value and type', () => {
+    const input = getInput('a: number = 1');
+    const expected: CheckTypeTreeReturn = {
+      errors: [],
+    };
+    const result = checkTypeTree(input);
+    expect(result).toEqual(expected);
+  });
+});
