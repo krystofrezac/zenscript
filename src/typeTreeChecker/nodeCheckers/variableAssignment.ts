@@ -35,6 +35,7 @@ export const checkVariableAssignmentNode: CheckTypeTreeNode<
     variableAssignment.implicitTypeNode &&
     checkTypeTreeNode(context, variableAssignment.implicitTypeNode);
 
+  // Errors that originated from explicit and implicit nodes
   const implicitExplicitErrors = [
     ...getNewErrors(implicitNodeContext?.errors ?? [], context.errors),
     ...getNewErrors(explicitNodeContext?.errors ?? [], context.errors),
@@ -47,18 +48,21 @@ export const checkVariableAssignmentNode: CheckTypeTreeNode<
     });
   }
 
+  // Error when trying to use variable without value as value
   const contextWithWithoutValueError = maybeAddWithoutValueError(
     context,
     implicitNodeContext,
   );
 
   const valueContext = explicitNodeContext ?? implicitNodeContext;
+  // When explicit and implicit nodes are missing - should not happen, it's just for TS
   if (!valueContext)
     return getCheckNodeReturn(contextWithWithoutValueError, {
       name: CheckerTypeNames.Empty,
       hasValue: false,
     });
 
+  // Error when explicit and implicit types are not compatible
   const contextWithTypeMismatchError = maybeAddTypeMismatchError(
     contextWithWithoutValueError,
     {
@@ -68,6 +72,7 @@ export const checkVariableAssignmentNode: CheckTypeTreeNode<
     },
   );
 
+  // Add variable to context
   const contextWithVariable = addVariableToContext(
     contextWithTypeMismatchError,
     {
