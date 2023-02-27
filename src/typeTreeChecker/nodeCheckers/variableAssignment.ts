@@ -108,6 +108,7 @@ const checkIfVariableWithNameIsAlreadyDeclared = (
       hasValue: false,
     });
   }
+  return undefined;
 };
 
 const maybeAddWithoutValueError = (
