@@ -1,14 +1,14 @@
+import { readFile } from 'fs/promises';
+import { join } from 'path';
 import { getTypeTree } from './getTypeTree';
 import { parse } from './parser';
 import { createSemantics } from './semantics';
+import { checkTypeTree } from './typeTreeChecker';
 
-const code = `  
-  a = 1
-`;
-
-const run = () => {
+const run = async () => {
   const semantics = createSemantics();
 
+  const code = await readFile(join(__dirname, '../input'), 'utf-8');
   const parsed = parse(code);
   if (parsed.failed()) {
     console.log('Parsing failed!');
@@ -16,9 +16,7 @@ const run = () => {
   }
   const adapter = semantics(parsed);
   const typeTree = getTypeTree(adapter);
-  console.log(JSON.stringify(typeTree, undefined, 2));
-  // if (checked) {
-  //   console.log(transpile(adapter));
-  // }
+  const checkResult = checkTypeTree(typeTree);
+  console.log(JSON.stringify(checkResult, undefined, 2));
 };
 run();

@@ -4,7 +4,7 @@ export enum TypeTreeCheckerErrorName {
   IdentifierAlreadyDeclaredInThisScope = 'IdentifierAlreadyDeclaredInThisScope',
   UnknownIdentifier = 'UnknownIdentifier',
   ExpressionWithoutValueUsedAsValue = 'VariableWithoutValueUsedAsValue',
-  TypeMismatch = 'TypeMismatch',
+  VariableTypeMismatch = 'VariableTypeMismatch',
 }
 type TypeTreeCheckerErrorBase<
   TName extends TypeTreeCheckerErrorName,
@@ -29,8 +29,9 @@ export type TypeTreeCheckerError =
       }
     >
   | TypeTreeCheckerErrorBase<
-      TypeTreeCheckerErrorName.TypeMismatch,
+      TypeTreeCheckerErrorName.VariableTypeMismatch,
       {
+        variableName: string;
         expected: CheckerType;
         received: CheckerType;
       }

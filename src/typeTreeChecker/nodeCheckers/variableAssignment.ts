@@ -9,7 +9,10 @@ import {
   TypeTreeCheckerContext,
   Variable,
 } from '../types';
-import { TypeTreeCheckerErrorName } from '../types/errors';
+import {
+  TypeTreeCheckerError,
+  TypeTreeCheckerErrorName,
+} from '../types/errors';
 import { CheckerTypeNames } from '../types/types';
 import { addError, addErrors } from './helpers/addError';
 import { areTypesCompatible } from './helpers/areTypesCompatible';
@@ -33,8 +36,8 @@ export const checkVariableAssignmentNode: CheckTypeTreeNode<
     checkTypeTreeNode(context, variableAssignment.implicitTypeNode);
 
   const implicitExplicitErrors = [
-    ...(implicitNodeContext?.errors ?? []),
-    ...(explicitNodeContext?.errors ?? []),
+    ...getNewErrors(implicitNodeContext?.errors ?? [], context.errors),
+    ...getNewErrors(explicitNodeContext?.errors ?? [], context.errors),
   ];
   if (implicitExplicitErrors.length > 0) {
     const contextWithErrors = addErrors(context, implicitExplicitErrors);
@@ -58,14 +61,21 @@ export const checkVariableAssignmentNode: CheckTypeTreeNode<
 
   const contextWithTypeMismatchError = maybeAddTypeMismatchError(
     contextWithWithoutValueError,
-    { explicitNodeContext, implicitNodeContext },
+    {
+      explicitNodeContext,
+      implicitNodeContext,
+      variableName: variableAssignment.variableName,
+    },
   );
 
   const contextWithVariable = addVariableToContext(
     contextWithTypeMismatchError,
     {
       variableName: variableAssignment.variableName,
-      variableType: valueContext.nodeType,
+      variableType: {
+        ...valueContext.nodeType,
+        hasValue: implicitNodeContext?.nodeType.hasValue ?? false,
+      },
     },
   );
 
@@ -113,9 +123,11 @@ const maybeAddTypeMismatchError = (
   {
     explicitNodeContext,
     implicitNodeContext,
+    variableName,
   }: {
     explicitNodeContext?: CheckTypeTreeNodeReturn;
     implicitNodeContext?: CheckTypeTreeNodeReturn;
+    variableName: string;
   },
 ) => {
   if (!explicitNodeContext || !implicitNodeContext) return context;
@@ -126,15 +138,21 @@ const maybeAddTypeMismatchError = (
     )
   ) {
     return addError(context, {
-      name: TypeTreeCheckerErrorName.TypeMismatch,
+      name: TypeTreeCheckerErrorName.VariableTypeMismatch,
       data: {
         expected: explicitNodeContext.nodeType,
         received: implicitNodeContext.nodeType,
+        variableName,
       },
     });
   }
   return context;
 };
+
+const getNewErrors = (
+  errors: TypeTreeCheckerError[],
+  originalErrors: TypeTreeCheckerError[],
+) => errors.slice(originalErrors.length);
 
 const addVariableToContext = (
   context: TypeTreeCheckerContext,

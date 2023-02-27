@@ -87,6 +87,17 @@ describe('assigning to variable - non type checks', () => {
     const result = checkTypeTree(input);
     expect(result).toEqual(expected);
   });
+  test('assigning variable with value', () => {
+    const input = getInput(`
+      a: number = 1
+      b = a
+    `);
+    const expected: CheckTypeTreeReturn = {
+      errors: [],
+    };
+    const result = checkTypeTree(input);
+    expect(result).toEqual(expected);
+  });
 });
 describe('assigning to variable - basic type checks', () => {
   test('assigning same value and type', () => {
@@ -102,8 +113,29 @@ describe('assigning to variable - basic type checks', () => {
     const expected: CheckTypeTreeReturn = {
       errors: [
         {
-          name: TypeTreeCheckerErrorName.TypeMismatch,
+          name: TypeTreeCheckerErrorName.VariableTypeMismatch,
           data: {
+            variableName: 'a',
+            expected: { name: CheckerTypeNames.String, hasValue: false },
+            received: { name: CheckerTypeNames.Number, hasValue: true },
+          },
+        },
+      ],
+    };
+    const result = checkTypeTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('assigning different value and type and then assigning again', () => {
+    const input = getInput(`
+      a: string = 1
+      b: string = a 
+      `);
+    const expected: CheckTypeTreeReturn = {
+      errors: [
+        {
+          name: TypeTreeCheckerErrorName.VariableTypeMismatch,
+          data: {
+            variableName: 'a',
             expected: { name: CheckerTypeNames.String, hasValue: false },
             received: { name: CheckerTypeNames.Number, hasValue: true },
           },

@@ -12,9 +12,7 @@ type CheckerTypeBase<TName extends CheckerTypeNames> = {
 type CheckerNumberType = CheckerTypeBase<CheckerTypeNames.Number>;
 type CheckerStringType = CheckerTypeBase<CheckerTypeNames.String>;
 
-type CheckerEmptyType = CheckerTypeBase<CheckerTypeNames.Empty> & {
-  hasValue: false;
-};
+type CheckerEmptyType = CheckerTypeBase<CheckerTypeNames.Empty>;
 
 export type CheckerType =
   | CheckerNumberType
