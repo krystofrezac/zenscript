@@ -9,15 +9,13 @@ import {
   TypeTreeCheckerContext,
   Variable,
 } from '../types';
-import {
-  TypeTreeCheckerError,
-  TypeTreeCheckerErrorName,
-} from '../types/errors';
+import { TypeTreeCheckerErrorName } from '../types/errors';
 import { CheckerTypeNames } from '../types/types';
 import { addError, addErrors } from './helpers/addError';
 import { areTypesCompatible } from './helpers/areTypesCompatible';
 import { findVariableInCurrentScope } from './helpers/findVariableInCurrentScope';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
+import { getNewErrors } from './helpers/getNewErrors';
 
 export const checkVariableAssignmentNode: CheckTypeTreeNode<
   TypeTreeNodeName.VariableAssignment
@@ -154,11 +152,6 @@ const maybeAddTypeMismatchError = (
   }
   return context;
 };
-
-const getNewErrors = (
-  errors: TypeTreeCheckerError[],
-  originalErrors: TypeTreeCheckerError[],
-) => errors.slice(originalErrors.length);
 
 const addVariableToContext = (
   context: TypeTreeCheckerContext,

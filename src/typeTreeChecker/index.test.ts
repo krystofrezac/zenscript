@@ -261,3 +261,88 @@ describe('block', () => {
     expect(result).toEqual(expected);
   });
 });
+describe('functions', () => {
+  describe('without parameters', () => {
+    test('value assignment', () => {
+      const input = getInput('a = () 1');
+      const expected: CheckTypeTreeReturn = {
+        errors: [],
+      };
+      const result = checkTypeTree(input);
+      expect(expected).toEqual(result);
+    });
+    test('type assignment', () => {
+      const input = getInput('a : () number');
+      const expected: CheckTypeTreeReturn = {
+        errors: [],
+      };
+      const result = checkTypeTree(input);
+      expect(expected).toEqual(result);
+    });
+    test('assigning value and same explicit type', () => {
+      const input = getInput('a : () number = () 1');
+      const expected: CheckTypeTreeReturn = {
+        errors: [],
+      };
+      const result = checkTypeTree(input);
+      expect(expected).toEqual(result);
+    });
+    test('assigning value and explicit type with different return', () => {
+      const input = getInput('a : () string = () 1');
+      const expected: CheckTypeTreeReturn = {
+        errors: [
+          {
+            name: TypeTreeCheckerErrorName.VariableTypeMismatch,
+            data: {
+              expected: {
+                name: CheckerTypeNames.Function,
+                parameters: {
+                  name: CheckerTypeNames.Tuple,
+                  items: [],
+                  hasValue: false,
+                },
+                return: {
+                  name: CheckerTypeNames.String,
+                  hasValue: false,
+                },
+                hasValue: false,
+              },
+              received: {
+                name: CheckerTypeNames.Function,
+                parameters: {
+                  name: CheckerTypeNames.Tuple,
+                  items: [],
+                  hasValue: true,
+                },
+                return: {
+                  name: CheckerTypeNames.Number,
+                  hasValue: true,
+                },
+                hasValue: true,
+              },
+              variableName: 'a',
+            },
+          },
+        ],
+      };
+      const result = checkTypeTree(input);
+      expect(expected).toEqual(result);
+    });
+    test('propagating errors from function body', () => {
+      const input = getInput('a = () b');
+      const expected: CheckTypeTreeReturn = {
+        errors: [
+          {
+            name: TypeTreeCheckerErrorName.UnknownIdentifier,
+            data: {
+              identifier: 'b',
+            },
+          },
+        ],
+      };
+      const result = checkTypeTree(input);
+      expect(result).toEqual(expected);
+    });
+    // TODO: function calls
+  });
+});

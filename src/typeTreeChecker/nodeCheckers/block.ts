@@ -7,15 +7,18 @@ import {
 } from '../types';
 import { CheckerTypeNames } from '../types/types';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
+import {
+  addVariableScope,
+  removeVariableScope,
+} from './helpers/variableScopes';
 
 export const checkBlockNode: CheckTypeTreeNode<TypeTreeNodeName.Block> = (
   context,
   block,
 ) => {
-  const contextWithAddedVariableScope: TypeTreeCheckerContext = {
-    ...context,
-    variableScopes: [...context.variableScopes, []],
-  };
+  const contextWithAddedVariableScope: TypeTreeCheckerContext =
+    addVariableScope(context);
+
   const contextAfterChildren = block.children.reduce<CheckTypeTreeNodeReturn>(
     (previousContext, child) => checkTypeTreeNode(previousContext, child),
     getCheckNodeReturn(contextWithAddedVariableScope, {
@@ -23,10 +26,10 @@ export const checkBlockNode: CheckTypeTreeNode<TypeTreeNodeName.Block> = (
       hasValue: false,
     }),
   );
-  const contextWithRemovedVariableScope: TypeTreeCheckerContext = {
-    ...contextAfterChildren,
-    variableScopes: context.variableScopes.slice(0, -1),
-  };
+
+  const contextWithRemovedVariableScope: TypeTreeCheckerContext =
+    removeVariableScope(contextAfterChildren);
+
   return getCheckNodeReturn(
     contextWithRemovedVariableScope,
     contextAfterChildren.nodeType,
