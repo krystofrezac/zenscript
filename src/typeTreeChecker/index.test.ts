@@ -198,3 +198,66 @@ describe('number', () => {
     expect(result).toEqual(expected);
   });
 });
+describe('block', () => {
+  test('assigning block with one expression', () => {
+    const input = getInput(`
+      a = { 1 } 
+    `);
+    const expected: CheckTypeTreeReturn = { errors: [] };
+    const result = checkTypeTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('assigning block with more expressions', () => {
+    const input = getInput(`
+      a = { 
+        b = 2
+        c = b
+        c
+      } 
+    `);
+    const expected: CheckTypeTreeReturn = { errors: [] };
+    const result = checkTypeTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('assigning block with more expressions and same explicit type', () => {
+    const input = getInput(`
+      a: number = { 
+        b = 2
+        c = b
+        c
+      } 
+    `);
+    const expected: CheckTypeTreeReturn = { errors: [] };
+    const result = checkTypeTree(input);
+    expect(result).toEqual(expected);
+  });
+  test('assigning block with more expressions and different explicit type', () => {
+    const input = getInput(`
+      a: string = { 
+        b = 2
+        c = b
+        c
+      } 
+    `);
+    const expected: CheckTypeTreeReturn = {
+      errors: [
+        {
+          name: TypeTreeCheckerErrorName.VariableTypeMismatch,
+          data: {
+            expected: {
+              name: CheckerTypeNames.String,
+              hasValue: false,
+            },
+            received: {
+              name: CheckerTypeNames.Number,
+              hasValue: true,
+            },
+            variableName: 'a',
+          },
+        },
+      ],
+    };
+    const result = checkTypeTree(input);
+    expect(result).toEqual(expected);
+  });
+});
