@@ -1,6 +1,7 @@
 import { TypeTreeNodeName } from '../../getTypeTree/types';
 import { CheckTypeTreeNode } from '../types';
 import { checkBlockNode } from './block';
+import { checkFunctionCall } from './functionCall';
 import { checkFunctionDeclaration } from './functionDeclaration';
 import { checkNumberNode } from './number';
 import { checkStringNode } from './string';
@@ -17,6 +18,7 @@ export const checkTypeTreeNode: CheckTypeTreeNode = (context, typeTree) => {
     [TypeTreeNodeName.Block]: checkBlockNode,
 
     [TypeTreeNodeName.FunctionDeclaration]: checkFunctionDeclaration,
+    [TypeTreeNodeName.FunctionCall]: checkFunctionCall,
 
     [TypeTreeNodeName.VariableAssignment]: checkVariableAssignmentNode,
     [TypeTreeNodeName.VariableReference]: checkVariableReferenceNode,

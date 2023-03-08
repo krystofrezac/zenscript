@@ -3,9 +3,10 @@ import { CheckerType } from './types';
 export enum TypeTreeCheckerErrorName {
   IdentifierAlreadyDeclaredInThisScope = 'IdentifierAlreadyDeclaredInThisScope',
   UnknownIdentifier = 'UnknownIdentifier',
-  ExpressionWithoutValueUsedAsValue = 'VariableWithoutValueUsedAsValue',
+  ExpressionWithoutValueUsedAsValue = 'ExpressionWithoutValueUsedAsValue',
   VariableTypeMismatch = 'VariableTypeMismatch',
   EmptyBlock = 'EmptyBlock',
+  CallingNonCallableExpression = 'CallingNonCallableExpression',
 }
 type TypeTreeCheckerErrorBase<
   TName extends TypeTreeCheckerErrorName,
@@ -37,4 +38,10 @@ export type TypeTreeCheckerError =
         received: CheckerType;
       }
     >
-  | TypeTreeCheckerErrorBase<TypeTreeCheckerErrorName.EmptyBlock>;
+  | TypeTreeCheckerErrorBase<TypeTreeCheckerErrorName.EmptyBlock>
+  | TypeTreeCheckerErrorBase<
+      TypeTreeCheckerErrorName.CallingNonCallableExpression,
+      {
+        callee: CheckerType;
+      }
+    >;
