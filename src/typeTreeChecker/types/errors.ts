@@ -5,6 +5,7 @@ export enum TypeTreeCheckerErrorName {
   UnknownIdentifier = 'UnknownIdentifier',
   ExpressionWithoutValueUsedAsValue = 'VariableWithoutValueUsedAsValue',
   VariableTypeMismatch = 'VariableTypeMismatch',
+  EmptyBlock = 'EmptyBlock',
 }
 type TypeTreeCheckerErrorBase<
   TName extends TypeTreeCheckerErrorName,
@@ -35,4 +36,5 @@ export type TypeTreeCheckerError =
         expected: CheckerType;
         received: CheckerType;
       }
-    >;
+    >
+  | TypeTreeCheckerErrorBase<TypeTreeCheckerErrorName.EmptyBlock>;

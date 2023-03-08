@@ -260,6 +260,16 @@ describe('block', () => {
     const result = checkTypeTree(input);
     expect(result).toEqual(expected);
   });
+  test('assigning block with no expression', () => {
+    const input = getInput(`
+      a = { } 
+    `);
+    const expected: CheckTypeTreeReturn = {
+      errors: [{ name: TypeTreeCheckerErrorName.EmptyBlock, data: {} }],
+    };
+    const result = checkTypeTree(input);
+    expect(result).toEqual(expected);
+  });
 });
 describe('functions', () => {
   describe('without parameters', () => {
