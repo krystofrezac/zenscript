@@ -3,6 +3,7 @@ import { checkTypeTree, CheckTypeTreeReturn } from '.';
 import { getTypeTree } from '../getTypeTree';
 import { parse } from '../parser';
 import { createSemantics } from '../semantics';
+import { VariableScope } from './types';
 import { TypeTreeCheckerErrorName } from './types/errors';
 import { CheckerTypeNames } from './types/types';
 
@@ -475,6 +476,264 @@ describe('functions', () => {
         };
         const result = checkTypeTree(input);
         expect(result).toEqual(expected);
+      });
+    });
+  });
+  describe('with simple parameters (not generics)', () => {
+    describe('calling', () => {
+      test('single parameter', () => {
+        const input = getInput('a: string = stringFunction("")');
+        const defaultVariables: VariableScope = [
+          {
+            variableName: 'stringFunction',
+            variableType: {
+              name: CheckerTypeNames.Function,
+              parameters: {
+                name: CheckerTypeNames.Tuple,
+                items: [
+                  {
+                    name: CheckerTypeNames.String,
+                    hasValue: true,
+                  },
+                ],
+                hasValue: true,
+              },
+              return: {
+                name: CheckerTypeNames.String,
+                hasValue: true,
+              },
+              hasValue: true,
+            },
+          },
+        ];
+        const expected: CheckTypeTreeReturn = {
+          errors: [],
+        };
+        const result = checkTypeTree(input, defaultVariables);
+        expect(result).toEqual(expected);
+      });
+      test('multiple parameters', () => {
+        const input = getInput(
+          'a: string = stringNumberNumberFunction("", 1, 2)',
+        );
+        const defaultVariables: VariableScope = [
+          {
+            variableName: 'stringNumberNumberFunction',
+            variableType: {
+              name: CheckerTypeNames.Function,
+              parameters: {
+                name: CheckerTypeNames.Tuple,
+                items: [
+                  {
+                    name: CheckerTypeNames.String,
+                    hasValue: true,
+                  },
+                  {
+                    name: CheckerTypeNames.Number,
+                    hasValue: true,
+                  },
+                  {
+                    name: CheckerTypeNames.Number,
+                    hasValue: true,
+                  },
+                ],
+                hasValue: true,
+              },
+              return: { name: CheckerTypeNames.String, hasValue: true },
+              hasValue: true,
+            },
+          },
+        ];
+        const expected: CheckTypeTreeReturn = {
+          errors: [],
+        };
+        const result = checkTypeTree(input, defaultVariables);
+        expect(result).toEqual(expected);
+      });
+      test('explicit implicit mismatch - missing parameter', () => {
+        const input = getInput('a: string = stringFunction()');
+        const defaultVariables: VariableScope = [
+          {
+            variableName: 'stringFunction',
+            variableType: {
+              name: CheckerTypeNames.Function,
+              parameters: {
+                name: CheckerTypeNames.Tuple,
+                items: [
+                  {
+                    name: CheckerTypeNames.String,
+                    hasValue: true,
+                  },
+                ],
+                hasValue: true,
+              },
+              return: { name: CheckerTypeNames.String, hasValue: true },
+              hasValue: true,
+            },
+          },
+        ];
+        const expected: CheckTypeTreeReturn = {
+          errors: [
+            {
+              name: TypeTreeCheckerErrorName.FunctionParametersMismatch,
+              data: {
+                expected: {
+                  name: CheckerTypeNames.Tuple,
+                  items: [{ name: CheckerTypeNames.String, hasValue: true }],
+                  hasValue: true,
+                },
+                received: {
+                  name: CheckerTypeNames.Tuple,
+                  items: [],
+                  hasValue: true,
+                },
+              },
+            },
+          ],
+        };
+        const result = checkTypeTree(input, defaultVariables);
+        expect(result).toEqual(expected);
+      });
+    });
+    // TODO:
+    describe.skip('declarations', () => {
+      test.only('single parameter', () => {
+        const input = getInput(`
+          a: (string) string = (param) stringFunction(param)
+        `);
+        const defaultVariables: VariableScope = [
+          {
+            variableName: 'stringFunction',
+            variableType: {
+              name: CheckerTypeNames.Function,
+              parameters: {
+                name: CheckerTypeNames.Tuple,
+                items: [{ name: CheckerTypeNames.String, hasValue: true }],
+                hasValue: true,
+              },
+              return: {
+                name: CheckerTypeNames.String,
+                hasValue: true,
+              },
+              hasValue: true,
+            },
+          },
+        ];
+        const expected: CheckTypeTreeReturn = { errors: [] };
+        const result = checkTypeTree(input, defaultVariables);
+        expect(expected).toEqual(result);
+      });
+      test('multiple parameters', () => {
+        const input = getInput(`
+          a: (string, number, number) string 
+           = (paramA, paramB, paramC) stringNumberNumberFunction(paramA, paramB, paramC)
+        `);
+        const defaultVariables: VariableScope = [
+          {
+            variableName: 'stringFunction',
+            variableType: {
+              name: CheckerTypeNames.Function,
+              parameters: {
+                name: CheckerTypeNames.Tuple,
+                items: [
+                  { name: CheckerTypeNames.String, hasValue: true },
+                  { name: CheckerTypeNames.Number, hasValue: true },
+                  { name: CheckerTypeNames.Number, hasValue: true },
+                ],
+                hasValue: true,
+              },
+              return: {
+                name: CheckerTypeNames.String,
+                hasValue: true,
+              },
+              hasValue: true,
+            },
+          },
+        ];
+        const expected: CheckTypeTreeReturn = { errors: [] };
+        const result = checkTypeTree(input, defaultVariables);
+        expect(expected).toEqual(result);
+      });
+      test('explicit implicit mismatch - missing parameter', () => {
+        const input = getInput(`
+          a: (string, number, number) string 
+           = (paramA, paramB) stringNumberNumberFunction(paramA, paramB)
+        `);
+        const defaultVariables: VariableScope = [
+          {
+            variableName: 'stringFunction',
+            variableType: {
+              name: CheckerTypeNames.Function,
+              parameters: {
+                name: CheckerTypeNames.Tuple,
+                items: [
+                  { name: CheckerTypeNames.String, hasValue: true },
+                  { name: CheckerTypeNames.Number, hasValue: true },
+                ],
+                hasValue: true,
+              },
+              return: {
+                name: CheckerTypeNames.String,
+                hasValue: true,
+              },
+              hasValue: true,
+            },
+          },
+        ];
+        const expected: CheckTypeTreeReturn = {
+          errors: [
+            {
+              name: TypeTreeCheckerErrorName.VariableTypeMismatch,
+              data: {
+                variableName: 'a',
+                expected: {
+                  name: CheckerTypeNames.Function,
+                  parameters: {
+                    name: CheckerTypeNames.Tuple,
+                    items: [
+                      {
+                        name: CheckerTypeNames.String,
+                        hasValue: false,
+                      },
+                      {
+                        name: CheckerTypeNames.Number,
+                        hasValue: false,
+                      },
+                      {
+                        name: CheckerTypeNames.Number,
+                        hasValue: false,
+                      },
+                    ],
+                    hasValue: false,
+                  },
+                  return: { name: CheckerTypeNames.String, hasValue: false },
+                  hasValue: false,
+                },
+                received: {
+                  name: CheckerTypeNames.Function,
+                  parameters: {
+                    name: CheckerTypeNames.Tuple,
+                    items: [
+                      {
+                        name: CheckerTypeNames.String,
+                        hasValue: true,
+                      },
+                      {
+                        name: CheckerTypeNames.Number,
+                        hasValue: true,
+                      },
+                    ],
+                    hasValue: true,
+                  },
+                  return: { name: CheckerTypeNames.String, hasValue: true },
+                  hasValue: true,
+                },
+              },
+            },
+          ],
+        };
+        const result = checkTypeTree(input, defaultVariables);
+        expect(expected).toEqual(result);
       });
     });
   });

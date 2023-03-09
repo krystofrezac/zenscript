@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "author": "Kryštof Řezáč",
   "scripts": {
+    "build": "tsc",
     "dev": "npm run gen:bundle && tsc --watch",
     "start": "node dist/index.js",
     "test": "vitest",

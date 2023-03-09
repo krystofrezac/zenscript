@@ -6,14 +6,16 @@ export type Variable = {
   variableName: string;
   variableType: CheckerType;
 };
-type VariableScope = Variable[];
+export type VariableScope = Variable[];
 
 export type TypeTreeCheckerContext = {
   errors: TypeTreeCheckerError[];
   variableScopes: VariableScope[];
 };
-export type CheckTypeTreeNodeReturn = TypeTreeCheckerContext & {
-  nodeType: CheckerType;
+export type CheckTypeTreeNodeReturn<
+  TNodeType extends CheckerType = CheckerType,
+> = TypeTreeCheckerContext & {
+  nodeType: TNodeType;
 };
 export type CheckTypeTreeNode<
   TNodeName extends TypeTreeNodeName = TypeTreeNodeName,

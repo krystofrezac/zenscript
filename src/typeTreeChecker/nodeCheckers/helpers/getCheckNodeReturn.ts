@@ -1,7 +1,7 @@
 import { CheckTypeTreeNodeReturn, TypeTreeCheckerContext } from '../../types';
 import { CheckerType } from '../../types/types';
 
-export const getCheckNodeReturn = (
+export const getCheckNodeReturn = <TNodeType extends CheckerType = CheckerType>(
   context: TypeTreeCheckerContext,
-  type: CheckerType,
-): CheckTypeTreeNodeReturn => ({ ...context, nodeType: type });
+  type: TNodeType,
+): CheckTypeTreeNodeReturn<TNodeType> => ({ ...context, nodeType: type });

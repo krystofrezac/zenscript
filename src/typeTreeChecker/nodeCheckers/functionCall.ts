@@ -4,12 +4,13 @@ import { CheckTypeTreeNode } from '../types';
 import { TypeTreeCheckerErrorName } from '../types/errors';
 import { CheckerTypeNames } from '../types/types';
 import { addError } from './helpers/addError';
+import { areTypesCompatible } from './helpers/areTypesCompatible';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 
 export const checkFunctionCall: CheckTypeTreeNode<
   TypeTreeNodeName.FunctionCall
-> = (context, functionDeclaration) => {
-  const calleeContext = checkTypeTreeNode(context, functionDeclaration.callee);
+> = (context, functionCall) => {
+  const calleeContext = checkTypeTreeNode(context, functionCall.callee);
 
   // callee doesn't have value
   if (!calleeContext.nodeType.hasValue) {
@@ -39,7 +40,32 @@ export const checkFunctionCall: CheckTypeTreeNode<
     });
   }
 
+  const argumentsContext = checkTypeTreeNode(
+    calleeContext,
+    functionCall.arguments,
+  );
+
+  // arguments and parameters are not compatible
+  if (
+    !areTypesCompatible(
+      calleeContext.nodeType.parameters,
+      argumentsContext.nodeType,
+    )
+  ) {
+    const contextWithError = addError(argumentsContext, {
+      name: TypeTreeCheckerErrorName.FunctionParametersMismatch,
+      data: {
+        expected: calleeContext.nodeType.parameters,
+        received: argumentsContext.nodeType,
+      },
+    });
+    return getCheckNodeReturn(contextWithError, {
+      name: CheckerTypeNames.Empty,
+      hasValue: false,
+    });
+  }
+
   const returnType = calleeContext.nodeType.return;
 
-  return getCheckNodeReturn(calleeContext, returnType);
+  return getCheckNodeReturn(argumentsContext, returnType);
 };

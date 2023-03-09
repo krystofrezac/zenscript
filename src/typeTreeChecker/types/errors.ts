@@ -5,6 +5,7 @@ export enum TypeTreeCheckerErrorName {
   UnknownIdentifier = 'UnknownIdentifier',
   ExpressionWithoutValueUsedAsValue = 'ExpressionWithoutValueUsedAsValue',
   VariableTypeMismatch = 'VariableTypeMismatch',
+  FunctionParametersMismatch = 'FunctionParametersMismatch',
   EmptyBlock = 'EmptyBlock',
   CallingNonCallableExpression = 'CallingNonCallableExpression',
 }
@@ -34,6 +35,13 @@ export type TypeTreeCheckerError =
       TypeTreeCheckerErrorName.VariableTypeMismatch,
       {
         variableName: string;
+        expected: CheckerType;
+        received: CheckerType;
+      }
+    >
+  | TypeTreeCheckerErrorBase<
+      TypeTreeCheckerErrorName.FunctionParametersMismatch,
+      {
         expected: CheckerType;
         received: CheckerType;
       }

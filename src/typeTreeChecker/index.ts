@@ -1,15 +1,19 @@
 import { TypeTreeNode } from '../getTypeTree/types';
 import { checkTypeTreeNode } from './nodeCheckers';
-import { TypeTreeCheckerContext } from './types';
+import { TypeTreeCheckerContext, VariableScope } from './types';
 
 export type CheckTypeTreeReturn = Pick<TypeTreeCheckerContext, 'errors'>;
 
-const defaultContext: TypeTreeCheckerContext = {
-  errors: [],
-  variableScopes: [],
-};
+export const checkTypeTree = (
+  typeTree: TypeTreeNode,
+  defaultVariables?: VariableScope,
+): CheckTypeTreeReturn => {
+  const variableScopes = defaultVariables ? [defaultVariables] : [];
+  const defaultContext: TypeTreeCheckerContext = {
+    errors: [],
+    variableScopes,
+  };
 
-export const checkTypeTree = (typeTree: TypeTreeNode): CheckTypeTreeReturn => {
   const result = checkTypeTreeNode(defaultContext, typeTree);
   return {
     errors: result.errors,
