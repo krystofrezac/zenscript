@@ -11,11 +11,11 @@ export enum TypeTreeNodeName {
   VariableAssignment = 'variableAssignment',
   Invalid = 'invalid',
 }
-type BaseNodeWithoutHasName<TName extends TypeTreeNodeName> = {
+type BaseNodeWithoutHasValue<TName extends TypeTreeNodeName> = {
   name: TName;
 };
 type BaseNode<TName extends TypeTreeNodeName> =
-  BaseNodeWithoutHasName<TName> & {
+  BaseNodeWithoutHasValue<TName> & {
     hasValue: boolean;
   };
 
@@ -24,7 +24,7 @@ export type BlockTypeNode = BaseNode<TypeTreeNodeName.Block> & {
 };
 type StringTypeNode = BaseNode<TypeTreeNodeName.String>;
 type NumberTypeNode = BaseNode<TypeTreeNodeName.Number>;
-type TupleTypeNode = BaseNode<TypeTreeNodeName.Tuple> & {
+export type TupleTypeNode = BaseNode<TypeTreeNodeName.Tuple> & {
   items: TypeNode[];
 };
 type FunctionDeclarationTypeNode =
@@ -32,7 +32,7 @@ type FunctionDeclarationTypeNode =
     parameters: TupleTypeNode;
     return: TypeNode;
   };
-type ParameterTypeNode = BaseNodeWithoutHasName<TypeTreeNodeName.Parameter> & {
+type ParameterTypeNode = BaseNodeWithoutHasValue<TypeTreeNodeName.Parameter> & {
   parameterName: string;
 };
 type FunctionCallTypeNode = BaseNode<TypeTreeNodeName.FunctionCall> & {
@@ -40,7 +40,7 @@ type FunctionCallTypeNode = BaseNode<TypeTreeNodeName.FunctionCall> & {
   arguments: TupleTypeNode;
 };
 type VariableReferenceTypeNode =
-  BaseNodeWithoutHasName<TypeTreeNodeName.VariableReference> & {
+  BaseNodeWithoutHasValue<TypeTreeNodeName.VariableReference> & {
     variableName: string;
   };
 type GenericTypeNode = BaseNode<TypeTreeNodeName.Generic> & {
@@ -65,6 +65,6 @@ export type VariableAssignmentNode =
   };
 
 // just for development
-type InvalidNode = BaseNodeWithoutHasName<TypeTreeNodeName.Invalid>;
+type InvalidNode = BaseNodeWithoutHasValue<TypeTreeNodeName.Invalid>;
 
 export type TypeTreeNode = VariableAssignmentNode | TypeNode | InvalidNode;

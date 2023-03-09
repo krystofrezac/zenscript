@@ -219,3 +219,14 @@ describe.only('functions', () => {
     expect(areTypesCompatible(typeA, typeB)).toBe(false);
   });
 });
+test('figure out', () => {
+  const typeA: CheckerType = {
+    name: CheckerTypeNames.FigureOut,
+    hasValue: false,
+  };
+  const typeB: CheckerType = {
+    name: CheckerTypeNames.FigureOut,
+    hasValue: false,
+  };
+  expect(areTypesCompatible(typeA, typeB)).toBe(true);
+});

@@ -1,19 +1,16 @@
 import { checkTypeTreeNode } from '.';
-import {
-  TypeTreeNodeName,
-  VariableAssignmentNode,
-} from '../../getTypeTree/types';
+import { TypeTreeNodeName } from '../../getTypeTree/types';
 import {
   CheckTypeTreeNode,
   CheckTypeTreeNodeReturn,
   TypeTreeCheckerContext,
-  Variable,
 } from '../types';
 import { TypeTreeCheckerErrorName } from '../types/errors';
 import { CheckerTypeNames } from '../types/types';
 import { addError, addErrors } from './helpers/addError';
+import { addVariableToContext } from './helpers/addVariableToContext';
 import { areTypesCompatible } from './helpers/areTypesCompatible';
-import { findVariableInCurrentScope } from './helpers/findVariableInCurrentScope';
+import { checkIfVariableWithNameIsAlreadyDeclared } from './helpers/checkIfVariableWithNameIsAreadyDeclared';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 import { getNewErrors } from './helpers/getNewErrors';
 
@@ -22,7 +19,7 @@ export const checkVariableAssignmentNode: CheckTypeTreeNode<
 > = (context, variableAssignment) => {
   const alreadyDeclaredError = checkIfVariableWithNameIsAlreadyDeclared(
     context,
-    variableAssignment,
+    variableAssignment.variableName,
   );
   if (alreadyDeclaredError) return alreadyDeclaredError;
 
@@ -88,27 +85,6 @@ export const checkVariableAssignmentNode: CheckTypeTreeNode<
   });
 };
 
-const checkIfVariableWithNameIsAlreadyDeclared = (
-  context: TypeTreeCheckerContext,
-  variableAssignment: VariableAssignmentNode,
-) => {
-  const foundVariableInCurrentScope = findVariableInCurrentScope(
-    context,
-    variableAssignment.variableName,
-  );
-  if (foundVariableInCurrentScope) {
-    const contextWithError = addError(context, {
-      name: TypeTreeCheckerErrorName.IdentifierAlreadyDeclaredInThisScope,
-      data: { identifier: variableAssignment.variableName },
-    });
-    return getCheckNodeReturn(contextWithError, {
-      name: CheckerTypeNames.Empty,
-      hasValue: false,
-    });
-  }
-  return undefined;
-};
-
 const maybeAddWithoutValueError = (
   context: TypeTreeCheckerContext,
   implicitNodeContext?: CheckTypeTreeNodeReturn,
@@ -151,17 +127,4 @@ const maybeAddTypeMismatchError = (
     });
   }
   return context;
-};
-
-const addVariableToContext = (
-  context: TypeTreeCheckerContext,
-  variable: Variable,
-): TypeTreeCheckerContext => {
-  const variableScopesHead = context.variableScopes.slice(0, -1);
-  const variableScopesTail = context.variableScopes.at(-1);
-  if (!variableScopesTail) return context;
-  return {
-    ...context,
-    variableScopes: [...variableScopesHead, [...variableScopesTail, variable]],
-  };
 };

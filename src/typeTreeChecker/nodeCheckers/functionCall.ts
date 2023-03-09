@@ -1,11 +1,12 @@
 import { checkTypeTreeNode } from '.';
-import { TypeTreeNodeName } from '../../getTypeTree/types';
-import { CheckTypeTreeNode } from '../types';
+import { TupleTypeNode, TypeTreeNodeName } from '../../getTypeTree/types';
+import { CheckTypeTreeNode, TypeTreeCheckerContext } from '../types';
 import { TypeTreeCheckerErrorName } from '../types/errors';
-import { CheckerTypeNames } from '../types/types';
+import { CheckerTupleType, CheckerTypeNames } from '../types/types';
 import { addError } from './helpers/addError';
 import { areTypesCompatible } from './helpers/areTypesCompatible';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
+import { updateVariableType } from './helpers/updateVariableType';
 
 export const checkFunctionCall: CheckTypeTreeNode<
   TypeTreeNodeName.FunctionCall
@@ -44,13 +45,14 @@ export const checkFunctionCall: CheckTypeTreeNode<
     calleeContext,
     functionCall.arguments,
   );
+  const argumentsType = argumentsContext.nodeType;
+  const parametersType = calleeContext.nodeType.parameters;
 
   // arguments and parameters are not compatible
   if (
-    !areTypesCompatible(
-      calleeContext.nodeType.parameters,
-      argumentsContext.nodeType,
-    )
+    !areTypesCompatible(parametersType, argumentsType, {
+      figureOutEnabled: true,
+    })
   ) {
     const contextWithError = addError(argumentsContext, {
       name: TypeTreeCheckerErrorName.FunctionParametersMismatch,
@@ -65,7 +67,48 @@ export const checkFunctionCall: CheckTypeTreeNode<
     });
   }
 
+  if (argumentsType.name !== CheckerTypeNames.Tuple) {
+    return getCheckNodeReturn(argumentsContext, {
+      name: CheckerTypeNames.Empty,
+      hasValue: false,
+    });
+  }
+  const figuredOutArgumentsContext = figureOutArguments(
+    argumentsContext,
+    argumentsType,
+    functionCall.arguments,
+    parametersType,
+  );
+
   const returnType = calleeContext.nodeType.return;
 
-  return getCheckNodeReturn(argumentsContext, returnType);
+  return getCheckNodeReturn(figuredOutArgumentsContext, returnType);
+};
+
+const figureOutArguments = (
+  originalContext: TypeTreeCheckerContext,
+  argumentsType: CheckerTupleType,
+  argumentsAST: TupleTypeNode,
+  parametersType: CheckerTupleType,
+): TypeTreeCheckerContext => {
+  const newContext = argumentsType.items.reduce((context, argument, index) => {
+    if (argument.name !== CheckerTypeNames.FigureOut) return context;
+
+    const argumentAST = argumentsAST.items[index];
+    const parameterType = parametersType.items[index];
+
+    if (
+      !parameterType ||
+      !argumentAST ||
+      argumentAST.name !== TypeTreeNodeName.VariableReference
+    )
+      return context;
+
+    return updateVariableType(context, {
+      variableName: argumentAST.variableName,
+      updatedType: parameterType,
+    });
+  }, originalContext);
+
+  return newContext;
 };

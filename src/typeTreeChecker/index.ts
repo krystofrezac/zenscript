@@ -12,6 +12,7 @@ export const checkTypeTree = (
   const defaultContext: TypeTreeCheckerContext = {
     errors: [],
     variableScopes,
+    functionIdCounter: 0,
   };
 
   const result = checkTypeTreeNode(defaultContext, typeTree);

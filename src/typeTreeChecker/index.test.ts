@@ -595,9 +595,8 @@ describe('functions', () => {
         expect(result).toEqual(expected);
       });
     });
-    // TODO:
-    describe.skip('declarations', () => {
-      test.only('single parameter', () => {
+    describe('declarations', () => {
+      test('single parameter', () => {
         const input = getInput(`
           a: (string) string = (param) stringFunction(param)
         `);
@@ -621,7 +620,7 @@ describe('functions', () => {
         ];
         const expected: CheckTypeTreeReturn = { errors: [] };
         const result = checkTypeTree(input, defaultVariables);
-        expect(expected).toEqual(result);
+        expect(result).toEqual(expected);
       });
       test('multiple parameters', () => {
         const input = getInput(`
@@ -630,7 +629,7 @@ describe('functions', () => {
         `);
         const defaultVariables: VariableScope = [
           {
-            variableName: 'stringFunction',
+            variableName: 'stringNumberNumberFunction',
             variableType: {
               name: CheckerTypeNames.Function,
               parameters: {
@@ -661,7 +660,7 @@ describe('functions', () => {
         `);
         const defaultVariables: VariableScope = [
           {
-            variableName: 'stringFunction',
+            variableName: 'stringNumberNumberFunction',
             variableType: {
               name: CheckerTypeNames.Function,
               parameters: {
@@ -734,6 +733,45 @@ describe('functions', () => {
         };
         const result = checkTypeTree(input, defaultVariables);
         expect(expected).toEqual(result);
+      });
+      test('multiple parameters with same name', () => {
+        const input = getInput('a = (paramA, paramA) fun(paramA, paramA)');
+        const defaultVariables: VariableScope = [
+          {
+            variableName: 'fun',
+            variableType: {
+              name: CheckerTypeNames.Function,
+              parameters: {
+                name: CheckerTypeNames.Tuple,
+                items: [
+                  {
+                    name: CheckerTypeNames.String,
+                    hasValue: true,
+                  },
+                  {
+                    name: CheckerTypeNames.String,
+                    hasValue: true,
+                  },
+                ],
+                hasValue: true,
+              },
+              return: { name: CheckerTypeNames.String, hasValue: true },
+              hasValue: true,
+            },
+          },
+        ];
+        const expected: CheckTypeTreeReturn = {
+          errors: [
+            {
+              name: TypeTreeCheckerErrorName.IdentifierAlreadyDeclaredInThisScope,
+              data: {
+                identifier: 'paramA',
+              },
+            },
+          ],
+        };
+        const result = checkTypeTree(input, defaultVariables);
+        expect(result).toEqual(expected);
       });
     });
   });
