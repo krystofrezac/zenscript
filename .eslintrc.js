@@ -1,6 +1,15 @@
 module.exports = {
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
-  plugins: ['@typescript-eslint', 'prefer-arrow-functions', 'prettier'],
+  plugins: [
+    'vitest',
+    '@typescript-eslint',
+    'prefer-arrow-functions',
+    'prettier',
+  ],
+  extends: [
+    'eslint:recommended',
+    'plugin:vitest/all',
+    'plugin:@typescript-eslint/recommended',
+  ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
@@ -23,5 +32,15 @@ module.exports = {
         returnStyle: 'implicit',
       },
     ],
+
+    'vitest/consistent-test-it': [
+      'error',
+      {
+        fn: 'test',
+        withinDescribe: 'test',
+      },
+    ],
+    'vitest/no-skipped-tests': 'error',
+    'vitest/no-disabled-tests': 'error',
   },
 };
