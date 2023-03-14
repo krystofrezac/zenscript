@@ -1,9 +1,21 @@
 import { CheckerType, CheckerTypeNames } from '../../types/types';
 
+type AreTypesCompatible = { figureOutEnabled?: boolean };
+
 export const areTypesCompatible = (
   typeA: CheckerType,
   typeB: CheckerType,
+  options: AreTypesCompatible = { figureOutEnabled: false },
 ): boolean => {
+  const { figureOutEnabled } = options;
+
+  if (
+    figureOutEnabled &&
+    (typeA.name === CheckerTypeNames.FigureOut ||
+      typeB.name === CheckerTypeNames.FigureOut)
+  )
+    return true;
+
   if (
     shallowCompareTypes.includes(typeA.name) &&
     shallowCompareTypes.includes(typeB.name)
@@ -20,7 +32,7 @@ export const areTypesCompatible = (
       haveSameLength &&
       typeA.items.every((itemA, index) => {
         const itemB = typeB.items[index];
-        return itemB && areTypesCompatible(itemA, itemB);
+        return itemB && areTypesCompatible(itemA, itemB, options);
       })
     );
   }
@@ -30,8 +42,8 @@ export const areTypesCompatible = (
     typeB.name === CheckerTypeNames.Function
   ) {
     return (
-      areTypesCompatible(typeA.parameters, typeB.parameters) &&
-      areTypesCompatible(typeA.return, typeB.return)
+      areTypesCompatible(typeA.parameters, typeB.parameters, options) &&
+      areTypesCompatible(typeA.return, typeB.return, options)
     );
   }
   return false;

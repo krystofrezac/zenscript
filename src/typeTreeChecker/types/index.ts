@@ -11,6 +11,7 @@ export type VariableScope = Variable[];
 export type TypeTreeCheckerContext = {
   errors: TypeTreeCheckerError[];
   variableScopes: VariableScope[];
+  figureOutId: number;
 };
 export type CheckTypeTreeNodeReturn<
   TNodeType extends CheckerType = CheckerType,
