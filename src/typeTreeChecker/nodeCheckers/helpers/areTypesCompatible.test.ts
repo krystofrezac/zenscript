@@ -148,7 +148,7 @@ describe('tuple', () => {
     expect(areTypesCompatible(typeA, typeB)).toBe(false);
   });
 });
-describe.only('functions', () => {
+describe('functions', () => {
   test('compatible', () => {
     const typeA: CheckerType = {
       name: CheckerTypeNames.Function,
@@ -172,7 +172,7 @@ describe.only('functions', () => {
     };
     expect(areTypesCompatible(typeA, typeB)).toBe(true);
   });
-  test.only('incompatible parameters', () => {
+  test('incompatible parameters', () => {
     const typeA: CheckerType = {
       name: CheckerTypeNames.Function,
       parameters: {
@@ -221,8 +221,7 @@ describe.only('functions', () => {
 });
 test('figure out', () => {
   const typeA: CheckerType = {
-    name: CheckerTypeNames.FigureOut,
-    id: 0,
+    name: CheckerTypeNames.String,
     hasValue: false,
   };
   const typeB: CheckerType = {
@@ -230,5 +229,7 @@ test('figure out', () => {
     id: 0,
     hasValue: false,
   };
-  expect(areTypesCompatible(typeA, typeB)).toBe(true);
+  expect(areTypesCompatible(typeA, typeB, { figureOutEnabled: true })).toBe(
+    true,
+  );
 });

@@ -13,7 +13,6 @@ export const checkParameter: CheckTypeTreeNode<TypeTreeNodeName.Parameter> = (
     context,
     parameter.parameterName,
   );
-
   if (alreadyDeclaredError) {
     return alreadyDeclaredError;
   }

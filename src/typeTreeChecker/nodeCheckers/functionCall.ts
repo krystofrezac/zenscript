@@ -93,7 +93,6 @@ const figureOutArguments = (
     if (argument.name !== CheckerTypeNames.FigureOut) return context;
 
     const parameterType = parametersType.items[index];
-
     if (!parameterType) return context;
 
     return updateFigureOutType(context, {

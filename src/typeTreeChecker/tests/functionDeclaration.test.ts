@@ -151,7 +151,6 @@ describe('with simple parameters', () => {
     ];
     const expected: CheckTypeTreeReturn = { errors: [] };
     const result = checkTypeTree(input, defaultVariables);
-    console.log(JSON.stringify(result, null, 2));
     expect(result).toEqual(expected);
   });
   test('multiple parameters', () => {
