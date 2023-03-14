@@ -1,12 +1,12 @@
 import { checkTypeTreeNode } from '.';
-import { TupleTypeNode, TypeTreeNodeName } from '../../getTypeTree/types';
+import { TypeTreeNodeName } from '../../getTypeTree/types';
 import { CheckTypeTreeNode, TypeTreeCheckerContext } from '../types';
 import { TypeTreeCheckerErrorName } from '../types/errors';
 import { CheckerTupleType, CheckerTypeNames } from '../types/types';
 import { addError } from './helpers/addError';
 import { areTypesCompatible } from './helpers/areTypesCompatible';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
-import { updateVariableType } from './helpers/updateVariableType';
+import { updateFigureOutType } from './helpers/updateVariableType';
 
 export const checkFunctionCall: CheckTypeTreeNode<
   TypeTreeNodeName.FunctionCall
@@ -76,7 +76,6 @@ export const checkFunctionCall: CheckTypeTreeNode<
   const figuredOutArgumentsContext = figureOutArguments(
     argumentsContext,
     argumentsType,
-    functionCall.arguments,
     parametersType,
   );
 
@@ -88,24 +87,17 @@ export const checkFunctionCall: CheckTypeTreeNode<
 const figureOutArguments = (
   originalContext: TypeTreeCheckerContext,
   argumentsType: CheckerTupleType,
-  argumentsAST: TupleTypeNode,
   parametersType: CheckerTupleType,
 ): TypeTreeCheckerContext => {
   const newContext = argumentsType.items.reduce((context, argument, index) => {
     if (argument.name !== CheckerTypeNames.FigureOut) return context;
 
-    const argumentAST = argumentsAST.items[index];
     const parameterType = parametersType.items[index];
 
-    if (
-      !parameterType ||
-      !argumentAST ||
-      argumentAST.name !== TypeTreeNodeName.VariableReference
-    )
-      return context;
+    if (!parameterType) return context;
 
-    return updateVariableType(context, {
-      variableName: argumentAST.variableName,
+    return updateFigureOutType(context, {
+      figureOutId: argument.id,
       updatedType: parameterType,
     });
   }, originalContext);

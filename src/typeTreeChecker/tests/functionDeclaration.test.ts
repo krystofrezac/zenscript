@@ -123,6 +123,37 @@ describe('with simple parameters', () => {
     const result = checkTypeTree(input, defaultVariables);
     expect(result).toEqual(expected);
   });
+  test('single parameter - indirect usage', () => {
+    const input = getInput(`
+          a : (string) string 
+            = (param) {
+              variable = param
+              stringFunction(variable)
+            }
+        `);
+    const defaultVariables: VariableScope = [
+      {
+        variableName: 'stringFunction',
+        variableType: {
+          name: CheckerTypeNames.Function,
+          parameters: {
+            name: CheckerTypeNames.Tuple,
+            items: [{ name: CheckerTypeNames.String, hasValue: true }],
+            hasValue: true,
+          },
+          return: {
+            name: CheckerTypeNames.String,
+            hasValue: true,
+          },
+          hasValue: true,
+        },
+      },
+    ];
+    const expected: CheckTypeTreeReturn = { errors: [] };
+    const result = checkTypeTree(input, defaultVariables);
+    console.log(JSON.stringify(result, null, 2));
+    expect(result).toEqual(expected);
+  });
   test('multiple parameters', () => {
     const input = getInput(`
           a: (string, number, number) string 

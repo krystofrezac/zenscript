@@ -222,10 +222,12 @@ describe.only('functions', () => {
 test('figure out', () => {
   const typeA: CheckerType = {
     name: CheckerTypeNames.FigureOut,
+    id: 0,
     hasValue: false,
   };
   const typeB: CheckerType = {
     name: CheckerTypeNames.FigureOut,
+    id: 0,
     hasValue: false,
   };
   expect(areTypesCompatible(typeA, typeB)).toBe(true);

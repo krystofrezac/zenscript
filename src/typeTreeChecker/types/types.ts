@@ -25,7 +25,9 @@ export type CheckerFunctionType = CheckerTypeBase<CheckerTypeNames.Function> & {
   return: CheckerType;
 };
 
-type CheckerFigureOutType = CheckerTypeBase<CheckerTypeNames.FigureOut>;
+type CheckerFigureOutType = CheckerTypeBase<CheckerTypeNames.FigureOut> & {
+  id: number;
+};
 type CheckerEmptyType = CheckerTypeBase<CheckerTypeNames.Empty>;
 
 export type CheckerType =

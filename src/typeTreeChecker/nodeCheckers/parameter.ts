@@ -1,5 +1,5 @@
 import { TypeTreeNodeName } from '../../getTypeTree/types';
-import { CheckTypeTreeNode } from '../types';
+import { CheckTypeTreeNode, TypeTreeCheckerContext } from '../types';
 import { CheckerType, CheckerTypeNames } from '../types/types';
 import { addVariableToContext } from './helpers/addVariableToContext';
 import { checkIfVariableWithNameIsAlreadyDeclared } from './helpers/checkIfVariableWithNameIsAreadyDeclared';
@@ -18,13 +18,23 @@ export const checkParameter: CheckTypeTreeNode<TypeTreeNodeName.Parameter> = (
     return alreadyDeclaredError;
   }
 
+  const figureOutId = context.figureOutId + 1;
   const variableType: CheckerType = {
     name: CheckerTypeNames.FigureOut,
+    id: figureOutId,
     hasValue: true,
   };
-  const contextWithVariable = addVariableToContext(context, {
-    variableName: parameter.parameterName,
-    variableType,
-  });
+  const contextWithBumpedFigureOutId: TypeTreeCheckerContext = {
+    ...context,
+    figureOutId,
+  };
+
+  const contextWithVariable = addVariableToContext(
+    contextWithBumpedFigureOutId,
+    {
+      variableName: parameter.parameterName,
+      variableType,
+    },
+  );
   return getCheckNodeReturn(contextWithVariable, variableType);
 };

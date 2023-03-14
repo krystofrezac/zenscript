@@ -1,26 +1,27 @@
 import { TypeTreeCheckerContext } from '../../types';
-import { CheckerType } from '../../types/types';
+import { CheckerType, CheckerTypeNames } from '../../types/types';
 
-type UpdateVariableTypeParams = {
-  variableName: string;
+type UpdateFigureOutTypeParams = {
+  figureOutId: number;
   updatedType: CheckerType;
 };
 
-export const updateVariableType = (
+export const updateFigureOutType = (
   context: TypeTreeCheckerContext,
-  { variableName, updatedType }: UpdateVariableTypeParams,
+  { figureOutId, updatedType }: UpdateFigureOutTypeParams,
 ): TypeTreeCheckerContext => {
-  let updated = false;
-
   const newVariableScopes = context.variableScopes
     .slice()
     .reverse()
     .map(variableScope =>
       variableScope.map(variable => {
-        if (updated || variable.variableName !== variableName) return variable;
+        if (
+          variable.variableType.name !== CheckerTypeNames.FigureOut ||
+          variable.variableType.id !== figureOutId
+        )
+          return variable;
 
-        updated = true;
-        return { variableName, variableType: updatedType };
+        return { ...variable, variableType: updatedType };
       }),
     )
     .reverse();
