@@ -1,10 +1,10 @@
-import { TypeTreeNode } from './getTypeTree/types';
+import { AstNode } from './ast/types';
 
 declare module 'ohm-js' {
   interface Node {
     getName: () => string;
-    getTypeTreeNode: () => TypeTreeNode;
-    getTypeTreeNodes: () => TypeTreeNode[];
+    getAstNode: () => AstNode;
+    getAstNodes: () => AstNode[];
     transpile: () => string;
   }
 }
