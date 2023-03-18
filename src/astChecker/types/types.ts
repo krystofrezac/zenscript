@@ -2,6 +2,7 @@ export enum AstCheckerTypeNames {
   Number = 'number',
   String = 'string',
   Tuple = 'tuple',
+  Record = 'record',
   Function = 'function',
   Empty = 'Empty',
 
@@ -20,6 +21,10 @@ type AstCheckerStringType = AstCheckerTypeBase<AstCheckerTypeNames.String>;
 export type AstCheckerTupleType =
   AstCheckerTypeBase<AstCheckerTypeNames.Tuple> & {
     items: AstCheckerType[];
+  };
+export type AstCheckerRecordType =
+  AstCheckerTypeBase<AstCheckerTypeNames.Record> & {
+    entries: Record<string, AstCheckerType>;
   };
 
 export type AstCheckerFunctionType =
@@ -40,6 +45,7 @@ export type AstCheckerType =
   | AstCheckerNumberType
   | AstCheckerStringType
   | AstCheckerTupleType
+  | AstCheckerRecordType
   | AstCheckerFunctionType
   | AstCheckerEmptyType
   | AstCheckerFigureOutType

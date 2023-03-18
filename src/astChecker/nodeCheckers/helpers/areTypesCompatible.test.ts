@@ -148,6 +148,100 @@ describe('tuple', () => {
     expect(areTypesCompatible(typeA, typeB)).toBe(false);
   });
 });
+describe('record', () => {
+  test('compatible', () => {
+    const typeA: AstCheckerType = {
+      name: AstCheckerTypeNames.Record,
+      entries: {
+        a: {
+          name: AstCheckerTypeNames.String,
+          hasValue: true,
+        },
+        b: {
+          name: AstCheckerTypeNames.Number,
+          hasValue: true,
+        },
+      },
+      hasValue: true,
+    };
+    const typeB: AstCheckerType = {
+      name: AstCheckerTypeNames.Record,
+      entries: {
+        a: {
+          name: AstCheckerTypeNames.String,
+          hasValue: false,
+        },
+        b: {
+          name: AstCheckerTypeNames.Number,
+          hasValue: false,
+        },
+      },
+      hasValue: false,
+    };
+
+    expect(areTypesCompatible(typeA, typeB)).toBe(true);
+  });
+  test('incompatible - same length', () => {
+    const typeA: AstCheckerType = {
+      name: AstCheckerTypeNames.Record,
+      entries: {
+        a: {
+          name: AstCheckerTypeNames.String,
+          hasValue: true,
+        },
+        b: {
+          name: AstCheckerTypeNames.Number,
+          hasValue: true,
+        },
+      },
+      hasValue: true,
+    };
+    const typeB: AstCheckerType = {
+      name: AstCheckerTypeNames.Record,
+      entries: {
+        a: {
+          name: AstCheckerTypeNames.String,
+          hasValue: false,
+        },
+        b: {
+          name: AstCheckerTypeNames.String,
+          hasValue: false,
+        },
+      },
+      hasValue: false,
+    };
+
+    expect(areTypesCompatible(typeA, typeB)).toBe(false);
+  });
+  test('incompatible - different length', () => {
+    const typeA: AstCheckerType = {
+      name: AstCheckerTypeNames.Record,
+      entries: {
+        a: {
+          name: AstCheckerTypeNames.String,
+          hasValue: true,
+        },
+        b: {
+          name: AstCheckerTypeNames.Number,
+          hasValue: true,
+        },
+      },
+      hasValue: true,
+    };
+    const typeB: AstCheckerType = {
+      name: AstCheckerTypeNames.Record,
+      entries: {
+        a: {
+          name: AstCheckerTypeNames.String,
+          hasValue: false,
+        },
+      },
+      hasValue: false,
+    };
+
+    expect(areTypesCompatible(typeA, typeB)).toBe(false);
+  });
+});
 describe('functions', () => {
   test('compatible', () => {
     const typeA: AstCheckerType = {

@@ -1,3 +1,4 @@
+import { pipe } from '../../../helpers/pipe';
 import { AstCheckerType, AstCheckerTypeNames } from '../../types/types';
 
 type AreTypesCompatible = { figureOutEnabled?: boolean };
@@ -38,6 +39,23 @@ export const areTypesCompatible = (
   }
 
   if (
+    typeA.name === AstCheckerTypeNames.Record &&
+    typeB.name === AstCheckerTypeNames.Record
+  ) {
+    const entriesA = pipe(Object.entries, sortEntries)(typeA.entries);
+    const entriesB = pipe(Object.entries, sortEntries)(typeB.entries);
+
+    const haveSameLength = entriesA.length === entriesB.length;
+    return (
+      haveSameLength &&
+      entriesA.every((entryA, index) => {
+        const entryB = entriesB[index];
+        return entryB && areTypesCompatible(entryA[1], entryB[1], options);
+      })
+    );
+  }
+
+  if (
     typeA.name === AstCheckerTypeNames.Function &&
     typeB.name === AstCheckerTypeNames.Function
   ) {
@@ -53,3 +71,6 @@ const shallowCompareTypes: AstCheckerTypeNames[] = [
   AstCheckerTypeNames.String,
   AstCheckerTypeNames.Number,
 ];
+
+const sortEntries = (entries: [string, AstCheckerType][]) =>
+  [...entries].sort(([a], [b]) => a.localeCompare(b));
