@@ -1,8 +1,8 @@
 import { test, describe, expect } from 'vitest';
 import { checkAST, CheckAstReturn } from '..';
+import { codeToAST } from '../../tests/helpers';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
-import { codeToAST } from './helpers';
 
 describe('string', () => {
   test('assigning only value', () => {
