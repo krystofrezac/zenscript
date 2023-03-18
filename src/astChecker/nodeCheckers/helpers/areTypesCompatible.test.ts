@@ -1,15 +1,15 @@
 import { expect, describe, test } from 'vitest';
-import { AstCheckerType, CheckerTypeNames } from '../../types/types';
+import { AstCheckerType, AstCheckerTypeNames } from '../../types/types';
 import { areTypesCompatible } from './areTypesCompatible';
 
 describe('string', () => {
   test('compatible', () => {
     const typeA: AstCheckerType = {
-      name: CheckerTypeNames.String,
+      name: AstCheckerTypeNames.String,
       hasValue: true,
     };
     const typeB: AstCheckerType = {
-      name: CheckerTypeNames.String,
+      name: AstCheckerTypeNames.String,
       hasValue: false,
     };
 
@@ -17,11 +17,11 @@ describe('string', () => {
   });
   test('compatible', () => {
     const typeA: AstCheckerType = {
-      name: CheckerTypeNames.String,
+      name: AstCheckerTypeNames.String,
       hasValue: true,
     };
     const typeB: AstCheckerType = {
-      name: CheckerTypeNames.Number,
+      name: AstCheckerTypeNames.Number,
       hasValue: false,
     };
 
@@ -31,11 +31,11 @@ describe('string', () => {
 describe('number', () => {
   test('compatible', () => {
     const typeA: AstCheckerType = {
-      name: CheckerTypeNames.Number,
+      name: AstCheckerTypeNames.Number,
       hasValue: true,
     };
     const typeB: AstCheckerType = {
-      name: CheckerTypeNames.Number,
+      name: AstCheckerTypeNames.Number,
       hasValue: false,
     };
 
@@ -43,11 +43,11 @@ describe('number', () => {
   });
   test('incompatible', () => {
     const typeA: AstCheckerType = {
-      name: CheckerTypeNames.Number,
+      name: AstCheckerTypeNames.Number,
       hasValue: true,
     };
     const typeB: AstCheckerType = {
-      name: CheckerTypeNames.String,
+      name: AstCheckerTypeNames.String,
       hasValue: false,
     };
 
@@ -57,28 +57,28 @@ describe('number', () => {
 describe('tuple', () => {
   test('compatible', () => {
     const typeA: AstCheckerType = {
-      name: CheckerTypeNames.Tuple,
+      name: AstCheckerTypeNames.Tuple,
       items: [
         {
-          name: CheckerTypeNames.String,
+          name: AstCheckerTypeNames.String,
           hasValue: true,
         },
         {
-          name: CheckerTypeNames.Number,
+          name: AstCheckerTypeNames.Number,
           hasValue: true,
         },
       ],
       hasValue: true,
     };
     const typeB: AstCheckerType = {
-      name: CheckerTypeNames.Tuple,
+      name: AstCheckerTypeNames.Tuple,
       items: [
         {
-          name: CheckerTypeNames.String,
+          name: AstCheckerTypeNames.String,
           hasValue: false,
         },
         {
-          name: CheckerTypeNames.Number,
+          name: AstCheckerTypeNames.Number,
           hasValue: false,
         },
       ],
@@ -89,28 +89,28 @@ describe('tuple', () => {
   });
   test('incompatible - same length', () => {
     const typeA: AstCheckerType = {
-      name: CheckerTypeNames.Tuple,
+      name: AstCheckerTypeNames.Tuple,
       items: [
         {
-          name: CheckerTypeNames.String,
+          name: AstCheckerTypeNames.String,
           hasValue: true,
         },
         {
-          name: CheckerTypeNames.Number,
+          name: AstCheckerTypeNames.Number,
           hasValue: true,
         },
       ],
       hasValue: true,
     };
     const typeB: AstCheckerType = {
-      name: CheckerTypeNames.Tuple,
+      name: AstCheckerTypeNames.Tuple,
       items: [
         {
-          name: CheckerTypeNames.String,
+          name: AstCheckerTypeNames.String,
           hasValue: false,
         },
         {
-          name: CheckerTypeNames.String,
+          name: AstCheckerTypeNames.String,
           hasValue: false,
         },
       ],
@@ -121,24 +121,24 @@ describe('tuple', () => {
   });
   test('incompatible - different length', () => {
     const typeA: AstCheckerType = {
-      name: CheckerTypeNames.Tuple,
+      name: AstCheckerTypeNames.Tuple,
       items: [
         {
-          name: CheckerTypeNames.String,
+          name: AstCheckerTypeNames.String,
           hasValue: true,
         },
         {
-          name: CheckerTypeNames.Number,
+          name: AstCheckerTypeNames.Number,
           hasValue: true,
         },
       ],
       hasValue: true,
     };
     const typeB: AstCheckerType = {
-      name: CheckerTypeNames.Tuple,
+      name: AstCheckerTypeNames.Tuple,
       items: [
         {
-          name: CheckerTypeNames.String,
+          name: AstCheckerTypeNames.String,
           hasValue: false,
         },
       ],
@@ -151,69 +151,69 @@ describe('tuple', () => {
 describe('functions', () => {
   test('compatible', () => {
     const typeA: AstCheckerType = {
-      name: CheckerTypeNames.Function,
+      name: AstCheckerTypeNames.Function,
       parameters: {
-        name: CheckerTypeNames.Tuple,
-        items: [{ name: CheckerTypeNames.String, hasValue: true }],
+        name: AstCheckerTypeNames.Tuple,
+        items: [{ name: AstCheckerTypeNames.String, hasValue: true }],
         hasValue: true,
       },
-      return: { name: CheckerTypeNames.String, hasValue: true },
+      return: { name: AstCheckerTypeNames.String, hasValue: true },
       hasValue: true,
     };
     const typeB: AstCheckerType = {
-      name: CheckerTypeNames.Function,
+      name: AstCheckerTypeNames.Function,
       parameters: {
-        name: CheckerTypeNames.Tuple,
-        items: [{ name: CheckerTypeNames.String, hasValue: false }],
+        name: AstCheckerTypeNames.Tuple,
+        items: [{ name: AstCheckerTypeNames.String, hasValue: false }],
         hasValue: false,
       },
-      return: { name: CheckerTypeNames.String, hasValue: false },
+      return: { name: AstCheckerTypeNames.String, hasValue: false },
       hasValue: false,
     };
     expect(areTypesCompatible(typeA, typeB)).toBe(true);
   });
   test('incompatible parameters', () => {
     const typeA: AstCheckerType = {
-      name: CheckerTypeNames.Function,
+      name: AstCheckerTypeNames.Function,
       parameters: {
-        name: CheckerTypeNames.Tuple,
+        name: AstCheckerTypeNames.Tuple,
         items: [],
         hasValue: true,
       },
-      return: { name: CheckerTypeNames.String, hasValue: true },
+      return: { name: AstCheckerTypeNames.String, hasValue: true },
       hasValue: true,
     };
     const typeB: AstCheckerType = {
-      name: CheckerTypeNames.Function,
+      name: AstCheckerTypeNames.Function,
       parameters: {
-        name: CheckerTypeNames.Tuple,
-        items: [{ name: CheckerTypeNames.String, hasValue: false }],
+        name: AstCheckerTypeNames.Tuple,
+        items: [{ name: AstCheckerTypeNames.String, hasValue: false }],
         hasValue: false,
       },
-      return: { name: CheckerTypeNames.String, hasValue: false },
+      return: { name: AstCheckerTypeNames.String, hasValue: false },
       hasValue: false,
     };
     expect(areTypesCompatible(typeA, typeB)).toBe(false);
   });
   test('incompatible return', () => {
     const typeA: AstCheckerType = {
-      name: CheckerTypeNames.Function,
+      name: AstCheckerTypeNames.Function,
       parameters: {
-        name: CheckerTypeNames.Tuple,
-        items: [{ name: CheckerTypeNames.String, hasValue: true }],
+        name: AstCheckerTypeNames.Tuple,
+        items: [{ name: AstCheckerTypeNames.String, hasValue: true }],
         hasValue: true,
       },
-      return: { name: CheckerTypeNames.Number, hasValue: true },
+      return: { name: AstCheckerTypeNames.Number, hasValue: true },
       hasValue: true,
     };
     const typeB: AstCheckerType = {
-      name: CheckerTypeNames.Function,
+      name: AstCheckerTypeNames.Function,
       parameters: {
-        name: CheckerTypeNames.Tuple,
-        items: [{ name: CheckerTypeNames.String, hasValue: false }],
+        name: AstCheckerTypeNames.Tuple,
+        items: [{ name: AstCheckerTypeNames.String, hasValue: false }],
         hasValue: false,
       },
-      return: { name: CheckerTypeNames.String, hasValue: false },
+      return: { name: AstCheckerTypeNames.String, hasValue: false },
       hasValue: false,
     };
     expect(areTypesCompatible(typeA, typeB)).toBe(false);
@@ -221,11 +221,11 @@ describe('functions', () => {
 });
 test('figure out', () => {
   const typeA: AstCheckerType = {
-    name: CheckerTypeNames.String,
+    name: AstCheckerTypeNames.String,
     hasValue: false,
   };
   const typeB: AstCheckerType = {
-    name: CheckerTypeNames.FigureOut,
+    name: AstCheckerTypeNames.FigureOut,
     id: 0,
     hasValue: false,
   };

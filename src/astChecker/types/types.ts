@@ -1,35 +1,40 @@
-export enum CheckerTypeNames {
+export enum AstCheckerTypeNames {
   Number = 'number',
   String = 'string',
   Tuple = 'tuple',
   Function = 'function',
+  Empty = 'Empty',
 
   FigureOut = 'FigureOut',
-  Empty = 'Empty',
+  Ignore = 'Ignore',
 }
 
-type CheckerTypeBase<TName extends CheckerTypeNames> = {
+type AstCheckerTypeBase<TName extends AstCheckerTypeNames> = {
   name: TName;
   hasValue: boolean;
 };
 
-type AstCheckerNumberType = CheckerTypeBase<CheckerTypeNames.Number>;
-type AstCheckerStringType = CheckerTypeBase<CheckerTypeNames.String>;
+type AstCheckerNumberType = AstCheckerTypeBase<AstCheckerTypeNames.Number>;
+type AstCheckerStringType = AstCheckerTypeBase<AstCheckerTypeNames.String>;
 
-export type AstCheckerTupleType = CheckerTypeBase<CheckerTypeNames.Tuple> & {
-  items: AstCheckerType[];
-};
+export type AstCheckerTupleType =
+  AstCheckerTypeBase<AstCheckerTypeNames.Tuple> & {
+    items: AstCheckerType[];
+  };
 
 export type AstCheckerFunctionType =
-  CheckerTypeBase<CheckerTypeNames.Function> & {
+  AstCheckerTypeBase<AstCheckerTypeNames.Function> & {
     parameters: AstCheckerTupleType;
     return: AstCheckerType;
   };
 
-type AstCheckerFigureOutType = CheckerTypeBase<CheckerTypeNames.FigureOut> & {
-  id: number;
-};
-type AstCheckerEmptyType = CheckerTypeBase<CheckerTypeNames.Empty>;
+type AstCheckerEmptyType = AstCheckerTypeBase<AstCheckerTypeNames.Empty>;
+
+type AstCheckerFigureOutType =
+  AstCheckerTypeBase<AstCheckerTypeNames.FigureOut> & {
+    id: number;
+  };
+type AstCheckerIgnoreType = AstCheckerTypeBase<AstCheckerTypeNames.Ignore>;
 
 export type AstCheckerType =
   | AstCheckerNumberType
@@ -37,4 +42,5 @@ export type AstCheckerType =
   | AstCheckerTupleType
   | AstCheckerFunctionType
   | AstCheckerEmptyType
-  | AstCheckerFigureOutType;
+  | AstCheckerFigureOutType
+  | AstCheckerIgnoreType;

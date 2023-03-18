@@ -1,5 +1,5 @@
 import { AstCheckerContext } from '../../types';
-import { AstCheckerType, CheckerTypeNames } from '../../types/types';
+import { AstCheckerType, AstCheckerTypeNames } from '../../types/types';
 
 type UpdateFigureOutTypeParams = {
   figureOutId: number;
@@ -13,7 +13,7 @@ export const updateFigureOutType = (
   const newVariableScopes = context.variableScopes.map(variableScope =>
     variableScope.map(variable => {
       if (
-        variable.variableType.name !== CheckerTypeNames.FigureOut ||
+        variable.variableType.name !== AstCheckerTypeNames.FigureOut ||
         variable.variableType.id !== figureOutId
       )
         return variable;

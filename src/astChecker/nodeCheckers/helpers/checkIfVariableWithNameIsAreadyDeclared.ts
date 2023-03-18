@@ -1,9 +1,9 @@
 import { AstCheckerContext } from '../../types';
 import { AstCheckerErrorName } from '../../types/errors';
-import { CheckerTypeNames } from '../../types/types';
 import { addError } from './addError';
 import { findVariableInCurrentScope } from './findVariableInCurrentScope';
 import { getCheckNodeReturn } from './getCheckNodeReturn';
+import { ignoreAstCheckerNode } from './ignoreAstCheckerNode';
 
 export const checkIfVariableWithNameIsAlreadyDeclared = (
   context: AstCheckerContext,
@@ -18,10 +18,7 @@ export const checkIfVariableWithNameIsAlreadyDeclared = (
       name: AstCheckerErrorName.IdentifierAlreadyDeclaredInThisScope,
       data: { identifier: variableName },
     });
-    return getCheckNodeReturn(contextWithError, {
-      name: CheckerTypeNames.Empty,
-      hasValue: false,
-    });
+    return getCheckNodeReturn(contextWithError, ignoreAstCheckerNode);
   }
   return undefined;
 };

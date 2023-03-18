@@ -2,7 +2,7 @@ import { checkAstNode } from '.';
 import { AstNodeName } from '../../ast/types';
 import { CheckAstNode, CheckAstNodeReturn, AstCheckerContext } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
-import { CheckerTypeNames } from '../types/types';
+import { AstCheckerTypeNames } from '../types/types';
 import { addError } from './helpers/addError';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 import {
@@ -23,14 +23,14 @@ export const checkBlockNode: CheckAstNode<AstNodeName.Block> = (
         name: AstCheckerErrorName.EmptyBlock,
         data: {},
       }),
-      { name: CheckerTypeNames.Empty, hasValue: false },
+      { name: AstCheckerTypeNames.Empty, hasValue: false },
     );
   }
 
   const contextAfterChildren = block.children.reduce<CheckAstNodeReturn>(
     (previousContext, child) => checkAstNode(previousContext, child),
     getCheckNodeReturn(contextWithAddedVariableScope, {
-      name: CheckerTypeNames.Empty,
+      name: AstCheckerTypeNames.Empty,
       hasValue: false,
     }),
   );
