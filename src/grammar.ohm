@@ -62,10 +62,9 @@ BoringLang {
   TupleType = "(" ListOf<TypeExpression, ","> ")"
 
   RecordEntry<Value> = identifier ":" Value
-  RecordContent<Value> = ListOf<RecordEntry<Value>, ",">
 
-  RecordExpression = "%{" RecordContent<Expression> "}"
-  RecordType = "%{" RecordContent<TypeExpression> "}"
+  RecordExpression = "%{" ListOf<RecordEntry<Expression>, ","> "}"
+  RecordType = "%{" ListOf<RecordEntry<TypeExpression>, ","> "}"
 
   Min2List<Value, Separator> = Value Separator NonemptyListOf<Value, Separator>
 

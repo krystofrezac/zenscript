@@ -3,7 +3,7 @@ import { BoringLangSemantics } from '../grammar.ohm-bundle';
 import { createInvalidAstNode, createAstNode } from './helpers/createAstNode';
 import { getTupleItemsTypes } from './helpers/getTupleItemsTypes';
 import { isAstValueNode } from './helpers/isAstValueNode';
-import { AstValueNode, AstNodeName } from './types';
+import { AstValueNode, AstNodeName, RecordEntryAstNode } from './types';
 
 export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
   semantics.addOperation<ReturnType<ohm.Node['getAstNode']>>('getAstNode', {
@@ -40,10 +40,20 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
         hasValue: true,
       });
     },
+    RecordExpression: (_start, content, _end) => {
+      const entries = content.getAstNodes() as RecordEntryAstNode[];
+
+      return createAstNode({
+        name: AstNodeName.Record,
+        entries,
+        hasValue: true,
+      });
+    },
     FunctionParameter: name =>
       createAstNode({
         name: AstNodeName.Parameter,
         parameterName: name.getName(),
+        hasValue: true,
       }),
     FunctionValueDeclaration: (
       _startBracket,
@@ -104,6 +114,15 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
         hasValue: false,
       });
     },
+    RecordType: (_start, content, _end) => {
+      const entries = content.getAstNodes() as RecordEntryAstNode[];
+
+      return createAstNode({
+        name: AstNodeName.Record,
+        entries,
+        hasValue: false,
+      });
+    },
     FunctionTypeDeclaration: (parametersTuple, returnExpression) => {
       const parametersType = parametersTuple.getAstNode();
       const returnType = returnExpression.getAstNode();
@@ -149,6 +168,18 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
         name: AstNodeName.VariableReference,
         variableName: identifier.sourceString,
       }),
+    RecordEntry: (identifier, _colon, value) => {
+      const valueAst = value.getAstNode();
+
+      if (!isAstValueNode(valueAst)) return createInvalidAstNode();
+
+      return createAstNode({
+        name: AstNodeName.RecordEntry,
+        key: identifier.getName(),
+        value: valueAst,
+        hasValue: 'hasValue' in valueAst ? valueAst.hasValue : false,
+      });
+    },
 
     // variable assignments
     VariableDeclaration_onlyValue: (identifier, valueAssignment) => {

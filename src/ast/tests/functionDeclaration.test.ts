@@ -38,10 +38,12 @@ describe('value', () => {
               {
                 name: AstNodeName.Parameter,
                 parameterName: 'a',
+                hasValue: true,
               },
               {
                 name: AstNodeName.Parameter,
                 parameterName: 'b',
+                hasValue: true,
               },
             ],
             hasValue: true,
@@ -76,10 +78,12 @@ describe('value', () => {
               {
                 name: AstNodeName.Parameter,
                 parameterName: 'a',
+                hasValue: true,
               },
               {
                 name: AstNodeName.Parameter,
                 parameterName: 'b',
+                hasValue: true,
               },
             ],
             hasValue: true,

@@ -5,6 +5,5 @@ declare module 'ohm-js' {
     getName: () => string;
     getAstNode: () => AstNode;
     getAstNodes: () => AstNode[];
-    transpile: () => string;
   }
 }
