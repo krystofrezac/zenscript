@@ -2,10 +2,11 @@ import { checkAstNode } from '.';
 import { AstNodeName } from '../../ast/types';
 import { CheckAstNode, AstCheckerContext } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
-import { AstCheckerTupleType, CheckerTypeNames } from '../types/types';
+import { AstCheckerTupleType, AstCheckerTypeNames } from '../types/types';
 import { addError } from './helpers/addError';
 import { areTypesCompatible } from './helpers/areTypesCompatible';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
+import { ignoreAstCheckerNode } from './helpers/ignoreAstCheckerNode';
 import { updateFigureOutType } from './helpers/updateVariableType';
 
 export const checkFunctionCall: CheckAstNode<AstNodeName.FunctionCall> = (
@@ -22,24 +23,18 @@ export const checkFunctionCall: CheckAstNode<AstNodeName.FunctionCall> = (
         expressionType: calleeContext.nodeType,
       },
     });
-    return getCheckNodeReturn(contextWithError, {
-      name: CheckerTypeNames.Empty,
-      hasValue: false,
-    });
+    return getCheckNodeReturn(contextWithError, ignoreAstCheckerNode);
   }
 
   // callee is not callable
-  if (calleeContext.nodeType.name !== CheckerTypeNames.Function) {
+  if (calleeContext.nodeType.name !== AstCheckerTypeNames.Function) {
     const contextWithError = addError(calleeContext, {
       name: AstCheckerErrorName.CallingNonCallableExpression,
       data: {
         callee: calleeContext.nodeType,
       },
     });
-    return getCheckNodeReturn(contextWithError, {
-      name: CheckerTypeNames.Empty,
-      hasValue: false,
-    });
+    return getCheckNodeReturn(contextWithError, ignoreAstCheckerNode);
   }
 
   const argumentsContext = checkAstNode(calleeContext, functionCall.arguments);
@@ -59,18 +54,14 @@ export const checkFunctionCall: CheckAstNode<AstNodeName.FunctionCall> = (
         received: argumentsContext.nodeType,
       },
     });
-    return getCheckNodeReturn(contextWithError, {
-      name: CheckerTypeNames.Empty,
-      hasValue: false,
-    });
+    return getCheckNodeReturn(contextWithError, ignoreAstCheckerNode);
   }
 
-  if (argumentsType.name !== CheckerTypeNames.Tuple) {
-    return getCheckNodeReturn(argumentsContext, {
-      name: CheckerTypeNames.Empty,
-      hasValue: false,
-    });
+  // should not happen - just for TS
+  if (argumentsType.name !== AstCheckerTypeNames.Tuple) {
+    return getCheckNodeReturn(argumentsContext, ignoreAstCheckerNode);
   }
+
   const figuredOutArgumentsContext = figureOutArguments(
     argumentsContext,
     argumentsType,
@@ -88,7 +79,7 @@ const figureOutArguments = (
   parametersType: AstCheckerTupleType,
 ): AstCheckerContext => {
   const newContext = argumentsType.items.reduce((context, argument, index) => {
-    if (argument.name !== CheckerTypeNames.FigureOut) return context;
+    if (argument.name !== AstCheckerTypeNames.FigureOut) return context;
 
     const parameterType = parametersType.items[index];
     if (!parameterType) return context;

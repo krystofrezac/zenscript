@@ -1,7 +1,7 @@
 import { checkAstNode } from '.';
 import { AstNodeName } from '../../ast/types';
 import { CheckAstNode, CheckAstNodeReturn } from '../types';
-import { AstCheckerTupleType, CheckerTypeNames } from '../types/types';
+import { AstCheckerTupleType, AstCheckerTypeNames } from '../types/types';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 
 export const checkTupleNode: CheckAstNode<AstNodeName.Tuple> = (
@@ -20,7 +20,7 @@ export const checkTupleNode: CheckAstNode<AstNodeName.Tuple> = (
       return getCheckNodeReturn(itemContext, newTuple);
     },
     getCheckNodeReturn(context, {
-      name: CheckerTypeNames.Tuple,
+      name: AstCheckerTypeNames.Tuple,
       items: [],
       hasValue: tuple.hasValue,
     }),

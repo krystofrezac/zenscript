@@ -1,6 +1,6 @@
 import { AstNodeName } from '../../ast/types';
 import { CheckAstNode } from '../types';
-import { CheckerTypeNames } from '../types/types';
+import { AstCheckerTypeNames } from '../types/types';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 
 export const checkNumberNode: CheckAstNode<AstNodeName.Number> = (
@@ -8,6 +8,6 @@ export const checkNumberNode: CheckAstNode<AstNodeName.Number> = (
   number,
 ) =>
   getCheckNodeReturn(context, {
-    name: CheckerTypeNames.Number,
+    name: AstCheckerTypeNames.Number,
     hasValue: number.hasValue,
   });

@@ -1,6 +1,6 @@
 import { AstNodeName } from '../../ast/types';
 import { CheckAstNode, AstCheckerContext } from '../types';
-import { AstCheckerType, CheckerTypeNames } from '../types/types';
+import { AstCheckerType, AstCheckerTypeNames } from '../types/types';
 import { addVariableToContext } from './helpers/addVariableToContext';
 import { checkIfVariableWithNameIsAlreadyDeclared } from './helpers/checkIfVariableWithNameIsAreadyDeclared';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
@@ -19,7 +19,7 @@ export const checkParameter: CheckAstNode<AstNodeName.Parameter> = (
 
   const figureOutId = context.figureOutId + 1;
   const variableType: AstCheckerType = {
-    name: CheckerTypeNames.FigureOut,
+    name: AstCheckerTypeNames.FigureOut,
     id: figureOutId,
     hasValue: true,
   };

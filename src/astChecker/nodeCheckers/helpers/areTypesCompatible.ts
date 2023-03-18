@@ -1,4 +1,4 @@
-import { AstCheckerType, CheckerTypeNames } from '../../types/types';
+import { AstCheckerType, AstCheckerTypeNames } from '../../types/types';
 
 type AreTypesCompatible = { figureOutEnabled?: boolean };
 
@@ -11,8 +11,8 @@ export const areTypesCompatible = (
 
   if (
     figureOutEnabled &&
-    (typeA.name === CheckerTypeNames.FigureOut ||
-      typeB.name === CheckerTypeNames.FigureOut)
+    (typeA.name === AstCheckerTypeNames.FigureOut ||
+      typeB.name === AstCheckerTypeNames.FigureOut)
   )
     return true;
 
@@ -24,8 +24,8 @@ export const areTypesCompatible = (
   }
 
   if (
-    typeA.name === CheckerTypeNames.Tuple &&
-    typeB.name === CheckerTypeNames.Tuple
+    typeA.name === AstCheckerTypeNames.Tuple &&
+    typeB.name === AstCheckerTypeNames.Tuple
   ) {
     const haveSameLength = typeA.items.length === typeB.items.length;
     return (
@@ -38,8 +38,8 @@ export const areTypesCompatible = (
   }
 
   if (
-    typeA.name === CheckerTypeNames.Function &&
-    typeB.name === CheckerTypeNames.Function
+    typeA.name === AstCheckerTypeNames.Function &&
+    typeB.name === AstCheckerTypeNames.Function
   ) {
     return (
       areTypesCompatible(typeA.parameters, typeB.parameters, options) &&
@@ -49,7 +49,7 @@ export const areTypesCompatible = (
   return false;
 };
 
-const shallowCompareTypes: CheckerTypeNames[] = [
-  CheckerTypeNames.String,
-  CheckerTypeNames.Number,
+const shallowCompareTypes: AstCheckerTypeNames[] = [
+  AstCheckerTypeNames.String,
+  AstCheckerTypeNames.Number,
 ];

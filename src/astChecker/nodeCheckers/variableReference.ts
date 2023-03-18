@@ -1,10 +1,10 @@
 import { AstNodeName } from '../../ast/types';
 import { CheckAstNode } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
-import { CheckerTypeNames } from '../types/types';
 import { addError } from './helpers/addError';
 import { findVariableFromCurrentScope } from './helpers/findVariableFromCurrentScope';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
+import { ignoreAstCheckerNode } from './helpers/ignoreAstCheckerNode';
 
 export const checkVariableReferenceNode: CheckAstNode<
   AstNodeName.VariableReference
@@ -18,10 +18,7 @@ export const checkVariableReferenceNode: CheckAstNode<
       name: AstCheckerErrorName.UnknownIdentifier,
       data: { identifier: variableReference.variableName },
     });
-    return getCheckNodeReturn(contextWithError, {
-      name: CheckerTypeNames.Empty,
-      hasValue: false,
-    });
+    return getCheckNodeReturn(contextWithError, ignoreAstCheckerNode);
   }
 
   return getCheckNodeReturn(context, referencedVariable.variableType);

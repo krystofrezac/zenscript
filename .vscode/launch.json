@@ -4,7 +4,7 @@
     {
         "type": "node",
         "request": "launch",
-        "name": "Build Project",
+        "name": "Debug",
         "program": "${workspaceFolder}/src/index.ts",
         "preLaunchTask": "npm: build",
         "sourceMaps": true,

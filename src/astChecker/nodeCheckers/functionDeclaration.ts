@@ -1,9 +1,10 @@
 import { checkAstNode } from '.';
 import { TupleAstNode, AstNodeName } from '../../ast/types';
 import { CheckAstNode, AstCheckerContext } from '../types';
-import { AstCheckerTupleType, CheckerTypeNames } from '../types/types';
+import { AstCheckerTupleType, AstCheckerTypeNames } from '../types/types';
 import { findVariableFromCurrentScope } from './helpers/findVariableFromCurrentScope';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
+import { ignoreAstCheckerNode } from './helpers/ignoreAstCheckerNode';
 import {
   addVariableScope,
   removeVariableScope,
@@ -21,11 +22,8 @@ export const checkFunctionDeclaration: CheckAstNode<
   const parametersType = parametersContext.nodeType;
 
   // Just for TS - parametersType should always be tuple
-  if (parametersType.name !== CheckerTypeNames.Tuple)
-    return getCheckNodeReturn(parametersContext, {
-      name: CheckerTypeNames.Empty,
-      hasValue: false,
-    });
+  if (parametersType.name !== AstCheckerTypeNames.Tuple)
+    return getCheckNodeReturn(parametersContext, ignoreAstCheckerNode);
 
   const returnContext = checkAstNode(
     parametersContext,
@@ -42,7 +40,7 @@ export const checkFunctionDeclaration: CheckAstNode<
   const contextWithRemovedVariableScope = removeVariableScope(returnContext);
 
   return getCheckNodeReturn(contextWithRemovedVariableScope, {
-    name: CheckerTypeNames.Function,
+    name: AstCheckerTypeNames.Function,
     parameters: figuredOutParameters,
     return: returnType,
     hasValue: returnType.hasValue,
@@ -55,7 +53,7 @@ const getFiguredOutParameters = (
   parametersAST: TupleAstNode,
 ): AstCheckerTupleType => {
   const figuredOutItems = parametersType.items.map((parameter, index) => {
-    if (parameter.name !== CheckerTypeNames.FigureOut) return parameter;
+    if (parameter.name !== AstCheckerTypeNames.FigureOut) return parameter;
 
     const parameterAST = parametersAST.items[index];
     if (!parameterAST || parameterAST.name !== AstNodeName.Parameter)

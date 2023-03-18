@@ -1,14 +1,16 @@
 import { checkAstNode } from '.';
 import { AstNodeName } from '../../ast/types';
+import { pipe } from '../../helpers/pipe';
 import { CheckAstNode, CheckAstNodeReturn, AstCheckerContext } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
-import { CheckerTypeNames } from '../types/types';
+import { AstCheckerTypeNames } from '../types/types';
 import { addError, addErrors } from './helpers/addError';
 import { addVariableToContext } from './helpers/addVariableToContext';
 import { areTypesCompatible } from './helpers/areTypesCompatible';
 import { checkIfVariableWithNameIsAlreadyDeclared } from './helpers/checkIfVariableWithNameIsAreadyDeclared';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 import { getNewErrors } from './helpers/getNewErrors';
+import { ignoreAstCheckerNode } from './helpers/ignoreAstCheckerNode';
 
 export const checkVariableAssignmentNode: CheckAstNode<
   AstNodeName.VariableAssignment
@@ -32,36 +34,49 @@ export const checkVariableAssignmentNode: CheckAstNode<
     ...getNewErrors(explicitNodeContext?.errors ?? [], context.errors),
   ];
   if (implicitExplicitErrors.length > 0) {
-    const contextWithErrors = addErrors(context, implicitExplicitErrors);
-    return getCheckNodeReturn(contextWithErrors, {
-      name: CheckerTypeNames.Empty,
-      hasValue: false,
-    });
+    const returnContext = pipe(
+      c => addErrors(c, implicitExplicitErrors),
+      c => addIgnoreVariable(c, variableAssignment.variableName),
+    )(context);
+
+    return getCheckNodeReturn(returnContext, ignoreAstCheckerNode);
+  }
+
+  // Ignore when explicit or implicit type is ignored
+  if (
+    implicitNodeContext?.nodeType.name === AstCheckerTypeNames.Ignore ||
+    explicitNodeContext?.nodeType.name === AstCheckerTypeNames.Ignore
+  ) {
+    const returnContext = addIgnoreVariable(
+      context,
+      variableAssignment.variableName,
+    );
+    return getCheckNodeReturn(returnContext, ignoreAstCheckerNode);
   }
 
   // Error when trying to use variable without value as value
-  const contextWithWithoutValueError = maybeAddWithoutValueError(
+  const contextWithWithoutValueError = checkWithoutValueError(
     context,
     implicitNodeContext,
   );
+  if (contextWithWithoutValueError) {
+    const returnContext = addIgnoreVariable(
+      contextWithWithoutValueError,
+      variableAssignment.variableName,
+    );
+    return getCheckNodeReturn(returnContext, ignoreAstCheckerNode);
+  }
 
   const valueContext = explicitNodeContext ?? implicitNodeContext;
   // When explicit and implicit nodes are missing - should not happen, it's just for TS
-  if (!valueContext)
-    return getCheckNodeReturn(contextWithWithoutValueError, {
-      name: CheckerTypeNames.Empty,
-      hasValue: false,
-    });
+  if (!valueContext) return getCheckNodeReturn(context, ignoreAstCheckerNode);
 
   // Error when explicit and implicit types are not compatible
-  const contextWithTypeMismatchError = maybeAddTypeMismatchError(
-    contextWithWithoutValueError,
-    {
-      explicitNodeContext,
-      implicitNodeContext,
-      variableName: variableAssignment.variableName,
-    },
-  );
+  const contextWithTypeMismatchError = maybeAddTypeMismatchError(context, {
+    explicitNodeContext,
+    implicitNodeContext,
+    variableName: variableAssignment.variableName,
+  });
 
   // Add variable to context
   const contextWithVariable = addVariableToContext(
@@ -76,12 +91,12 @@ export const checkVariableAssignmentNode: CheckAstNode<
   );
 
   return getCheckNodeReturn(contextWithVariable, {
-    name: CheckerTypeNames.Empty,
+    name: AstCheckerTypeNames.Empty,
     hasValue: false,
   });
 };
 
-const maybeAddWithoutValueError = (
+const checkWithoutValueError = (
   context: AstCheckerContext,
   implicitNodeContext?: CheckAstNodeReturn,
 ) => {
@@ -91,7 +106,7 @@ const maybeAddWithoutValueError = (
       data: { expressionType: implicitNodeContext.nodeType },
     });
   }
-  return context;
+  return undefined;
 };
 
 const maybeAddTypeMismatchError = (
@@ -124,3 +139,9 @@ const maybeAddTypeMismatchError = (
   }
   return context;
 };
+
+const addIgnoreVariable = (context: AstCheckerContext, variableName: string) =>
+  addVariableToContext(context, {
+    variableName: variableName,
+    variableType: ignoreAstCheckerNode,
+  });
