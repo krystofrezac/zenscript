@@ -24,6 +24,8 @@ BoringLang {
                | numberExpression
                | stringExpression
                | booleanExpression 
+               | RecordExpression
+               | RecordEntryAccessExpression
                | identifier
                | Block
                | TupleExpression
@@ -35,6 +37,8 @@ BoringLang {
                    | genericName
                    | TupleType
                    | FunctionTypeCall
+                   | RecordType
+                   | RecordEntryAccessType
                    | identifier
 
   identifier = letter+
@@ -45,7 +49,6 @@ BoringLang {
   stringCharacter =  ~("\"" | "\\" | newLine) any
 
   Block = "{" ListOf<Statement, #(newLine)> "}"
-  TupleExpression = "(" ListOf<Expression, ","> ")"
 
   booleanExpression = trueExpression | falseExpression
   trueExpression = "true"
@@ -55,7 +58,18 @@ BoringLang {
   booleanType = "boolean"
   compilerHook  = "@"letter+
 
+  TupleExpression = "(" ListOf<Expression, ","> ")"
   TupleType = "(" ListOf<TypeExpression, ","> ")"
+
+  RecordEntry<Value> = identifier ":" Value
+
+  RecordExpression = "%{" ListOf<RecordEntry<Expression>, ","> "}"
+  RecordType = "%{" ListOf<RecordEntry<TypeExpression>, ","> "}"
+
+  Min2List<Value, Separator> = Value Separator NonemptyListOf<Value, Separator>
+
+  RecordEntryAccessExpression = Min2List<identifier, ".">
+  RecordEntryAccessType = Min2List<identifier, ".">
 
   FunctionParameter = identifier
   FunctionValueDeclaration = "(" ListOf<FunctionParameter, ","> ")" Expression

@@ -1,8 +1,8 @@
 import { describe, test, expect } from 'vitest';
 import { CheckAstReturn, checkAST } from '..';
+import { codeToAST } from '../../tests/helpers';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
-import { codeToAST } from './helpers';
 
 describe('non type checks', () => {
   test('assigning expression', () => {

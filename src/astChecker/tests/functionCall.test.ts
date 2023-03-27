@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'vitest';
 import { CheckAstReturn, checkAST } from '..';
+import { codeToAST } from '../../tests/helpers';
 import { VariableScope } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
-import { codeToAST } from './helpers';
 
 describe('without parameters', () => {
   test('value assignment', () => {

@@ -3,12 +3,15 @@ export enum AstNodeName {
   String = 'string',
   Number = 'number',
   Tuple = 'tuple',
+  Record = 'record',
+  RecordEntry = 'recordEntry',
   FunctionDeclaration = 'functionDeclaration',
   Parameter = 'parameter',
   FunctionCall = 'functionCall',
   VariableReference = 'variableReference',
   Generic = 'generic',
   VariableAssignment = 'variableAssignment',
+
   Invalid = 'invalid',
 }
 type BaseNodeWithoutHasValue<TName extends AstNodeName> = {
@@ -26,11 +29,18 @@ type NumberAstNode = BaseNode<AstNodeName.Number>;
 export type TupleAstNode = BaseNode<AstNodeName.Tuple> & {
   items: AstValueNode[];
 };
+export type RecordEntryAstNode = BaseNode<AstNodeName.RecordEntry> & {
+  key: string;
+  value: AstValueNode;
+};
+export type RecordAstNode = BaseNode<AstNodeName.Record> & {
+  entries: RecordEntryAstNode[];
+};
 type FunctionDeclarationAstNode = BaseNode<AstNodeName.FunctionDeclaration> & {
   parameters: TupleAstNode;
   return: AstValueNode;
 };
-type ParameterAstNode = BaseNodeWithoutHasValue<AstNodeName.Parameter> & {
+type ParameterAstNode = BaseNode<AstNodeName.Parameter> & {
   parameterName: string;
 };
 type FunctionCallAstNode = BaseNode<AstNodeName.FunctionCall> & {
@@ -49,6 +59,8 @@ export type AstValueNode =
   | StringAstNode
   | NumberAstNode
   | TupleAstNode
+  | RecordAstNode
+  | RecordEntryAstNode
   | FunctionDeclarationAstNode
   | ParameterAstNode
   | FunctionCallAstNode
@@ -65,4 +77,4 @@ export type VariableAssignmentAstNode =
 // just for development
 type InvalidAstNode = BaseNodeWithoutHasValue<AstNodeName.Invalid>;
 
-export type AstNode = VariableAssignmentAstNode | AstValueNode | InvalidAstNode;
+export type AstNode = AstValueNode | VariableAssignmentAstNode | InvalidAstNode;
