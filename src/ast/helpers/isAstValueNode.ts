@@ -9,6 +9,7 @@ export const isAstValueNode = (node: AstNode): node is AstValueNode => {
     [AstNodeName.Tuple]: true,
     [AstNodeName.Record]: true,
     [AstNodeName.RecordEntry]: true,
+    [AstNodeName.RecordEntryAccess]: true,
     [AstNodeName.VariableReference]: true,
     [AstNodeName.FunctionDeclaration]: true,
     [AstNodeName.FunctionCall]: true,

@@ -9,4 +9,8 @@ export const getAstNodesOperations = (semantics: BoringLangSemantics) =>
       ...tailIterable.getAstNodes(),
     ],
     EmptyListOf: () => [],
+    Min2List: (first, _separator, tail) => [
+      first.getAstNode(),
+      ...tail.getAstNodes(),
+    ],
   });
