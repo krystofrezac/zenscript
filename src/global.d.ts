@@ -1,4 +1,4 @@
-import { AstNode } from './ast/types';
+import { AstNode } from './typeAST/types';
 
 declare module 'ohm-js' {
   interface Node {

@@ -1,5 +1,5 @@
 import { checkAstNode } from '.';
-import { AstNodeName, RecordEntryAstNode } from '../../ast/types';
+import { AstNodeName, RecordEntryAstNode } from '../../typeAST/types';
 import { AstCheckerContext, CheckAstNode } from '../types';
 import { AstCheckerType, AstCheckerTypeNames } from '../types/types';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';

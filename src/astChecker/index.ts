@@ -1,4 +1,4 @@
-import { AstNode } from '../ast/types';
+import { AstNode } from '../typeAST/types';
 import { checkAstNode } from './nodeCheckers';
 import { AstCheckerContext, VariableScope } from './types';
 

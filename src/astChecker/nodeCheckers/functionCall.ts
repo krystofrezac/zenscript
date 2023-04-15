@@ -1,5 +1,5 @@
 import { checkAstNode } from '.';
-import { AstNodeName } from '../../ast/types';
+import { AstNodeName } from '../../typeAST/types';
 import { CheckAstNode, AstCheckerContext } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTupleType, AstCheckerTypeNames } from '../types/types';

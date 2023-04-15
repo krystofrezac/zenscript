@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises';
 import { join } from 'path';
-import { getAST } from './ast';
+import { getTypeAST } from './typeAST';
 import { parse } from './parser';
 import { checkAST } from './astChecker';
 
@@ -11,8 +11,8 @@ const run = async () => {
     console.log('Parsing failed!');
     return;
   }
-  const AST = getAST(parsed);
-  const checkResult = checkAST(AST);
+  const typeAST = getTypeAST(parsed);
+  const checkResult = checkAST(typeAST);
 
   console.log(JSON.stringify(checkResult, undefined, 2));
 };

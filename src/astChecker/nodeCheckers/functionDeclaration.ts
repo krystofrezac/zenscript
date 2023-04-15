@@ -1,5 +1,5 @@
 import { checkAstNode } from '.';
-import { TupleAstNode, AstNodeName } from '../../ast/types';
+import { TupleAstNode, AstNodeName } from '../../typeAST/types';
 import { CheckAstNode, AstCheckerContext } from '../types';
 import { AstCheckerTupleType, AstCheckerTypeNames } from '../types/types';
 import { findVariableFromCurrentScope } from './helpers/findVariableFromCurrentScope';
