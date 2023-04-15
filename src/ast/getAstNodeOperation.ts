@@ -4,6 +4,7 @@ import { createInvalidAstNode, createAstNode } from './helpers/createAstNode';
 import { getTupleItemsTypes } from './helpers/getTupleItemsTypes';
 import { isAstValueNode } from './helpers/isAstValueNode';
 import { AstValueNode, AstNodeName, RecordEntryAstNode } from './types';
+import { getRecordAccessNode } from './helpers/getRecordAccessNode';
 
 export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
   semantics.addOperation<ReturnType<ohm.Node['getAstNode']>>('getAstNode', {
@@ -49,6 +50,7 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
         hasValue: true,
       });
     },
+    RecordEntryAccessExpression: getRecordAccessNode(true),
     FunctionParameter: name =>
       createAstNode({
         name: AstNodeName.Parameter,
@@ -123,6 +125,8 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
         hasValue: false,
       });
     },
+    RecordEntryAccessType: getRecordAccessNode(false),
+
     FunctionTypeDeclaration: (parametersTuple, returnExpression) => {
       const parametersType = parametersTuple.getAstNode();
       const returnType = returnExpression.getAstNode();

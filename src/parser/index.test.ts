@@ -177,8 +177,9 @@ test('comments', () => {
     `;
   expect(parse(input).succeeded()).toBe(true);
 });
-test('records', () => {
-  const input = `
+describe('records', () => {
+  test('declarations', () => {
+    const input = `
     recordA = %{ a: "", b: 1, c: %{}} 
     recordB = %{
        a: "", 
@@ -198,5 +199,12 @@ test('records', () => {
               c: %{}
             } 
   `;
-  expect(parse(input).succeeded()).toBe(true);
+    expect(parse(input).succeeded()).toBe(true);
+  });
+  test('accessing', () => {
+    const input = `
+      a = record.entryA.entryB.entryC
+    `;
+    expect(parse(input).succeeded()).toBe(true);
+  });
 });

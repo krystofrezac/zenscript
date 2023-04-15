@@ -5,6 +5,7 @@ export enum AstNodeName {
   Tuple = 'tuple',
   Record = 'record',
   RecordEntry = 'recordEntry',
+  RecordEntryAccess = 'recordEntryAccess',
   FunctionDeclaration = 'functionDeclaration',
   Parameter = 'parameter',
   FunctionCall = 'functionCall',
@@ -36,6 +37,11 @@ export type RecordEntryAstNode = BaseNode<AstNodeName.RecordEntry> & {
 export type RecordAstNode = BaseNode<AstNodeName.Record> & {
   entries: RecordEntryAstNode[];
 };
+export type RecordEntryAccessAstNode =
+  BaseNode<AstNodeName.RecordEntryAccess> & {
+    entryName: string;
+    accessing: AstValueNode;
+  };
 type FunctionDeclarationAstNode = BaseNode<AstNodeName.FunctionDeclaration> & {
   parameters: TupleAstNode;
   return: AstValueNode;
@@ -47,7 +53,7 @@ type FunctionCallAstNode = BaseNode<AstNodeName.FunctionCall> & {
   callee: AstValueNode;
   arguments: TupleAstNode;
 };
-type VariableReferenceAstNode =
+export type VariableReferenceAstNode =
   BaseNodeWithoutHasValue<AstNodeName.VariableReference> & {
     variableName: string;
   };
@@ -61,6 +67,7 @@ export type AstValueNode =
   | TupleAstNode
   | RecordAstNode
   | RecordEntryAstNode
+  | RecordEntryAccessAstNode
   | FunctionDeclarationAstNode
   | ParameterAstNode
   | FunctionCallAstNode
