@@ -1,4 +1,4 @@
-import { AstNodeName } from '../../ast/types';
+import { AstNodeName } from '../../typeAST/types';
 import { CheckAstNode, AstCheckerContext } from '../types';
 import { AstCheckerType, AstCheckerTypeNames } from '../types/types';
 import { addVariableToContext } from './helpers/addVariableToContext';

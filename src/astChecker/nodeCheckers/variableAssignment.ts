@@ -1,5 +1,5 @@
 import { checkAstNode } from '.';
-import { AstNodeName } from '../../ast/types';
+import { AstNodeName } from '../../typeAST/types';
 import { pipe } from '../../helpers/pipe';
 import { CheckAstNode, CheckAstNodeReturn, AstCheckerContext } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
