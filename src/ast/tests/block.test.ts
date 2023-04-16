@@ -7,8 +7,7 @@ test('empty block', () => {
   const input = '{}';
   const expected = createAstNode({
     name: AstNodeName.Block,
-    children: [{ name: AstNodeName.Block, children: [], hasValue: true }],
-    hasValue: true,
+    children: [{ name: AstNodeName.Block, children: [] }],
   });
   const result = codeToAST(input);
   expect(result).toEqual(expected);
@@ -20,11 +19,9 @@ test('block with string value', () => {
     children: [
       {
         name: AstNodeName.Block,
-        children: [{ name: AstNodeName.String, hasValue: true }],
-        hasValue: true,
+        children: [{ name: AstNodeName.StringExpression, value: '' }],
       },
     ],
-    hasValue: true,
   });
   const result = codeToAST(input);
   expect(result).toEqual(expected);
@@ -36,11 +33,9 @@ test('block with number value', () => {
     children: [
       {
         name: AstNodeName.Block,
-        children: [{ name: AstNodeName.Number, hasValue: true }],
-        hasValue: true,
+        children: [{ name: AstNodeName.NumberExpression, value: 1 }],
       },
     ],
-    hasValue: true,
   });
   const result = codeToAST(input);
   expect(result).toEqual(expected);
@@ -59,31 +54,27 @@ test('block with variable assignments', () => {
         children: [
           {
             name: AstNodeName.VariableAssignment,
-            variableName: 'a',
-            implicitType: {
-              name: AstNodeName.Number,
-              hasValue: true,
+            identifierName: 'a',
+            expression: {
+              name: AstNodeName.NumberExpression,
+              value: 1,
             },
-            hasValue: true,
           },
           {
             name: AstNodeName.VariableAssignment,
-            variableName: 'b',
-            implicitType: {
-              name: AstNodeName.Number,
-              hasValue: true,
+            identifierName: 'b',
+            expression: {
+              name: AstNodeName.NumberExpression,
+              value: 2,
             },
-            hasValue: true,
           },
           {
-            name: AstNodeName.VariableReference,
-            variableName: 'b',
+            name: AstNodeName.IdentifierExpression,
+            identifierName: 'b',
           },
         ],
-        hasValue: true,
       },
     ],
-    hasValue: true,
   });
   const result = codeToAST(input);
   expect(result).toEqual(expected);
@@ -95,16 +86,13 @@ test('block assigned to variable', () => {
     children: [
       {
         name: AstNodeName.VariableAssignment,
-        variableName: 'a',
-        implicitType: {
+        identifierName: 'a',
+        expression: {
           name: AstNodeName.Block,
-          children: [{ name: AstNodeName.Number, hasValue: true }],
-          hasValue: true,
+          children: [{ name: AstNodeName.NumberExpression, value: 1 }],
         },
-        hasValue: true,
       },
     ],
-    hasValue: true,
   });
   const result = codeToAST(input);
   expect(result).toEqual(expected);
@@ -126,33 +114,28 @@ test('nested blocks', () => {
         children: [
           {
             name: AstNodeName.VariableAssignment,
-            variableName: 'a',
-            implicitType: {
-              name: AstNodeName.Number,
-              hasValue: true,
+            identifierName: 'a',
+            expression: {
+              name: AstNodeName.NumberExpression,
+              value: 1,
             },
-            hasValue: true,
           },
           {
             name: AstNodeName.Block,
             children: [
               {
                 name: AstNodeName.VariableAssignment,
-                variableName: 'a',
-                implicitType: {
-                  name: AstNodeName.String,
-                  hasValue: true,
+                identifierName: 'a',
+                expression: {
+                  name: AstNodeName.StringExpression,
+                  value: 'hello',
                 },
-                hasValue: true,
               },
             ],
-            hasValue: true,
           },
         ],
-        hasValue: true,
       },
     ],
-    hasValue: true,
   });
   const result = codeToAST(input);
   expect(result).toEqual(expected);

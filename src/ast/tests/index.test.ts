@@ -7,7 +7,6 @@ describe('empty', () => {
   const expected = createAstNode({
     name: AstNodeName.Block,
     children: [],
-    hasValue: true,
   });
   test('empty string', () => {
     const input = '';
@@ -25,8 +24,9 @@ describe('string', () => {
     const input = '"Hello, World!"';
     const expected = createAstNode({
       name: AstNodeName.Block,
-      children: [{ name: AstNodeName.String, hasValue: true }],
-      hasValue: true,
+      children: [
+        { name: AstNodeName.StringExpression, value: 'Hello, World!' },
+      ],
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -38,12 +38,13 @@ describe('string', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          implicitType: { name: AstNodeName.String, hasValue: true },
-          hasValue: true,
+          identifierName: 'a',
+          expression: {
+            name: AstNodeName.StringExpression,
+            value: 'Hello, World!',
+          },
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -55,13 +56,14 @@ describe('string', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          implicitType: { name: AstNodeName.String, hasValue: true },
-          explicitType: { name: AstNodeName.String, hasValue: false },
-          hasValue: true,
+          identifierName: 'a',
+          expression: {
+            name: AstNodeName.StringExpression,
+            value: 'Hello, World!',
+          },
+          type: { name: AstNodeName.StringType },
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -73,13 +75,14 @@ describe('string', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          implicitType: { name: AstNodeName.String, hasValue: true },
-          explicitType: { name: AstNodeName.Number, hasValue: false },
-          hasValue: true,
+          identifierName: 'a',
+          expression: {
+            name: AstNodeName.StringExpression,
+            value: 'Hello, World!',
+          },
+          type: { name: AstNodeName.NumberType },
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -91,12 +94,10 @@ describe('string', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          explicitType: { name: AstNodeName.String, hasValue: false },
-          hasValue: false,
+          identifierName: 'a',
+          type: { name: AstNodeName.StringType },
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -108,8 +109,7 @@ describe('number', () => {
     const input = '1';
     const expected = createAstNode({
       name: AstNodeName.Block,
-      children: [{ name: AstNodeName.Number, hasValue: true }],
-      hasValue: true,
+      children: [{ name: AstNodeName.NumberExpression, value: 1 }],
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -121,12 +121,10 @@ describe('number', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          implicitType: { name: AstNodeName.Number, hasValue: true },
-          hasValue: true,
+          identifierName: 'a',
+          expression: { name: AstNodeName.NumberExpression, value: 1 },
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -138,13 +136,11 @@ describe('number', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          implicitType: { name: AstNodeName.Number, hasValue: true },
-          explicitType: { name: AstNodeName.Number, hasValue: false },
-          hasValue: true,
+          identifierName: 'a',
+          expression: { name: AstNodeName.NumberExpression, value: 1 },
+          type: { name: AstNodeName.NumberType },
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -156,13 +152,11 @@ describe('number', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          implicitType: { name: AstNodeName.Number, hasValue: true },
-          explicitType: { name: AstNodeName.String, hasValue: false },
-          hasValue: true,
+          identifierName: 'a',
+          expression: { name: AstNodeName.NumberExpression, value: 1 },
+          type: { name: AstNodeName.StringType },
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -174,12 +168,10 @@ describe('number', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          explicitType: { name: AstNodeName.Number, hasValue: false },
-          hasValue: false,
+          identifierName: 'a',
+          type: { name: AstNodeName.NumberType },
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -197,21 +189,18 @@ describe('variable reference', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          implicitType: { name: AstNodeName.Number, hasValue: true },
-          hasValue: true,
+          identifierName: 'a',
+          expression: { name: AstNodeName.NumberExpression, value: 1 },
         },
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'b',
-          implicitType: {
-            name: AstNodeName.VariableReference,
-            variableName: 'a',
+          identifierName: 'b',
+          expression: {
+            name: AstNodeName.IdentifierExpression,
+            identifierName: 'a',
           },
-          hasValue: true,
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -226,21 +215,18 @@ describe('variable reference', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          implicitType: { name: AstNodeName.Number, hasValue: true },
-          hasValue: true,
+          identifierName: 'a',
+          expression: { name: AstNodeName.NumberExpression, value: 1 },
         },
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'b',
-          explicitType: {
-            name: AstNodeName.VariableReference,
-            variableName: 'a',
+          identifierName: 'b',
+          type: {
+            name: AstNodeName.IdentifierType,
+            identifierName: 'a',
           },
-          hasValue: false,
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -256,31 +242,27 @@ describe('variable reference', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          implicitType: { name: AstNodeName.Number, hasValue: true },
-          hasValue: true,
+          identifierName: 'a',
+          expression: { name: AstNodeName.NumberExpression, value: 1 },
         },
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'b',
-          explicitType: { name: AstNodeName.Number, hasValue: false },
-          hasValue: false,
+          identifierName: 'b',
+          type: { name: AstNodeName.NumberType },
         },
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'c',
-          explicitType: {
-            name: AstNodeName.VariableReference,
-            variableName: 'b',
+          identifierName: 'c',
+          type: {
+            name: AstNodeName.IdentifierType,
+            identifierName: 'b',
           },
-          implicitType: {
-            name: AstNodeName.VariableReference,
-            variableName: 'a',
+          expression: {
+            name: AstNodeName.IdentifierExpression,
+            identifierName: 'a',
           },
-          hasValue: true,
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);

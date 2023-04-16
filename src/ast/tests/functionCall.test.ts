@@ -10,20 +10,17 @@ describe('value', () => {
       name: AstNodeName.Block,
       children: [
         {
-          name: AstNodeName.FunctionCall,
+          name: AstNodeName.FunctionCallExpression,
           callee: {
-            name: AstNodeName.VariableReference,
-            variableName: 'a',
+            name: AstNodeName.IdentifierExpression,
+            identifierName: 'a',
           },
           arguments: {
-            name: AstNodeName.Tuple,
+            name: AstNodeName.TupleExpression,
             items: [],
-            hasValue: true,
           },
-          hasValue: true,
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -34,25 +31,22 @@ describe('value', () => {
       name: AstNodeName.Block,
       children: [
         {
-          name: AstNodeName.FunctionCall,
+          name: AstNodeName.FunctionCallExpression,
           callee: {
-            name: AstNodeName.VariableReference,
-            variableName: 'a',
+            name: AstNodeName.IdentifierExpression,
+            identifierName: 'a',
           },
           arguments: {
-            name: AstNodeName.Tuple,
+            name: AstNodeName.TupleExpression,
             items: [
               {
-                name: AstNodeName.Number,
-                hasValue: true,
+                name: AstNodeName.NumberExpression,
+                value: 1,
               },
             ],
-            hasValue: true,
           },
-          hasValue: true,
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -63,29 +57,24 @@ describe('value', () => {
       name: AstNodeName.Block,
       children: [
         {
-          name: AstNodeName.FunctionCall,
+          name: AstNodeName.FunctionCallExpression,
           callee: {
-            name: AstNodeName.FunctionCall,
+            name: AstNodeName.FunctionCallExpression,
             callee: {
-              name: AstNodeName.VariableReference,
-              variableName: 'a',
+              name: AstNodeName.IdentifierExpression,
+              identifierName: 'a',
             },
             arguments: {
-              name: AstNodeName.Tuple,
+              name: AstNodeName.TupleExpression,
               items: [],
-              hasValue: true,
             },
-            hasValue: true,
           },
           arguments: {
-            name: AstNodeName.Tuple,
+            name: AstNodeName.TupleExpression,
             items: [],
-            hasValue: true,
           },
-          hasValue: true,
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -100,24 +89,20 @@ describe('type', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          explicitType: {
-            name: AstNodeName.FunctionCall,
+          identifierName: 'a',
+          type: {
+            name: AstNodeName.FunctionCallType,
             callee: {
-              name: AstNodeName.VariableReference,
-              variableName: 'b',
+              name: AstNodeName.IdentifierType,
+              identifierName: 'b',
             },
             arguments: {
-              name: AstNodeName.Tuple,
+              name: AstNodeName.TupleType,
               items: [],
-              hasValue: false,
             },
-            hasValue: false,
           },
-          hasValue: false,
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -129,29 +114,24 @@ describe('type', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          explicitType: {
-            name: AstNodeName.FunctionCall,
+          identifierName: 'a',
+          type: {
+            name: AstNodeName.FunctionCallType,
             callee: {
-              name: AstNodeName.VariableReference,
-              variableName: 'b',
+              name: AstNodeName.IdentifierType,
+              identifierName: 'b',
             },
             arguments: {
-              name: AstNodeName.Tuple,
+              name: AstNodeName.TupleType,
               items: [
                 {
-                  name: AstNodeName.Number,
-                  hasValue: false,
+                  name: AstNodeName.NumberType,
                 },
               ],
-              hasValue: false,
             },
-            hasValue: false,
           },
-          hasValue: false,
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -163,33 +143,27 @@ describe('type', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          explicitType: {
-            name: AstNodeName.FunctionCall,
+          identifierName: 'a',
+          type: {
+            name: AstNodeName.FunctionCallType,
             callee: {
-              name: AstNodeName.FunctionCall,
+              name: AstNodeName.FunctionCallType,
               callee: {
-                name: AstNodeName.VariableReference,
-                variableName: 'b',
+                name: AstNodeName.IdentifierType,
+                identifierName: 'b',
               },
               arguments: {
-                name: AstNodeName.Tuple,
+                name: AstNodeName.TupleType,
                 items: [],
-                hasValue: false,
               },
-              hasValue: false,
             },
             arguments: {
-              name: AstNodeName.Tuple,
+              name: AstNodeName.TupleType,
               items: [],
-              hasValue: false,
             },
-            hasValue: false,
           },
-          hasValue: false,
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);

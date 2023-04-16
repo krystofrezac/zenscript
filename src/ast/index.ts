@@ -1,11 +1,11 @@
 import { MatchResult } from 'ohm-js';
 import grammar from '../grammar.ohm-bundle';
 import { getAstNodeOperation } from './getAstNodeOperation';
-import { getAstNodesOperations } from './getAstNodesOperation';
 import { createGetNameOperation } from './getNameOperation';
 import { AstNode } from './types';
+import { getAstNodesOperations } from './getAstNodesOperation';
 
-export const getTypeAST = (parsedInput: MatchResult): AstNode => {
+export const getAST = (parsedInput: MatchResult): AstNode => {
   const semantics = grammar.createSemantics();
   getAstNodeOperation(semantics);
   getAstNodesOperations(semantics);

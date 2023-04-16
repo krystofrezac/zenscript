@@ -7,8 +7,7 @@ test('empty tuple', () => {
   const input = '()';
   const expected = createAstNode({
     name: AstNodeName.Block,
-    children: [{ name: AstNodeName.Tuple, items: [], hasValue: true }],
-    hasValue: true,
+    children: [{ name: AstNodeName.TupleExpression, items: [] }],
   });
   const result = codeToAST(input);
   expect(result).toEqual(expected);
@@ -19,12 +18,10 @@ test('one item tuple', () => {
     name: AstNodeName.Block,
     children: [
       {
-        name: AstNodeName.Tuple,
-        items: [{ name: AstNodeName.Number, hasValue: true }],
-        hasValue: true,
+        name: AstNodeName.TupleExpression,
+        items: [{ name: AstNodeName.NumberExpression, value: 1 }],
       },
     ],
-    hasValue: true,
   });
   const result = codeToAST(input);
   expect(result).toEqual(expected);
@@ -35,20 +32,17 @@ test('multiple items tuple', () => {
     name: AstNodeName.Block,
     children: [
       {
-        name: AstNodeName.Tuple,
+        name: AstNodeName.TupleExpression,
         items: [
-          { name: AstNodeName.Number, hasValue: true },
-          { name: AstNodeName.String, hasValue: true },
+          { name: AstNodeName.NumberExpression, value: 1 },
+          { name: AstNodeName.StringExpression, value: '' },
           {
-            name: AstNodeName.Tuple,
-            items: [{ name: AstNodeName.Number, hasValue: true }],
-            hasValue: true,
+            name: AstNodeName.TupleExpression,
+            items: [{ name: AstNodeName.NumberExpression, value: 1 }],
           },
         ],
-        hasValue: true,
       },
     ],
-    hasValue: true,
   });
   const result = codeToAST(input);
   expect(result).toEqual(expected);
@@ -60,16 +54,13 @@ test('tuple assigned to variable', () => {
     children: [
       {
         name: AstNodeName.VariableAssignment,
-        variableName: 'a',
-        implicitType: {
-          name: AstNodeName.Tuple,
-          items: [{ name: AstNodeName.Number, hasValue: true }],
-          hasValue: true,
+        identifierName: 'a',
+        expression: {
+          name: AstNodeName.TupleExpression,
+          items: [{ name: AstNodeName.NumberExpression, value: 1 }],
         },
-        hasValue: true,
       },
     ],
-    hasValue: true,
   });
   const result = codeToAST(input);
   expect(result).toEqual(expected);
@@ -81,21 +72,17 @@ test('tuple assigned to variable with same explicit type', () => {
     children: [
       {
         name: AstNodeName.VariableAssignment,
-        variableName: 'a',
-        explicitType: {
-          name: AstNodeName.Tuple,
-          items: [{ name: AstNodeName.Number, hasValue: false }],
-          hasValue: false,
+        identifierName: 'a',
+        type: {
+          name: AstNodeName.TupleType,
+          items: [{ name: AstNodeName.NumberType }],
         },
-        implicitType: {
-          name: AstNodeName.Tuple,
-          items: [{ name: AstNodeName.Number, hasValue: true }],
-          hasValue: true,
+        expression: {
+          name: AstNodeName.TupleExpression,
+          items: [{ name: AstNodeName.NumberExpression, value: 1 }],
         },
-        hasValue: true,
       },
     ],
-    hasValue: true,
   });
   const result = codeToAST(input);
   expect(result).toEqual(expected);
@@ -107,17 +94,14 @@ test('tuple assigned to variable with different explicit type', () => {
     children: [
       {
         name: AstNodeName.VariableAssignment,
-        variableName: 'a',
-        explicitType: { name: AstNodeName.Number, hasValue: false },
-        implicitType: {
-          name: AstNodeName.Tuple,
-          items: [{ name: AstNodeName.Number, hasValue: true }],
-          hasValue: true,
+        identifierName: 'a',
+        type: { name: AstNodeName.NumberType },
+        expression: {
+          name: AstNodeName.TupleExpression,
+          items: [{ name: AstNodeName.NumberExpression, value: 1 }],
         },
-        hasValue: true,
       },
     ],
-    hasValue: true,
   });
   const result = codeToAST(input);
   expect(result).toEqual(expected);

@@ -13,16 +13,13 @@ describe('declaration', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          implicitType: {
-            name: AstNodeName.Record,
+          identifierName: 'a',
+          expression: {
+            name: AstNodeName.RecordExpression,
             entries: [],
-            hasValue: true,
           },
-          hasValue: true,
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -36,16 +33,13 @@ describe('declaration', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          explicitType: {
-            name: AstNodeName.Record,
+          identifierName: 'a',
+          type: {
+            name: AstNodeName.RecordType,
             entries: [],
-            hasValue: false,
           },
-          hasValue: false,
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -65,55 +59,47 @@ describe('declaration', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          implicitType: {
-            name: AstNodeName.Record,
+          identifierName: 'a',
+          expression: {
+            name: AstNodeName.RecordExpression,
             entries: [
               {
-                name: AstNodeName.RecordEntry,
+                name: AstNodeName.RecordEntryExpression,
                 key: 'a',
                 value: {
-                  name: AstNodeName.Number,
-                  hasValue: true,
+                  name: AstNodeName.NumberExpression,
+                  value: 1,
                 },
-                hasValue: true,
               },
               {
-                name: AstNodeName.RecordEntry,
+                name: AstNodeName.RecordEntryExpression,
                 key: 'b',
                 value: {
-                  name: AstNodeName.String,
-                  hasValue: true,
+                  name: AstNodeName.StringExpression,
+                  value: '',
                 },
-                hasValue: true,
               },
               {
-                name: AstNodeName.RecordEntry,
+                name: AstNodeName.RecordEntryExpression,
                 key: 'c',
                 value: {
-                  name: AstNodeName.Record,
+                  name: AstNodeName.RecordExpression,
                   entries: [
                     {
-                      name: AstNodeName.RecordEntry,
+                      name: AstNodeName.RecordEntryExpression,
                       key: 'a',
                       value: {
-                        name: AstNodeName.Number,
-                        hasValue: true,
+                        name: AstNodeName.NumberExpression,
+                        value: 1,
                       },
-                      hasValue: true,
                     },
                   ],
-                  hasValue: true,
                 },
-                hasValue: true,
               },
             ],
-            hasValue: true,
           },
-          hasValue: true,
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -133,55 +119,42 @@ describe('declaration', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          explicitType: {
-            name: AstNodeName.Record,
+          identifierName: 'a',
+          type: {
+            name: AstNodeName.RecordType,
             entries: [
               {
-                name: AstNodeName.RecordEntry,
+                name: AstNodeName.RecordEntryType,
                 key: 'a',
-                value: {
-                  name: AstNodeName.Number,
-                  hasValue: false,
-                },
-                hasValue: false,
+                value: { name: AstNodeName.NumberType },
               },
               {
-                name: AstNodeName.RecordEntry,
+                name: AstNodeName.RecordEntryType,
                 key: 'b',
                 value: {
-                  name: AstNodeName.String,
-                  hasValue: false,
+                  name: AstNodeName.StringType,
                 },
-                hasValue: false,
               },
               {
-                name: AstNodeName.RecordEntry,
+                name: AstNodeName.RecordEntryType,
                 key: 'c',
                 value: {
-                  name: AstNodeName.Record,
+                  name: AstNodeName.RecordType,
                   entries: [
                     {
-                      name: AstNodeName.RecordEntry,
+                      name: AstNodeName.RecordEntryType,
                       key: 'a',
                       value: {
-                        name: AstNodeName.Number,
-                        hasValue: false,
+                        name: AstNodeName.NumberType,
                       },
-                      hasValue: false,
                     },
                   ],
-                  hasValue: false,
                 },
-                hasValue: false,
               },
             ],
-            hasValue: false,
           },
-          hasValue: false,
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
@@ -198,49 +171,41 @@ describe('accessing', () => {
       children: [
         {
           name: AstNodeName.VariableAssignment,
-          variableName: 'a',
-          explicitType: {
-            name: AstNodeName.RecordEntryAccess,
+          identifierName: 'a',
+          type: {
+            name: AstNodeName.RecordEntryAccessType,
             entryName: 'entryC',
             accessing: {
-              name: AstNodeName.RecordEntryAccess,
+              name: AstNodeName.RecordEntryAccessType,
               entryName: 'entryB',
               accessing: {
-                name: AstNodeName.RecordEntryAccess,
+                name: AstNodeName.RecordEntryAccessType,
                 entryName: 'entryA',
                 accessing: {
-                  name: AstNodeName.VariableReference,
-                  variableName: 'record',
+                  name: AstNodeName.IdentifierType,
+                  identifierName: 'record',
                 },
-                hasValue: false,
               },
-              hasValue: false,
             },
-            hasValue: false,
           },
-          implicitType: {
-            name: AstNodeName.RecordEntryAccess,
+          expression: {
+            name: AstNodeName.RecordEntryAccessExpression,
             entryName: 'entrySameAsC',
             accessing: {
-              name: AstNodeName.RecordEntryAccess,
+              name: AstNodeName.RecordEntryAccessExpression,
               entryName: 'entryB',
               accessing: {
-                name: AstNodeName.RecordEntryAccess,
+                name: AstNodeName.RecordEntryAccessExpression,
                 entryName: 'entryA',
                 accessing: {
-                  name: AstNodeName.VariableReference,
-                  variableName: 'record',
+                  name: AstNodeName.IdentifierExpression,
+                  identifierName: 'record',
                 },
-                hasValue: true,
               },
-              hasValue: true,
             },
-            hasValue: true,
           },
-          hasValue: true,
         },
       ],
-      hasValue: true,
     });
     const result = codeToAST(input);
     expect(result).toEqual(expected);
