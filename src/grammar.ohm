@@ -4,6 +4,7 @@ BoringLang {
   Program = ListOf<Statement, #(newLine)>
 
   Statement = | VariableDeclaration
+              | ExportVariable
               | Expression
 
   newLine = " "*"\n"" "*
@@ -15,6 +16,7 @@ BoringLang {
   VariableDeclaration = | identifier ValueAssignment                            -- onlyValue
                         | identifier TypeAssignment ValueAssignment             -- valueAndType
                         | identifier TypeAssignment                             -- onlyType
+  ExportVariable = "export" VariableDeclaration
 
   ValueAssignment = valueAssignmentOperator Expression
   TypeAssignment = typeAssignmentOperator TypeExpression 
@@ -29,6 +31,7 @@ BoringLang {
                | identifier
                | Block
                | TupleExpression
+               | compilerHook  
 
   TypeExpression = | FunctionTypeDeclaration
                    | stringType
@@ -53,10 +56,11 @@ BoringLang {
   booleanExpression = trueExpression | falseExpression
   trueExpression = "true"
   falseExpression = "false"
+  compilerHook = "@"identifier
+
   stringType = "string"
   numberType = "number"
   booleanType = "boolean"
-  compilerHook  = "@"letter+
 
   TupleExpression = "(" ListOf<Expression, ","> ")"
   TupleType = "(" ListOf<TypeExpression, ","> ")"
