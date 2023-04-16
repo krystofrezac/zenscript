@@ -6,6 +6,7 @@ import { checkFunctionDeclaration } from './functionDeclaration';
 import { checkNumberNode } from './number';
 import { checkParameter } from './parameter';
 import { checkRecordNode } from './record';
+import { checkRecordEntryAccessNode } from './recordEntryAccess';
 import { checkStringNode } from './string';
 import { checkTupleNode } from './tuple';
 import { checkVariableAssignmentNode } from './variableAssignment';
@@ -20,7 +21,9 @@ export const checkAstNode: CheckAstNode = (context, astNode) => {
 
     [AstNodeName.Block]: checkBlockNode,
     [AstNodeName.Tuple]: checkTupleNode,
+
     [AstNodeName.Record]: checkRecordNode,
+    [AstNodeName.RecordEntryAccess]: checkRecordEntryAccessNode,
 
     [AstNodeName.FunctionDeclaration]: checkFunctionDeclaration,
     [AstNodeName.FunctionCall]: checkFunctionCall,

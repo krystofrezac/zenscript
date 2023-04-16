@@ -138,7 +138,7 @@ describe('accessing', () => {
       a: number = record.c.a
       aa: record.c.a = record.c.a
       b: string = record.c.b
-      bb: record.b = record.c.b
+      bb: record.c.b = record.c.b
 
       incorrect: string = record.c.a
     `);
@@ -156,6 +156,49 @@ describe('accessing', () => {
               name: AstCheckerTypeNames.Number,
               hasValue: true,
             },
+          },
+        },
+      ],
+    };
+    const result = checkAST(input);
+    expect(result).toEqual(expected);
+  });
+  test('accessing non existing entry', () => {
+    const input = codeToAST(`
+      record = %{a: 1}
+      entry = record.b
+    `);
+    const expected: CheckAstReturn = {
+      errors: [
+        {
+          name: AstCheckerErrorName.EntryDoesNotExistOnRecord,
+          data: {
+            record: {
+              name: AstCheckerTypeNames.Record,
+              entries: {
+                a: { name: AstCheckerTypeNames.Number, hasValue: true },
+              },
+              hasValue: true,
+            },
+            entryName: 'b',
+          },
+        },
+      ],
+    };
+    const result = checkAST(input);
+    expect(result).toEqual(expected);
+  });
+  test('accessing non record', () => {
+    const input = codeToAST(`
+      nonRecord = 1 
+      entry = nonRecord.someField
+    `);
+    const expected: CheckAstReturn = {
+      errors: [
+        {
+          name: AstCheckerErrorName.AccessingNonRecord,
+          data: {
+            accessing: AstCheckerTypeNames.Number,
           },
         },
       ],
