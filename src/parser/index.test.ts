@@ -208,3 +208,15 @@ describe('records', () => {
     expect(parse(input).succeeded()).toBe(true);
   });
 });
+test('import', () => {
+  const input = `
+    file = @import("./file")
+  `;
+  expect(parse(input).succeeded()).toBe(true);
+});
+test('export', () => {
+  const input = `
+    export someVariable = ""
+  `;
+  expect(parse(input).succeeded()).toBe(true);
+});
