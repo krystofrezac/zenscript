@@ -1,4 +1,8 @@
-import { AstCheckerType } from './types';
+import {
+  AstCheckerRecordType,
+  AstCheckerType,
+  AstCheckerTypeNames,
+} from './types';
 
 export enum AstCheckerErrorName {
   IdentifierAlreadyDeclaredInThisScope = 'IdentifierAlreadyDeclaredInThisScope',
@@ -8,6 +12,8 @@ export enum AstCheckerErrorName {
   FunctionParametersMismatch = 'FunctionParametersMismatch',
   EmptyBlock = 'EmptyBlock',
   CallingNonCallableExpression = 'CallingNonCallableExpression',
+  EntryDoesNotExistOnRecord = 'FieldDoesNotExistOnRecord',
+  AccessingNonRecord = 'AccessingNonRecord',
 }
 type AstCheckerErrorBase<
   TName extends AstCheckerErrorName,
@@ -51,5 +57,18 @@ export type AstCheckerError =
       AstCheckerErrorName.CallingNonCallableExpression,
       {
         callee: AstCheckerType;
+      }
+    >
+  | AstCheckerErrorBase<
+      AstCheckerErrorName.EntryDoesNotExistOnRecord,
+      {
+        record: AstCheckerRecordType;
+        entryName: string;
+      }
+    >
+  | AstCheckerErrorBase<
+      AstCheckerErrorName.AccessingNonRecord,
+      {
+        accessing: AstCheckerTypeNames;
       }
     >;
