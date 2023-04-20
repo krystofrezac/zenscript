@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { codeToAST } from '../../tests/helpers';
+import { codeToAst } from '../../tests/helpers';
 import { createAstNode } from '../helpers/createAstNode';
 import { AstNodeName } from '../types';
 
@@ -22,7 +22,7 @@ describe('value', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('with parameters', () => {
@@ -48,7 +48,7 @@ describe('value', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('chained', () => {
@@ -76,7 +76,7 @@ describe('value', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
 });
@@ -104,7 +104,7 @@ describe('type', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('with parameters', () => {
@@ -133,7 +133,7 @@ describe('type', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('chained', () => {
@@ -165,7 +165,7 @@ describe('type', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
 });

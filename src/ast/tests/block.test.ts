@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { codeToAST } from '../../tests/helpers';
+import { codeToAst } from '../../tests/helpers';
 import { createAstNode } from '../helpers/createAstNode';
 import { AstNodeName } from '../types';
 
@@ -9,7 +9,7 @@ test('empty block', () => {
     name: AstNodeName.Block,
     children: [{ name: AstNodeName.Block, children: [] }],
   });
-  const result = codeToAST(input);
+  const result = codeToAst(input);
   expect(result).toEqual(expected);
 });
 test('block with string value', () => {
@@ -23,7 +23,7 @@ test('block with string value', () => {
       },
     ],
   });
-  const result = codeToAST(input);
+  const result = codeToAst(input);
   expect(result).toEqual(expected);
 });
 test('block with number value', () => {
@@ -37,7 +37,7 @@ test('block with number value', () => {
       },
     ],
   });
-  const result = codeToAST(input);
+  const result = codeToAst(input);
   expect(result).toEqual(expected);
 });
 test('block with variable assignments', () => {
@@ -76,7 +76,7 @@ test('block with variable assignments', () => {
       },
     ],
   });
-  const result = codeToAST(input);
+  const result = codeToAst(input);
   expect(result).toEqual(expected);
 });
 test('block assigned to variable', () => {
@@ -94,7 +94,7 @@ test('block assigned to variable', () => {
       },
     ],
   });
-  const result = codeToAST(input);
+  const result = codeToAst(input);
   expect(result).toEqual(expected);
 });
 test('nested blocks', () => {
@@ -137,6 +137,6 @@ test('nested blocks', () => {
       },
     ],
   });
-  const result = codeToAST(input);
+  const result = codeToAst(input);
   expect(result).toEqual(expected);
 });

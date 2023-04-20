@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { codeToAST } from '../../tests/helpers';
+import { codeToAst } from '../../tests/helpers';
 import { createAstNode } from '../helpers/createAstNode';
 import { AstNodeName } from '../types';
 
@@ -9,7 +9,7 @@ test('empty tuple', () => {
     name: AstNodeName.Block,
     children: [{ name: AstNodeName.TupleExpression, items: [] }],
   });
-  const result = codeToAST(input);
+  const result = codeToAst(input);
   expect(result).toEqual(expected);
 });
 test('one item tuple', () => {
@@ -23,7 +23,7 @@ test('one item tuple', () => {
       },
     ],
   });
-  const result = codeToAST(input);
+  const result = codeToAst(input);
   expect(result).toEqual(expected);
 });
 test('multiple items tuple', () => {
@@ -44,7 +44,7 @@ test('multiple items tuple', () => {
       },
     ],
   });
-  const result = codeToAST(input);
+  const result = codeToAst(input);
   expect(result).toEqual(expected);
 });
 test('tuple assigned to variable', () => {
@@ -62,7 +62,7 @@ test('tuple assigned to variable', () => {
       },
     ],
   });
-  const result = codeToAST(input);
+  const result = codeToAst(input);
   expect(result).toEqual(expected);
 });
 test('tuple assigned to variable with same explicit type', () => {
@@ -84,7 +84,7 @@ test('tuple assigned to variable with same explicit type', () => {
       },
     ],
   });
-  const result = codeToAST(input);
+  const result = codeToAst(input);
   expect(result).toEqual(expected);
 });
 test('tuple assigned to variable with different explicit type', () => {
@@ -103,6 +103,6 @@ test('tuple assigned to variable with different explicit type', () => {
       },
     ],
   });
-  const result = codeToAST(input);
+  const result = codeToAst(input);
   expect(result).toEqual(expected);
 });

@@ -5,7 +5,7 @@ import { createGetNameOperation } from './getNameOperation';
 import { AstNode } from './types';
 import { getAstNodesOperations } from './getAstNodesOperation';
 
-export const getAST = (parsedInput: MatchResult): AstNode => {
+export const getAst = (parsedInput: MatchResult): AstNode => {
   const semantics = grammar.createSemantics();
   getAstNodeOperation(semantics);
   getAstNodesOperations(semantics);

@@ -1,5 +1,5 @@
 import { expect, test, describe } from 'vitest';
-import { codeToAST } from '../../tests/helpers';
+import { codeToAst } from '../../tests/helpers';
 import { createAstNode } from '../helpers/createAstNode';
 import { AstNodeName } from '../types';
 
@@ -21,7 +21,7 @@ describe('declaration', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('empty record type', () => {
@@ -41,7 +41,7 @@ describe('declaration', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('non empty record value', () => {
@@ -101,7 +101,7 @@ describe('declaration', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('non empty record type', () => {
@@ -156,7 +156,7 @@ describe('declaration', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
 });
@@ -207,7 +207,7 @@ describe('accessing', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
 });

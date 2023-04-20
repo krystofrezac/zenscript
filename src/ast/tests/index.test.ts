@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { codeToAST } from '../../tests/helpers';
+import { codeToAst } from '../../tests/helpers';
 import { createAstNode } from '../helpers/createAstNode';
 import { AstNodeName } from '../types';
 
@@ -10,12 +10,12 @@ describe('empty', () => {
   });
   test('empty string', () => {
     const input = '';
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('string with spaces', () => {
     const input = '   ';
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
 });
@@ -28,7 +28,7 @@ describe('string', () => {
         { name: AstNodeName.StringExpression, value: 'Hello, World!' },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('string assigned to variable', () => {
@@ -46,7 +46,7 @@ describe('string', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('string assigned to variable with same explicit type', () => {
@@ -65,7 +65,7 @@ describe('string', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('string assigned to variable with different explicit type', () => {
@@ -84,7 +84,7 @@ describe('string', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('string type assigned to variable', () => {
@@ -99,7 +99,7 @@ describe('string', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
 });
@@ -111,7 +111,7 @@ describe('number', () => {
       name: AstNodeName.Block,
       children: [{ name: AstNodeName.NumberExpression, value: 1 }],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('number assigned to variable', () => {
@@ -126,7 +126,7 @@ describe('number', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('number assigned to variable with same explicit type', () => {
@@ -142,7 +142,7 @@ describe('number', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('number assigned to variable with different explicit type', () => {
@@ -158,7 +158,7 @@ describe('number', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('number type assigned to variable', () => {
@@ -173,7 +173,7 @@ describe('number', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
 });
@@ -202,7 +202,7 @@ describe('variable reference', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('referencing type', () => {
@@ -228,7 +228,7 @@ describe('variable reference', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
   test('referencing value and type', () => {
@@ -264,7 +264,7 @@ describe('variable reference', () => {
         },
       ],
     });
-    const result = codeToAST(input);
+    const result = codeToAst(input);
     expect(result).toEqual(expected);
   });
 });
