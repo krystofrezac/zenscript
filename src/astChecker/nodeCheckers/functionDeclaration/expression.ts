@@ -9,7 +9,7 @@ import {
   addVariableScope,
   removeVariableScope,
 } from '../helpers/variableScopes';
-import { checkParameters } from './helpers/checkParameters';
+import { checkFunctionDeclarationExpressionParameters } from './helpers/checkParameters';
 
 export const checkFunctionDeclarationExpression: CheckAstNode<
   AstNodeName.FunctionDeclarationExpression
@@ -17,7 +17,7 @@ export const checkFunctionDeclarationExpression: CheckAstNode<
   const contextWithAddedVariableScope = addVariableScope(context);
 
   const { context: contextWithCheckedParameters, parametersTypes } =
-    checkParameters(
+    checkFunctionDeclarationExpressionParameters(
       contextWithAddedVariableScope,
       functionDeclaration.parameters,
     );

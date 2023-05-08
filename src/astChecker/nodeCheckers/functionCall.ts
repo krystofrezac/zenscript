@@ -1,5 +1,5 @@
 import { checkAstNode } from '.';
-import { AstNodeName } from '../../ast/types';
+import { AstNode, AstNodeName } from '../../ast/types';
 import { AstCheckerContext, CheckAstNode } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerType, AstCheckerTypeNames } from '../types/types';
@@ -37,10 +37,8 @@ export const checkFunctionCall: CheckAstNode<
     return getCheckNodeReturn(contextWithError, ignoreAstCheckerNode);
   }
 
-  const { context: argumentsContext, nodeTypes: argumentsType } = checkAstNodes(
-    calleeContext,
-    functionCall.arguments,
-  );
+  const { context: argumentsContext, nodeTypes: argumentsType } =
+    checkAstNodes<AstNode>(calleeContext, functionCall.arguments);
   const parametersType = calleeContext.nodeType.parameters;
 
   // arguments and parameters are not compatible

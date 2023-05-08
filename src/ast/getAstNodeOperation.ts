@@ -1,7 +1,7 @@
 import ohm from 'ohm-js';
 import { BoringLangSemantics } from '../grammar.ohm-bundle';
-import { createAstNode, createInvalidAstNode } from './helpers/createAstNode';
-import { CommonAstNode, AstNodeName, AstNode } from './types';
+import { createAstNode } from './helpers/createAstNode';
+import { CommonAstNode, AstNodeName } from './types';
 import {
   ExpressionAstNode,
   IdentifierExpressionAstNode,
@@ -9,11 +9,11 @@ import {
   TupleExpressionAstNode,
 } from './types/expressionNodes';
 import {
-  IdentifierTypeAstNode,
   RecordEntryTypeAstNode,
   TupleTypeAstNode,
   TypeAstNode,
 } from './types/typeNodes';
+import { getRecordEntryAstNode } from './helpers/getRecordEntryAstNode';
 
 export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
   semantics.addOperation<ReturnType<ohm.Node['getAstNode']>>('getAstNode', {
@@ -126,26 +126,9 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
         key: key.getName(),
         value: value.getAstNode() as ExpressionAstNode,
       }),
-    RecordEntryAccessExpression: identifierList => {
-      // TODO: unify
-      const identifierNodes =
-        identifierList.getAstNodes() as IdentifierTypeAstNode[];
-
-      const getType = ([head, ...tail]: IdentifierTypeAstNode[]): AstNode => {
-        if (!head) return createInvalidAstNode();
-        if (tail.length === 0) return head;
-
-        const accessing = getType(tail) as ExpressionAstNode;
-
-        return createAstNode({
-          name: AstNodeName.RecordEntryAccessExpression,
-          entryName: head?.identifierName,
-          accessing,
-        });
-      };
-
-      return getType(identifierNodes.reverse());
-    },
+    RecordEntryAccessExpression: getRecordEntryAstNode(
+      AstNodeName.RecordEntryAccessExpression,
+    ),
 
     // types
     identifierType: name =>
@@ -191,24 +174,7 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
         key: key.getName(),
         value: value.getAstNode() as TypeAstNode,
       }),
-    RecordEntryAccessType: identifierList => {
-      // TODO: unify
-      const identifierNodes =
-        identifierList.getAstNodes() as IdentifierTypeAstNode[];
-
-      const getType = ([head, ...tail]: IdentifierTypeAstNode[]): AstNode => {
-        if (!head) return createInvalidAstNode();
-        if (tail.length === 0) return head;
-
-        const accessing = getType(tail) as TypeAstNode;
-
-        return createAstNode({
-          name: AstNodeName.RecordEntryAccessType,
-          entryName: head?.identifierName,
-          accessing,
-        });
-      };
-
-      return getType(identifierNodes.reverse());
-    },
+    RecordEntryAccessType: getRecordEntryAstNode(
+      AstNodeName.RecordEntryAccessType,
+    ),
   });

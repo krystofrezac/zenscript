@@ -2,10 +2,23 @@ import { IdentifierExpressionAstNode } from '../../../../ast/types/expressionNod
 import { AstCheckerContext } from '../../../types';
 import { AstCheckerType, AstCheckerTypeNames } from '../../../types/types';
 import { addVariableToContext } from '../../helpers/addVariableToContext';
+import { checkAstNodes } from '../../helpers/checkAstNodes';
 import { checkIfVariableWithNameIsAlreadyDeclared } from '../../helpers/checkIfVariableWithNameIsAlreadyDeclared';
 import { getCheckNodeReturn } from '../../helpers/getCheckNodeReturn';
 
-const checkParameter = (
+export const checkFunctionDeclarationExpressionParameters = (
+  context: AstCheckerContext,
+  parameters: IdentifierExpressionAstNode[],
+) => {
+  const { context: checkedContext, nodeTypes } = checkAstNodes(
+    context,
+    parameters,
+    checkFunctionDeclarationExpressionParameter,
+  );
+  return { context: checkedContext, parametersTypes: nodeTypes };
+};
+
+const checkFunctionDeclarationExpressionParameter = (
   context: AstCheckerContext,
   parameter: IdentifierExpressionAstNode,
 ) => {
@@ -36,27 +49,4 @@ const checkParameter = (
     },
   );
   return getCheckNodeReturn(contextWithVariable, variableType);
-};
-
-export const checkParameters = (
-  context: AstCheckerContext,
-  parameters: IdentifierExpressionAstNode[],
-) => {
-  const checkedParameters = parameters.reduce<{
-    context: AstCheckerContext;
-    parametersTypes: AstCheckerType[];
-  }>(
-    ({ context, parametersTypes: parameterTypes }, parameter) => {
-      const checkedParameter = checkParameter(context, parameter);
-      return {
-        context: checkedParameter,
-        parametersTypes: [...parameterTypes, checkedParameter.nodeType],
-      };
-    },
-    {
-      context,
-      parametersTypes: [],
-    },
-  );
-  return checkedParameters;
 };
