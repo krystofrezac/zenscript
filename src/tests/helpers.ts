@@ -1,8 +1,8 @@
-import { getTypeAST } from '../typeAST';
+import { getAst } from '../ast';
 import { parse } from '../parser';
 
-export const codeToAST = (code: string) => {
+export const codeToAst = (code: string) => {
   const parsed = parse(code);
 
-  return getTypeAST(parsed);
+  return getAst(parsed);
 };

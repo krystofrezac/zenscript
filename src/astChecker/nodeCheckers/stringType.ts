@@ -1,13 +1,13 @@
-import { AstNodeName } from '../../typeAST/types';
+import { AstNodeName } from '../../ast/types';
 import { CheckAstNode } from '../types';
 import { AstCheckerTypeNames } from '../types/types';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 
-export const checkNumberNode: CheckAstNode<AstNodeName.Number> = (
+export const checkStringTypeNode: CheckAstNode<AstNodeName.StringType> = (
   context,
-  number,
+  _stringType,
 ) =>
   getCheckNodeReturn(context, {
-    name: AstCheckerTypeNames.Number,
-    hasValue: number.hasValue,
+    name: AstCheckerTypeNames.String,
+    hasValue: false,
   });

@@ -1,13 +1,13 @@
 import { describe, expect, test } from 'vitest';
-import { CheckAstReturn, checkAST } from '..';
-import { codeToAST } from '../../tests/helpers';
+import { CheckAstReturn, checkAst } from '..';
+import { codeToAst } from '../../tests/helpers';
 import { VariableScope } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
 
 describe('chained errors', () => {
   test(AstCheckerErrorName.UnknownIdentifier, () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
       b = a
       c = b
       d = c
@@ -22,11 +22,11 @@ describe('chained errors', () => {
         },
       ],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test(AstCheckerErrorName.ExpressionWithoutValueUsedAsValue, () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
       a: string
       b = a
       c = b
@@ -44,11 +44,11 @@ describe('chained errors', () => {
         },
       ],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test(AstCheckerErrorName.VariableTypeMismatch, () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
       a: string = 1
       b: string = a
       c: number = a
@@ -73,11 +73,11 @@ describe('chained errors', () => {
         },
       ],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test(AstCheckerErrorName.FunctionParametersMismatch, () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
       a = stringFunction() 
       b = a
       c = b
@@ -87,16 +87,12 @@ describe('chained errors', () => {
         variableName: 'stringFunction',
         variableType: {
           name: AstCheckerTypeNames.Function,
-          parameters: {
-            name: AstCheckerTypeNames.Tuple,
-            items: [
-              {
-                name: AstCheckerTypeNames.String,
-                hasValue: true,
-              },
-            ],
-            hasValue: true,
-          },
+          parameters: [
+            {
+              name: AstCheckerTypeNames.String,
+              hasValue: true,
+            },
+          ],
           return: {
             name: AstCheckerTypeNames.String,
             hasValue: true,
@@ -110,30 +106,22 @@ describe('chained errors', () => {
         {
           name: AstCheckerErrorName.FunctionParametersMismatch,
           data: {
-            expected: {
-              name: AstCheckerTypeNames.Tuple,
-              items: [
-                {
-                  name: AstCheckerTypeNames.String,
-                  hasValue: true,
-                },
-              ],
-              hasValue: true,
-            },
-            received: {
-              name: AstCheckerTypeNames.Tuple,
-              items: [],
-              hasValue: true,
-            },
+            expected: [
+              {
+                name: AstCheckerTypeNames.String,
+                hasValue: true,
+              },
+            ],
+            received: [],
           },
         },
       ],
     };
-    const result = checkAST(input, defaultVariables);
+    const result = checkAst(input, defaultVariables);
     expect(result).toEqual(expected);
   });
   test(AstCheckerErrorName.EmptyBlock, () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
       a = {}  
       b = a
       c = b
@@ -146,11 +134,11 @@ describe('chained errors', () => {
         },
       ],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test(AstCheckerErrorName.CallingNonCallableExpression, () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
       a = 1
       b = a()
       c = b
@@ -169,7 +157,7 @@ describe('chained errors', () => {
         },
       ],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
 });

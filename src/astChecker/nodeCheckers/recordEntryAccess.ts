@@ -1,5 +1,5 @@
 import { checkAstNode } from '.';
-import { AstNodeName } from '../../typeAST/types';
+import { AstNodeName } from '../../ast/types';
 import { CheckAstNode } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
@@ -8,7 +8,7 @@ import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 import { ignoreAstCheckerNode } from './helpers/ignoreAstCheckerNode';
 
 export const checkRecordEntryAccessNode: CheckAstNode<
-  AstNodeName.RecordEntryAccess
+  AstNodeName.RecordEntryAccessExpression | AstNodeName.RecordEntryAccessType
 > = (context, recordEntryAccess) => {
   const accessingContext = checkAstNode(context, recordEntryAccess.accessing);
   const accessingType = accessingContext.nodeType;

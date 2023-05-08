@@ -1,16 +1,25 @@
 import { checkAstNode } from '.';
-import { AstNodeName } from '../../typeAST/types';
-import { CheckAstNode, CheckAstNodeReturn } from '../types';
+import { AstNode, AstNodeName } from '../../ast/types';
+import { AstCheckerContext, CheckAstNode, CheckAstNodeReturn } from '../types';
 import { AstCheckerTupleType, AstCheckerTypeNames } from '../types/types';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 
-export const checkTupleNode: CheckAstNode<AstNodeName.Tuple> = (
-  context,
-  tuple,
-) => {
-  const contextAfterItems = tuple.items.reduce<
-    CheckAstNodeReturn<AstCheckerTupleType>
-  >(
+export const checkTupleNode =
+  (
+    hasValue: boolean,
+  ): CheckAstNode<AstNodeName.TupleExpression | AstNodeName.TupleType> =>
+  (context, tuple) => {
+    const contextAfterItems = reduceResult(context, hasValue, tuple.items);
+    return contextAfterItems;
+  };
+
+// TS hack, because you cannot reduce tuple.items directly
+const reduceResult = (
+  context: AstCheckerContext,
+  hasValue: boolean,
+  arr: AstNode[],
+) =>
+  arr.reduce<CheckAstNodeReturn<AstCheckerTupleType>>(
     (prevContext, item) => {
       const itemContext = checkAstNode(prevContext, item);
       const newTuple: AstCheckerTupleType = {
@@ -22,9 +31,6 @@ export const checkTupleNode: CheckAstNode<AstNodeName.Tuple> = (
     getCheckNodeReturn(context, {
       name: AstCheckerTypeNames.Tuple,
       items: [],
-      hasValue: tuple.hasValue,
+      hasValue,
     }),
   );
-
-  return contextAfterItems;
-};

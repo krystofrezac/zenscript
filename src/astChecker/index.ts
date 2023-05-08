@@ -1,10 +1,10 @@
-import { AstNode } from '../typeAST/types';
+import { AstNode } from '../ast/types';
 import { checkAstNode } from './nodeCheckers';
 import { AstCheckerContext, VariableScope } from './types';
 
 export type CheckAstReturn = Pick<AstCheckerContext, 'errors'>;
 
-export const checkAST = (
+export const checkAst = (
   ast: AstNode,
   defaultVariables?: VariableScope,
 ): CheckAstReturn => {

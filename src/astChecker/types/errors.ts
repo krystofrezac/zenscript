@@ -48,8 +48,8 @@ export type AstCheckerError =
   | AstCheckerErrorBase<
       AstCheckerErrorName.FunctionParametersMismatch,
       {
-        expected: AstCheckerType;
-        received: AstCheckerType;
+        expected: AstCheckerType[];
+        received: AstCheckerType[];
       }
     >
   | AstCheckerErrorBase<AstCheckerErrorName.EmptyBlock>

@@ -1,5 +1,5 @@
 import { checkAstNode } from '.';
-import { AstNodeName } from '../../typeAST/types';
+import { AstNodeName } from '../../ast/types';
 import { pipe } from '../../helpers/pipe';
 import { CheckAstNode, CheckAstNodeReturn, AstCheckerContext } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
@@ -7,7 +7,7 @@ import { AstCheckerTypeNames } from '../types/types';
 import { addError, addErrors } from './helpers/addError';
 import { addVariableToContext } from './helpers/addVariableToContext';
 import { areTypesCompatible } from './helpers/areTypesCompatible';
-import { checkIfVariableWithNameIsAlreadyDeclared } from './helpers/checkIfVariableWithNameIsAreadyDeclared';
+import { checkIfVariableWithNameIsAlreadyDeclared } from './helpers/checkIfVariableWithNameIsAlreadyDeclared';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 import { getNewErrors } from './helpers/getNewErrors';
 import { ignoreAstCheckerNode } from './helpers/ignoreAstCheckerNode';
@@ -17,26 +17,25 @@ export const checkVariableAssignmentNode: CheckAstNode<
 > = (context, variableAssignment) => {
   const alreadyDeclaredError = checkIfVariableWithNameIsAlreadyDeclared(
     context,
-    variableAssignment.variableName,
+    variableAssignment.identifierName,
   );
   if (alreadyDeclaredError) return alreadyDeclaredError;
 
-  const explicitNodeContext =
-    variableAssignment.explicitType &&
-    checkAstNode(context, variableAssignment.explicitType);
-  const implicitNodeContext =
-    variableAssignment.implicitType &&
-    checkAstNode(context, variableAssignment.implicitType);
+  const typeContext =
+    variableAssignment.type && checkAstNode(context, variableAssignment.type);
+  const expressionContext =
+    variableAssignment.expression &&
+    checkAstNode(context, variableAssignment.expression);
 
-  // Errors that originated from explicit and implicit nodes
-  const implicitExplicitErrors = [
-    ...getNewErrors(implicitNodeContext?.errors ?? [], context.errors),
-    ...getNewErrors(explicitNodeContext?.errors ?? [], context.errors),
+  // Errors that originated from type and expression nodes
+  const nodeErrors = [
+    ...getNewErrors(expressionContext?.errors ?? [], context.errors),
+    ...getNewErrors(typeContext?.errors ?? [], context.errors),
   ];
-  if (implicitExplicitErrors.length > 0) {
+  if (nodeErrors.length > 0) {
     const returnContext = pipe(
-      c => addErrors(c, implicitExplicitErrors),
-      c => addIgnoreVariable(c, variableAssignment.variableName),
+      c => addErrors(c, nodeErrors),
+      c => addIgnoreVariable(c, variableAssignment.identifierName),
     )(context);
 
     return getCheckNodeReturn(returnContext, ignoreAstCheckerNode);
@@ -44,12 +43,12 @@ export const checkVariableAssignmentNode: CheckAstNode<
 
   // Ignore when explicit or implicit type is ignored
   if (
-    implicitNodeContext?.nodeType.name === AstCheckerTypeNames.Ignore ||
-    explicitNodeContext?.nodeType.name === AstCheckerTypeNames.Ignore
+    expressionContext?.nodeType.name === AstCheckerTypeNames.Ignore ||
+    typeContext?.nodeType.name === AstCheckerTypeNames.Ignore
   ) {
     const returnContext = addIgnoreVariable(
       context,
-      variableAssignment.variableName,
+      variableAssignment.identifierName,
     );
     return getCheckNodeReturn(returnContext, ignoreAstCheckerNode);
   }
@@ -57,35 +56,35 @@ export const checkVariableAssignmentNode: CheckAstNode<
   // Error when trying to use variable without value as value
   const contextWithWithoutValueError = checkWithoutValueError(
     context,
-    implicitNodeContext,
+    expressionContext,
   );
   if (contextWithWithoutValueError) {
     const returnContext = addIgnoreVariable(
       contextWithWithoutValueError,
-      variableAssignment.variableName,
+      variableAssignment.identifierName,
     );
     return getCheckNodeReturn(returnContext, ignoreAstCheckerNode);
   }
 
-  const valueContext = explicitNodeContext ?? implicitNodeContext;
+  const valueContext = typeContext ?? expressionContext;
   // When explicit and implicit nodes are missing - should not happen, it's just for TS
   if (!valueContext) return getCheckNodeReturn(context, ignoreAstCheckerNode);
 
   // Error when explicit and implicit types are not compatible
   const contextWithTypeMismatchError = maybeAddTypeMismatchError(context, {
-    explicitNodeContext,
-    implicitNodeContext,
-    variableName: variableAssignment.variableName,
+    explicitNodeContext: typeContext,
+    implicitNodeContext: expressionContext,
+    variableName: variableAssignment.identifierName,
   });
 
   // Add variable to context
   const contextWithVariable = addVariableToContext(
     contextWithTypeMismatchError,
     {
-      variableName: variableAssignment.variableName,
+      variableName: variableAssignment.identifierName,
       variableType: {
         ...valueContext.nodeType,
-        hasValue: implicitNodeContext?.nodeType.hasValue ?? false,
+        hasValue: expressionContext?.nodeType.hasValue ?? false,
       },
     },
   );

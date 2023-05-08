@@ -1,72 +1,72 @@
 import { test, describe, expect } from 'vitest';
-import { checkAST, CheckAstReturn } from '..';
-import { codeToAST } from '../../tests/helpers';
+import { checkAst, CheckAstReturn } from '..';
+import { codeToAst } from '../../tests/helpers';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
 
 describe('string', () => {
   test('assigning only value', () => {
-    const input = codeToAST('a = ""');
+    const input = codeToAst('a = ""');
     const expected: CheckAstReturn = {
       errors: [],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test('assigning only type', () => {
-    const input = codeToAST('a: string');
+    const input = codeToAst('a: string');
     const expected: CheckAstReturn = {
       errors: [],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test('assigning same value and type', () => {
-    const input = codeToAST('a: string = ""');
+    const input = codeToAst('a: string = ""');
     const expected: CheckAstReturn = {
       errors: [],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
 });
 describe('number', () => {
   test('assigning only value', () => {
-    const input = codeToAST('a = 1');
+    const input = codeToAst('a = 1');
     const expected: CheckAstReturn = {
       errors: [],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test('assigning only type', () => {
-    const input = codeToAST('a: number');
+    const input = codeToAst('a: number');
     const expected: CheckAstReturn = {
       errors: [],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test('assigning same value and type', () => {
-    const input = codeToAST('a: number = 1');
+    const input = codeToAst('a: number = 1');
     const expected: CheckAstReturn = {
       errors: [],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
 });
 describe('block', () => {
   test('assigning block with one expression', () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
       a = { 1 } 
     `);
     const expected: CheckAstReturn = { errors: [] };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test('assigning block with more expressions', () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
       a = { 
         b = 2
         c = b
@@ -74,11 +74,11 @@ describe('block', () => {
       } 
     `);
     const expected: CheckAstReturn = { errors: [] };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test('assigning block with more expressions and same explicit type', () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
       a: number = { 
         b = 2
         c = b
@@ -86,11 +86,11 @@ describe('block', () => {
       } 
     `);
     const expected: CheckAstReturn = { errors: [] };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test('assigning block with more expressions and different explicit type', () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
       a: string = { 
         b = 2
         c = b
@@ -115,17 +115,17 @@ describe('block', () => {
         },
       ],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test('assigning block with no expression', () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
       a = { } 
     `);
     const expected: CheckAstReturn = {
       errors: [{ name: AstCheckerErrorName.EmptyBlock, data: {} }],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
 });

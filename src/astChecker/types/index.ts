@@ -1,4 +1,4 @@
-import { AstNode, AstNodeName } from '../../typeAST/types';
+import { AstNode, AstNodeName } from '../../ast/types';
 import { AstCheckerError } from './errors';
 import { AstCheckerType } from './types';
 

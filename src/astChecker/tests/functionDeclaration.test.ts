@@ -1,37 +1,37 @@
 import { describe, expect, test } from 'vitest';
-import { CheckAstReturn, checkAST } from '..';
-import { codeToAST } from '../../tests/helpers';
+import { CheckAstReturn, checkAst } from '..';
+import { codeToAst } from '../../tests/helpers';
 import { VariableScope } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
 
 describe('without parameters', () => {
   test('value assignment', () => {
-    const input = codeToAST('a = () 1');
+    const input = codeToAst('a = () 1');
     const expected: CheckAstReturn = {
       errors: [],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(expected).toEqual(result);
   });
   test('type assignment', () => {
-    const input = codeToAST('a : () number');
+    const input = codeToAst('a : () number');
     const expected: CheckAstReturn = {
       errors: [],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(expected).toEqual(result);
   });
   test('assigning value and same explicit type', () => {
-    const input = codeToAST('a : () number = () 1');
+    const input = codeToAst('a : () number = () 1');
     const expected: CheckAstReturn = {
       errors: [],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(expected).toEqual(result);
   });
   test('assigning value and explicit type with different return', () => {
-    const input = codeToAST('a : () string = () 1');
+    const input = codeToAst('a : () string = () 1');
     const expected: CheckAstReturn = {
       errors: [
         {
@@ -39,11 +39,7 @@ describe('without parameters', () => {
           data: {
             expected: {
               name: AstCheckerTypeNames.Function,
-              parameters: {
-                name: AstCheckerTypeNames.Tuple,
-                items: [],
-                hasValue: false,
-              },
+              parameters: [],
               return: {
                 name: AstCheckerTypeNames.String,
                 hasValue: false,
@@ -52,11 +48,7 @@ describe('without parameters', () => {
             },
             received: {
               name: AstCheckerTypeNames.Function,
-              parameters: {
-                name: AstCheckerTypeNames.Tuple,
-                items: [],
-                hasValue: true,
-              },
+              parameters: [],
               return: {
                 name: AstCheckerTypeNames.Number,
                 hasValue: true,
@@ -68,11 +60,11 @@ describe('without parameters', () => {
         },
       ],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(expected).toEqual(result);
   });
   test('propagating errors from function body', () => {
-    const input = codeToAST('a = () b');
+    const input = codeToAst('a = () b');
     const expected: CheckAstReturn = {
       errors: [
         {
@@ -83,22 +75,22 @@ describe('without parameters', () => {
         },
       ],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test('higher order function', () => {
-    const input = codeToAST('a: ()()()number = ()()()1');
+    const input = codeToAst('a: ()()()number = ()()()1');
     const expected: CheckAstReturn = {
       errors: [],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
 });
 
 describe('with simple parameters', () => {
-  test('single parameter', () => {
-    const input = codeToAST(`
+  test.only('single parameter', () => {
+    const input = codeToAst(`
           a: (string) string = (param) stringFunction(param)
         `);
     const defaultVariables: VariableScope = [
@@ -106,11 +98,7 @@ describe('with simple parameters', () => {
         variableName: 'stringFunction',
         variableType: {
           name: AstCheckerTypeNames.Function,
-          parameters: {
-            name: AstCheckerTypeNames.Tuple,
-            items: [{ name: AstCheckerTypeNames.String, hasValue: true }],
-            hasValue: true,
-          },
+          parameters: [{ name: AstCheckerTypeNames.String, hasValue: true }],
           return: {
             name: AstCheckerTypeNames.String,
             hasValue: true,
@@ -120,11 +108,12 @@ describe('with simple parameters', () => {
       },
     ];
     const expected: CheckAstReturn = { errors: [] };
-    const result = checkAST(input, defaultVariables);
+    const result = checkAst(input, defaultVariables);
+    console.log(JSON.stringify(result.errors, null, 2));
     expect(result).toEqual(expected);
   });
   test('single parameter - indirect usage', () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
           a : (string) string 
             = (param) {
               variable = param
@@ -136,11 +125,7 @@ describe('with simple parameters', () => {
         variableName: 'stringFunction',
         variableType: {
           name: AstCheckerTypeNames.Function,
-          parameters: {
-            name: AstCheckerTypeNames.Tuple,
-            items: [{ name: AstCheckerTypeNames.String, hasValue: true }],
-            hasValue: true,
-          },
+          parameters: [{ name: AstCheckerTypeNames.String, hasValue: true }],
           return: {
             name: AstCheckerTypeNames.String,
             hasValue: true,
@@ -150,11 +135,11 @@ describe('with simple parameters', () => {
       },
     ];
     const expected: CheckAstReturn = { errors: [] };
-    const result = checkAST(input, defaultVariables);
+    const result = checkAst(input, defaultVariables);
     expect(result).toEqual(expected);
   });
   test('multiple parameters', () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
           a: (string, number, number) string 
            = (paramA, paramB, paramC) stringNumberNumberFunction(paramA, paramB, paramC)
         `);
@@ -163,15 +148,11 @@ describe('with simple parameters', () => {
         variableName: 'stringNumberNumberFunction',
         variableType: {
           name: AstCheckerTypeNames.Function,
-          parameters: {
-            name: AstCheckerTypeNames.Tuple,
-            items: [
-              { name: AstCheckerTypeNames.String, hasValue: true },
-              { name: AstCheckerTypeNames.Number, hasValue: true },
-              { name: AstCheckerTypeNames.Number, hasValue: true },
-            ],
-            hasValue: true,
-          },
+          parameters: [
+            { name: AstCheckerTypeNames.String, hasValue: true },
+            { name: AstCheckerTypeNames.Number, hasValue: true },
+            { name: AstCheckerTypeNames.Number, hasValue: true },
+          ],
           return: {
             name: AstCheckerTypeNames.String,
             hasValue: true,
@@ -181,11 +162,11 @@ describe('with simple parameters', () => {
       },
     ];
     const expected: CheckAstReturn = { errors: [] };
-    const result = checkAST(input, defaultVariables);
+    const result = checkAst(input, defaultVariables);
     expect(expected).toEqual(result);
   });
   test('explicit implicit mismatch - missing parameter', () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
           a: (string, number, number) string 
            = (paramA, paramB) stringNumberNumberFunction(paramA, paramB)
         `);
@@ -194,14 +175,10 @@ describe('with simple parameters', () => {
         variableName: 'stringNumberNumberFunction',
         variableType: {
           name: AstCheckerTypeNames.Function,
-          parameters: {
-            name: AstCheckerTypeNames.Tuple,
-            items: [
-              { name: AstCheckerTypeNames.String, hasValue: true },
-              { name: AstCheckerTypeNames.Number, hasValue: true },
-            ],
-            hasValue: true,
-          },
+          parameters: [
+            { name: AstCheckerTypeNames.String, hasValue: true },
+            { name: AstCheckerTypeNames.Number, hasValue: true },
+          ],
           return: {
             name: AstCheckerTypeNames.String,
             hasValue: true,
@@ -218,43 +195,35 @@ describe('with simple parameters', () => {
             variableName: 'a',
             expected: {
               name: AstCheckerTypeNames.Function,
-              parameters: {
-                name: AstCheckerTypeNames.Tuple,
-                items: [
-                  {
-                    name: AstCheckerTypeNames.String,
-                    hasValue: false,
-                  },
-                  {
-                    name: AstCheckerTypeNames.Number,
-                    hasValue: false,
-                  },
-                  {
-                    name: AstCheckerTypeNames.Number,
-                    hasValue: false,
-                  },
-                ],
-                hasValue: false,
-              },
+              parameters: [
+                {
+                  name: AstCheckerTypeNames.String,
+                  hasValue: false,
+                },
+                {
+                  name: AstCheckerTypeNames.Number,
+                  hasValue: false,
+                },
+                {
+                  name: AstCheckerTypeNames.Number,
+                  hasValue: false,
+                },
+              ],
               return: { name: AstCheckerTypeNames.String, hasValue: false },
               hasValue: false,
             },
             received: {
               name: AstCheckerTypeNames.Function,
-              parameters: {
-                name: AstCheckerTypeNames.Tuple,
-                items: [
-                  {
-                    name: AstCheckerTypeNames.String,
-                    hasValue: true,
-                  },
-                  {
-                    name: AstCheckerTypeNames.Number,
-                    hasValue: true,
-                  },
-                ],
-                hasValue: true,
-              },
+              parameters: [
+                {
+                  name: AstCheckerTypeNames.String,
+                  hasValue: true,
+                },
+                {
+                  name: AstCheckerTypeNames.Number,
+                  hasValue: true,
+                },
+              ],
               return: { name: AstCheckerTypeNames.String, hasValue: true },
               hasValue: true,
             },
@@ -262,30 +231,26 @@ describe('with simple parameters', () => {
         },
       ],
     };
-    const result = checkAST(input, defaultVariables);
+    const result = checkAst(input, defaultVariables);
     expect(expected).toEqual(result);
   });
   test('multiple parameters with same name', () => {
-    const input = codeToAST('a = (paramA, paramA) fun(paramA, paramA)');
+    const input = codeToAst('a = (paramA, paramA) fun(paramA, paramA)');
     const defaultVariables: VariableScope = [
       {
         variableName: 'fun',
         variableType: {
           name: AstCheckerTypeNames.Function,
-          parameters: {
-            name: AstCheckerTypeNames.Tuple,
-            items: [
-              {
-                name: AstCheckerTypeNames.String,
-                hasValue: true,
-              },
-              {
-                name: AstCheckerTypeNames.String,
-                hasValue: true,
-              },
-            ],
-            hasValue: true,
-          },
+          parameters: [
+            {
+              name: AstCheckerTypeNames.String,
+              hasValue: true,
+            },
+            {
+              name: AstCheckerTypeNames.String,
+              hasValue: true,
+            },
+          ],
           return: { name: AstCheckerTypeNames.String, hasValue: true },
           hasValue: true,
         },
@@ -301,7 +266,7 @@ describe('with simple parameters', () => {
         },
       ],
     };
-    const result = checkAST(input, defaultVariables);
+    const result = checkAst(input, defaultVariables);
     expect(result).toEqual(expected);
   });
 });

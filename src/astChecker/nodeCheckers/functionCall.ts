@@ -1,18 +1,18 @@
 import { checkAstNode } from '.';
-import { AstNodeName } from '../../typeAST/types';
-import { CheckAstNode, AstCheckerContext } from '../types';
+import { AstNode, AstNodeName } from '../../ast/types';
+import { AstCheckerContext, CheckAstNode } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
-import { AstCheckerTupleType, AstCheckerTypeNames } from '../types/types';
+import { AstCheckerType, AstCheckerTypeNames } from '../types/types';
 import { addError } from './helpers/addError';
 import { areTypesCompatible } from './helpers/areTypesCompatible';
+import { checkAstNodes } from './helpers/checkAstNodes';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 import { ignoreAstCheckerNode } from './helpers/ignoreAstCheckerNode';
 import { updateFigureOutType } from './helpers/updateVariableType';
 
-export const checkFunctionCall: CheckAstNode<AstNodeName.FunctionCall> = (
-  context,
-  functionCall,
-) => {
+export const checkFunctionCall: CheckAstNode<
+  AstNodeName.FunctionCallExpression | AstNodeName.FunctionCallType
+> = (context, functionCall) => {
   const calleeContext = checkAstNode(context, functionCall.callee);
 
   // callee doesn't have value
@@ -37,8 +37,8 @@ export const checkFunctionCall: CheckAstNode<AstNodeName.FunctionCall> = (
     return getCheckNodeReturn(contextWithError, ignoreAstCheckerNode);
   }
 
-  const argumentsContext = checkAstNode(calleeContext, functionCall.arguments);
-  const argumentsType = argumentsContext.nodeType;
+  const { context: argumentsContext, nodeTypes: argumentsType } =
+    checkAstNodes<AstNode>(calleeContext, functionCall.arguments);
   const parametersType = calleeContext.nodeType.parameters;
 
   // arguments and parameters are not compatible
@@ -51,15 +51,10 @@ export const checkFunctionCall: CheckAstNode<AstNodeName.FunctionCall> = (
       name: AstCheckerErrorName.FunctionParametersMismatch,
       data: {
         expected: calleeContext.nodeType.parameters,
-        received: argumentsContext.nodeType,
+        received: argumentsType,
       },
     });
     return getCheckNodeReturn(contextWithError, ignoreAstCheckerNode);
-  }
-
-  // should not happen - just for TS
-  if (argumentsType.name !== AstCheckerTypeNames.Tuple) {
-    return getCheckNodeReturn(argumentsContext, ignoreAstCheckerNode);
   }
 
   const figuredOutArgumentsContext = figureOutArguments(
@@ -69,19 +64,18 @@ export const checkFunctionCall: CheckAstNode<AstNodeName.FunctionCall> = (
   );
 
   const returnType = calleeContext.nodeType.return;
-
   return getCheckNodeReturn(figuredOutArgumentsContext, returnType);
 };
 
 const figureOutArguments = (
   originalContext: AstCheckerContext,
-  argumentsType: AstCheckerTupleType,
-  parametersType: AstCheckerTupleType,
+  argumentsType: AstCheckerType[],
+  parametersType: AstCheckerType[],
 ): AstCheckerContext => {
-  const newContext = argumentsType.items.reduce((context, argument, index) => {
+  const newContext = argumentsType.reduce((context, argument, index) => {
     if (argument.name !== AstCheckerTypeNames.FigureOut) return context;
 
-    const parameterType = parametersType.items[index];
+    const parameterType = parametersType[index];
     if (!parameterType) return context;
 
     return updateFigureOutType(context, {

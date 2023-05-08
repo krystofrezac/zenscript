@@ -8,77 +8,84 @@ BoringLang {
               | Expression
 
   newLine = " "*"\n"" "*
-  valueAssignmentOperator = "="
+  expressionAssignmentOperator = "="
   typeAssignmentOperator = ":"
   oneLineComment = "//" (~newLine any)* 
   multiLineComment = "/*" (~"*/" any)* "*/"
 
-  VariableDeclaration = | identifier ValueAssignment                            -- onlyValue
-                        | identifier TypeAssignment ValueAssignment             -- valueAndType
-                        | identifier TypeAssignment                             -- onlyType
-  ExportVariable = "export" VariableDeclaration
-
-  ValueAssignment = valueAssignmentOperator Expression
+  VariableDeclaration = | identifierExpression ExpressionAssignment                            -- onlyExpression
+                        | identifierExpression TypeAssignment ExpressionAssignment             -- expressionAndType
+                        | identifierExpression TypeAssignment                                  -- onlyType
+  ExpressionAssignment = expressionAssignmentOperator Expression
   TypeAssignment = typeAssignmentOperator TypeExpression 
 
-  Expression = | FunctionValueCall
-               | FunctionValueDeclaration
+  ExportVariable = "export" VariableDeclaration
+
+  Expression = | FunctionCallExpression
+               | FunctionDeclarationExpression
                | numberExpression
                | stringExpression
                | booleanExpression 
                | RecordExpression
                | RecordEntryAccessExpression
-               | identifier
+               | identifierExpression
                | Block
                | TupleExpression
-               | compilerHook  
+               | compilerHookExpression
 
-  TypeExpression = | FunctionTypeDeclaration
+  TypeExpression = | FunctionDeclarationType
                    | stringType
                    | numberType
                    | booleanType
-                   | genericName
                    | TupleType
-                   | FunctionTypeCall
+                   | FunctionCallType
                    | RecordType
                    | RecordEntryAccessType
-                   | identifier
+                   | identifierType
+                   | Block
+                   | compilerHookType
 
   identifier = letter+
-  genericName = "'" identifier
-  numberExpression = digit+
+  identifierExpression = identifier
+  identifierType = identifier
 
-  stringExpression = "\"" stringCharacter* "\""
+  compilerHookExpression = "@"identifier
+  compilerHookType = "@"identifier
+
+
+  numberExpression = digit+
+  numberType = "number"
+
   stringCharacter =  ~("\"" | "\\" | newLine) any
+  stringExpression = "\"" stringCharacter* "\""
+  stringType = "string"
 
   Block = "{" ListOf<Statement, #(newLine)> "}"
 
-  booleanExpression = trueExpression | falseExpression
   trueExpression = "true"
   falseExpression = "false"
-  compilerHook = "@"identifier
-
-  stringType = "string"
-  numberType = "number"
+  booleanExpression = trueExpression | falseExpression
   booleanType = "boolean"
 
   TupleExpression = "(" ListOf<Expression, ","> ")"
   TupleType = "(" ListOf<TypeExpression, ","> ")"
 
-  RecordEntry<Value> = identifier ":" Value
 
-  RecordExpression = "%{" ListOf<RecordEntry<Expression>, ","> "}"
-  RecordType = "%{" ListOf<RecordEntry<TypeExpression>, ","> "}"
+  RecordEntryExpression = identifierExpression ":" Expression
+  RecordExpression = "%{" ListOf<RecordEntryExpression, ","> "}"
 
-  Min2List<Value, Separator> = Value Separator NonemptyListOf<Value, Separator>
+  RecordEntryType = identifierType ":" TypeExpression
+  RecordType = "%{" ListOf<RecordEntryType, ","> "}"
 
-  RecordEntryAccessExpression = Min2List<identifier, ".">
-  RecordEntryAccessType = Min2List<identifier, ".">
+  Min2List<Expression, Separator> = Expression Separator NonemptyListOf<Expression, Separator>
 
-  FunctionParameter = identifier
-  FunctionValueDeclaration = "(" ListOf<FunctionParameter, ","> ")" Expression
-  FunctionTypeDeclaration = TupleType TypeExpression
+  RecordEntryAccessExpression = Min2List<identifierExpression, ".">
+  RecordEntryAccessType = Min2List<identifierType, ".">
 
-  FunctionValueCall = Expression TupleExpression
-  FunctionTypeCall = TypeExpression TupleType
+  FunctionParameter = identifierExpression
+  FunctionDeclarationExpression = "(" ListOf<FunctionParameter, ","> ")" Expression
+  FunctionDeclarationType = TupleType TypeExpression
+
+  FunctionCallExpression = Expression TupleExpression
+  FunctionCallType = TypeExpression TupleType
 }

@@ -1,20 +1,20 @@
 import { expect, test, describe } from 'vitest';
-import { checkAST, CheckAstReturn } from '..';
-import { codeToAST } from '../../tests/helpers';
+import { checkAst, CheckAstReturn } from '..';
+import { codeToAst } from '../../tests/helpers';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
 
 describe('declaration', () => {
   test('empty record with correct explicit type', () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
     a : %{} = %{} 
   `);
     const expected: CheckAstReturn = { errors: [] };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test('empty record with incorrect explicit type', () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
     a : %{a: string} = %{} 
   `);
     const expected: CheckAstReturn = {
@@ -39,20 +39,20 @@ describe('declaration', () => {
         },
       ],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test('non empty record with correct explicit type', () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
     a : %{a: string, b: number, c: %{a: number}} 
       = %{a: "", b: 1, c: %{a: 1}} 
   `);
     const expected: CheckAstReturn = { errors: [] };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test('non empty record with incorrect explicit type', () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
     a : %{a: string, b: number, c: %{a: number}} 
       = %{a: "", b: 1, c: %{a: ""}} 
   `);
@@ -96,13 +96,13 @@ describe('declaration', () => {
         },
       ],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
 });
 describe('accessing', () => {
   test('one level access', () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
       record = %{a: "", b: 1} 
       a: string = record.a
       aa: record.a = record.a
@@ -129,11 +129,11 @@ describe('accessing', () => {
         },
       ],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test('two level access', () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
       record = %{a: "", b: 1, c: %{a: 1, b: ""}} 
       a: number = record.c.a
       aa: record.c.a = record.c.a
@@ -160,11 +160,11 @@ describe('accessing', () => {
         },
       ],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test('accessing non existing entry', () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
       record = %{a: 1}
       entry = record.b
     `);
@@ -185,11 +185,11 @@ describe('accessing', () => {
         },
       ],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
   test('accessing non record', () => {
-    const input = codeToAST(`
+    const input = codeToAst(`
       nonRecord = 1 
       entry = nonRecord.someField
     `);
@@ -203,7 +203,7 @@ describe('accessing', () => {
         },
       ],
     };
-    const result = checkAST(input);
+    const result = checkAst(input);
     expect(result).toEqual(expected);
   });
 });

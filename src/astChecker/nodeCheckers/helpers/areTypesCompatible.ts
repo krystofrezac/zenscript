@@ -1,14 +1,20 @@
 import { pipe } from '../../../helpers/pipe';
+import { MaybeArray } from '../../../typeUtils';
 import { AstCheckerType, AstCheckerTypeNames } from '../../types/types';
 
-type AreTypesCompatible = { figureOutEnabled?: boolean };
+type AreTypesCompatibleOptions = { figureOutEnabled?: boolean };
 
 export const areTypesCompatible = (
-  typeA: AstCheckerType,
-  typeB: AstCheckerType,
-  options: AreTypesCompatible = { figureOutEnabled: false },
+  typeA: MaybeArray<AstCheckerType>,
+  typeB: MaybeArray<AstCheckerType>,
+  options: AreTypesCompatibleOptions = { figureOutEnabled: false },
 ): boolean => {
   const { figureOutEnabled } = options;
+
+  if (Array.isArray(typeA) || Array.isArray(typeB)) {
+    if (!Array.isArray(typeA) || !Array.isArray(typeB)) return false;
+    return checkArray(typeA, typeB, options);
+  }
 
   if (
     figureOutEnabled &&
@@ -28,14 +34,7 @@ export const areTypesCompatible = (
     typeA.name === AstCheckerTypeNames.Tuple &&
     typeB.name === AstCheckerTypeNames.Tuple
   ) {
-    const haveSameLength = typeA.items.length === typeB.items.length;
-    return (
-      haveSameLength &&
-      typeA.items.every((itemA, index) => {
-        const itemB = typeB.items[index];
-        return itemB && areTypesCompatible(itemA, itemB, options);
-      })
-    );
+    return checkArray(typeA.items, typeB.items, options);
   }
 
   if (
@@ -74,3 +73,18 @@ const shallowCompareTypes: AstCheckerTypeNames[] = [
 
 const sortEntries = (entries: [string, AstCheckerType][]) =>
   [...entries].sort(([a], [b]) => a.localeCompare(b));
+
+const checkArray = (
+  typeA: AstCheckerType[],
+  typeB: AstCheckerType[],
+  options: AreTypesCompatibleOptions,
+) => {
+  const haveSameLength = typeA.length === typeB.length;
+  return (
+    haveSameLength &&
+    typeA.every((itemA, index) => {
+      const itemB = typeB[index];
+      return itemB && areTypesCompatible(itemA, itemB, options);
+    })
+  );
+};
