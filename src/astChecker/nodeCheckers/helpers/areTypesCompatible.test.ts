@@ -246,21 +246,13 @@ describe('functions', () => {
   test('compatible', () => {
     const typeA: AstCheckerType = {
       name: AstCheckerTypeNames.Function,
-      parameters: {
-        name: AstCheckerTypeNames.Tuple,
-        items: [{ name: AstCheckerTypeNames.String, hasValue: true }],
-        hasValue: true,
-      },
+      parameters: [{ name: AstCheckerTypeNames.String, hasValue: true }],
       return: { name: AstCheckerTypeNames.String, hasValue: true },
       hasValue: true,
     };
     const typeB: AstCheckerType = {
       name: AstCheckerTypeNames.Function,
-      parameters: {
-        name: AstCheckerTypeNames.Tuple,
-        items: [{ name: AstCheckerTypeNames.String, hasValue: false }],
-        hasValue: false,
-      },
+      parameters: [{ name: AstCheckerTypeNames.String, hasValue: false }],
       return: { name: AstCheckerTypeNames.String, hasValue: false },
       hasValue: false,
     };
@@ -269,21 +261,13 @@ describe('functions', () => {
   test('incompatible parameters', () => {
     const typeA: AstCheckerType = {
       name: AstCheckerTypeNames.Function,
-      parameters: {
-        name: AstCheckerTypeNames.Tuple,
-        items: [],
-        hasValue: true,
-      },
+      parameters: [],
       return: { name: AstCheckerTypeNames.String, hasValue: true },
       hasValue: true,
     };
     const typeB: AstCheckerType = {
       name: AstCheckerTypeNames.Function,
-      parameters: {
-        name: AstCheckerTypeNames.Tuple,
-        items: [{ name: AstCheckerTypeNames.String, hasValue: false }],
-        hasValue: false,
-      },
+      parameters: [{ name: AstCheckerTypeNames.String, hasValue: false }],
       return: { name: AstCheckerTypeNames.String, hasValue: false },
       hasValue: false,
     };
@@ -292,21 +276,13 @@ describe('functions', () => {
   test('incompatible return', () => {
     const typeA: AstCheckerType = {
       name: AstCheckerTypeNames.Function,
-      parameters: {
-        name: AstCheckerTypeNames.Tuple,
-        items: [{ name: AstCheckerTypeNames.String, hasValue: true }],
-        hasValue: true,
-      },
+      parameters: [{ name: AstCheckerTypeNames.String, hasValue: true }],
       return: { name: AstCheckerTypeNames.Number, hasValue: true },
       hasValue: true,
     };
     const typeB: AstCheckerType = {
       name: AstCheckerTypeNames.Function,
-      parameters: {
-        name: AstCheckerTypeNames.Tuple,
-        items: [{ name: AstCheckerTypeNames.String, hasValue: false }],
-        hasValue: false,
-      },
+      parameters: [{ name: AstCheckerTypeNames.String, hasValue: false }],
       return: { name: AstCheckerTypeNames.String, hasValue: false },
       hasValue: false,
     };

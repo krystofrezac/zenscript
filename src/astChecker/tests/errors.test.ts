@@ -87,16 +87,12 @@ describe('chained errors', () => {
         variableName: 'stringFunction',
         variableType: {
           name: AstCheckerTypeNames.Function,
-          parameters: {
-            name: AstCheckerTypeNames.Tuple,
-            items: [
-              {
-                name: AstCheckerTypeNames.String,
-                hasValue: true,
-              },
-            ],
-            hasValue: true,
-          },
+          parameters: [
+            {
+              name: AstCheckerTypeNames.String,
+              hasValue: true,
+            },
+          ],
           return: {
             name: AstCheckerTypeNames.String,
             hasValue: true,
@@ -110,21 +106,13 @@ describe('chained errors', () => {
         {
           name: AstCheckerErrorName.FunctionParametersMismatch,
           data: {
-            expected: {
-              name: AstCheckerTypeNames.Tuple,
-              items: [
-                {
-                  name: AstCheckerTypeNames.String,
-                  hasValue: true,
-                },
-              ],
-              hasValue: true,
-            },
-            received: {
-              name: AstCheckerTypeNames.Tuple,
-              items: [],
-              hasValue: true,
-            },
+            expected: [
+              {
+                name: AstCheckerTypeNames.String,
+                hasValue: true,
+              },
+            ],
+            received: [],
           },
         },
       ],

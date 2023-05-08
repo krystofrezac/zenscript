@@ -39,11 +39,7 @@ describe('without parameters', () => {
           data: {
             expected: {
               name: AstCheckerTypeNames.Function,
-              parameters: {
-                name: AstCheckerTypeNames.Tuple,
-                items: [],
-                hasValue: false,
-              },
+              parameters: [],
               return: {
                 name: AstCheckerTypeNames.String,
                 hasValue: false,
@@ -52,11 +48,7 @@ describe('without parameters', () => {
             },
             received: {
               name: AstCheckerTypeNames.Function,
-              parameters: {
-                name: AstCheckerTypeNames.Tuple,
-                items: [],
-                hasValue: true,
-              },
+              parameters: [],
               return: {
                 name: AstCheckerTypeNames.Number,
                 hasValue: true,
@@ -97,7 +89,7 @@ describe('without parameters', () => {
 });
 
 describe('with simple parameters', () => {
-  test('single parameter', () => {
+  test.only('single parameter', () => {
     const input = codeToAst(`
           a: (string) string = (param) stringFunction(param)
         `);
@@ -106,11 +98,7 @@ describe('with simple parameters', () => {
         variableName: 'stringFunction',
         variableType: {
           name: AstCheckerTypeNames.Function,
-          parameters: {
-            name: AstCheckerTypeNames.Tuple,
-            items: [{ name: AstCheckerTypeNames.String, hasValue: true }],
-            hasValue: true,
-          },
+          parameters: [{ name: AstCheckerTypeNames.String, hasValue: true }],
           return: {
             name: AstCheckerTypeNames.String,
             hasValue: true,
@@ -121,6 +109,7 @@ describe('with simple parameters', () => {
     ];
     const expected: CheckAstReturn = { errors: [] };
     const result = checkAst(input, defaultVariables);
+    console.log(JSON.stringify(result.errors, null, 2));
     expect(result).toEqual(expected);
   });
   test('single parameter - indirect usage', () => {
@@ -136,11 +125,7 @@ describe('with simple parameters', () => {
         variableName: 'stringFunction',
         variableType: {
           name: AstCheckerTypeNames.Function,
-          parameters: {
-            name: AstCheckerTypeNames.Tuple,
-            items: [{ name: AstCheckerTypeNames.String, hasValue: true }],
-            hasValue: true,
-          },
+          parameters: [{ name: AstCheckerTypeNames.String, hasValue: true }],
           return: {
             name: AstCheckerTypeNames.String,
             hasValue: true,
@@ -163,15 +148,11 @@ describe('with simple parameters', () => {
         variableName: 'stringNumberNumberFunction',
         variableType: {
           name: AstCheckerTypeNames.Function,
-          parameters: {
-            name: AstCheckerTypeNames.Tuple,
-            items: [
-              { name: AstCheckerTypeNames.String, hasValue: true },
-              { name: AstCheckerTypeNames.Number, hasValue: true },
-              { name: AstCheckerTypeNames.Number, hasValue: true },
-            ],
-            hasValue: true,
-          },
+          parameters: [
+            { name: AstCheckerTypeNames.String, hasValue: true },
+            { name: AstCheckerTypeNames.Number, hasValue: true },
+            { name: AstCheckerTypeNames.Number, hasValue: true },
+          ],
           return: {
             name: AstCheckerTypeNames.String,
             hasValue: true,
@@ -194,14 +175,10 @@ describe('with simple parameters', () => {
         variableName: 'stringNumberNumberFunction',
         variableType: {
           name: AstCheckerTypeNames.Function,
-          parameters: {
-            name: AstCheckerTypeNames.Tuple,
-            items: [
-              { name: AstCheckerTypeNames.String, hasValue: true },
-              { name: AstCheckerTypeNames.Number, hasValue: true },
-            ],
-            hasValue: true,
-          },
+          parameters: [
+            { name: AstCheckerTypeNames.String, hasValue: true },
+            { name: AstCheckerTypeNames.Number, hasValue: true },
+          ],
           return: {
             name: AstCheckerTypeNames.String,
             hasValue: true,
@@ -218,43 +195,35 @@ describe('with simple parameters', () => {
             variableName: 'a',
             expected: {
               name: AstCheckerTypeNames.Function,
-              parameters: {
-                name: AstCheckerTypeNames.Tuple,
-                items: [
-                  {
-                    name: AstCheckerTypeNames.String,
-                    hasValue: false,
-                  },
-                  {
-                    name: AstCheckerTypeNames.Number,
-                    hasValue: false,
-                  },
-                  {
-                    name: AstCheckerTypeNames.Number,
-                    hasValue: false,
-                  },
-                ],
-                hasValue: false,
-              },
+              parameters: [
+                {
+                  name: AstCheckerTypeNames.String,
+                  hasValue: false,
+                },
+                {
+                  name: AstCheckerTypeNames.Number,
+                  hasValue: false,
+                },
+                {
+                  name: AstCheckerTypeNames.Number,
+                  hasValue: false,
+                },
+              ],
               return: { name: AstCheckerTypeNames.String, hasValue: false },
               hasValue: false,
             },
             received: {
               name: AstCheckerTypeNames.Function,
-              parameters: {
-                name: AstCheckerTypeNames.Tuple,
-                items: [
-                  {
-                    name: AstCheckerTypeNames.String,
-                    hasValue: true,
-                  },
-                  {
-                    name: AstCheckerTypeNames.Number,
-                    hasValue: true,
-                  },
-                ],
-                hasValue: true,
-              },
+              parameters: [
+                {
+                  name: AstCheckerTypeNames.String,
+                  hasValue: true,
+                },
+                {
+                  name: AstCheckerTypeNames.Number,
+                  hasValue: true,
+                },
+              ],
               return: { name: AstCheckerTypeNames.String, hasValue: true },
               hasValue: true,
             },
@@ -272,20 +241,16 @@ describe('with simple parameters', () => {
         variableName: 'fun',
         variableType: {
           name: AstCheckerTypeNames.Function,
-          parameters: {
-            name: AstCheckerTypeNames.Tuple,
-            items: [
-              {
-                name: AstCheckerTypeNames.String,
-                hasValue: true,
-              },
-              {
-                name: AstCheckerTypeNames.String,
-                hasValue: true,
-              },
-            ],
-            hasValue: true,
-          },
+          parameters: [
+            {
+              name: AstCheckerTypeNames.String,
+              hasValue: true,
+            },
+            {
+              name: AstCheckerTypeNames.String,
+              hasValue: true,
+            },
+          ],
           return: { name: AstCheckerTypeNames.String, hasValue: true },
           hasValue: true,
         },

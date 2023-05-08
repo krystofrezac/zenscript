@@ -15,10 +15,7 @@ describe('value', () => {
             name: AstNodeName.IdentifierExpression,
             identifierName: 'a',
           },
-          arguments: {
-            name: AstNodeName.TupleExpression,
-            items: [],
-          },
+          arguments: [],
         },
       ],
     });
@@ -36,15 +33,12 @@ describe('value', () => {
             name: AstNodeName.IdentifierExpression,
             identifierName: 'a',
           },
-          arguments: {
-            name: AstNodeName.TupleExpression,
-            items: [
-              {
-                name: AstNodeName.NumberExpression,
-                value: 1,
-              },
-            ],
-          },
+          arguments: [
+            {
+              name: AstNodeName.NumberExpression,
+              value: 1,
+            },
+          ],
         },
       ],
     });
@@ -64,15 +58,9 @@ describe('value', () => {
               name: AstNodeName.IdentifierExpression,
               identifierName: 'a',
             },
-            arguments: {
-              name: AstNodeName.TupleExpression,
-              items: [],
-            },
+            arguments: [],
           },
-          arguments: {
-            name: AstNodeName.TupleExpression,
-            items: [],
-          },
+          arguments: [],
         },
       ],
     });
@@ -96,10 +84,7 @@ describe('type', () => {
               name: AstNodeName.IdentifierType,
               identifierName: 'b',
             },
-            arguments: {
-              name: AstNodeName.TupleType,
-              items: [],
-            },
+            arguments: [],
           },
         },
       ],
@@ -121,14 +106,11 @@ describe('type', () => {
               name: AstNodeName.IdentifierType,
               identifierName: 'b',
             },
-            arguments: {
-              name: AstNodeName.TupleType,
-              items: [
-                {
-                  name: AstNodeName.NumberType,
-                },
-              ],
-            },
+            arguments: [
+              {
+                name: AstNodeName.NumberType,
+              },
+            ],
           },
         },
       ],
@@ -152,15 +134,9 @@ describe('type', () => {
                 name: AstNodeName.IdentifierType,
                 identifierName: 'b',
               },
-              arguments: {
-                name: AstNodeName.TupleType,
-                items: [],
-              },
+              arguments: [],
             },
-            arguments: {
-              name: AstNodeName.TupleType,
-              items: [],
-            },
+            arguments: [],
           },
         },
       ],

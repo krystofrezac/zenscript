@@ -29,7 +29,7 @@ export type AstCheckerRecordType =
 
 export type AstCheckerFunctionType =
   AstCheckerTypeBase<AstCheckerTypeNames.Function> & {
-    parameters: AstCheckerTupleType;
+    parameters: AstCheckerType[];
     return: AstCheckerType;
   };
 

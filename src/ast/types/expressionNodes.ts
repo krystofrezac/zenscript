@@ -37,7 +37,7 @@ type FunctionDeclarationExpressionAstNode =
 type FunctionCallExpressionAstNode =
   AstBaseNode<AstNodeName.FunctionCallExpression> & {
     callee: ExpressionAstNode;
-    arguments: TupleExpressionAstNode;
+    arguments: ExpressionAstNode[];
   };
 
 export type ExpressionAstNode =

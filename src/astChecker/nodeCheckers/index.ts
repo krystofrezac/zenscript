@@ -2,34 +2,45 @@ import { AstNodeName } from '../../ast/types';
 import { CheckAstNode } from '../types';
 import { checkBlockNode } from './block';
 import { checkFunctionCall } from './functionCall';
-import { checkFunctionDeclaration } from './functionDeclaration';
-import { checkNumberNode } from './number';
-import { checkParameter } from './parameter';
-import { checkRecordNode } from './record';
-import { checkRecordEntryAccessNode } from './recordEntryAccess';
-import { checkStringNode } from './string';
+import { checkFunctionDeclarationExpression } from './functionDeclaration/expression';
+import { checkNumberExpressionNode } from './numberExpression';
+import { checkStringExpressionNode } from './stringExpression';
 import { checkTupleNode } from './tuple';
 import { checkVariableAssignmentNode } from './variableAssignment';
 import { checkIdentifierNode } from './identifier';
+import { checkStringTypeNode } from './stringType';
+import { checkNumberTypeNode } from './numberType';
+import { checkFunctionDeclarationType } from './functionDeclaration/type';
+import { checkRecordEntryAccessNode } from './recordEntryAccess';
+import { checkRecordExpressionNode } from './record/expression';
+import { checkRecordTypeNode } from './record/type';
 
 export const checkAstNode: CheckAstNode = (context, astNode) => {
   const actionMap: Partial<{
     [Name in AstNodeName]: CheckAstNode<Name>;
   }> = {
-    [AstNodeName.Number]: checkNumberNode,
-    [AstNodeName.String]: checkStringNode,
+    [AstNodeName.NumberExpression]: checkNumberExpressionNode,
+    [AstNodeName.NumberType]: checkNumberTypeNode,
+
+    [AstNodeName.StringExpression]: checkStringExpressionNode,
+    [AstNodeName.StringType]: checkStringTypeNode,
 
     [AstNodeName.Block]: checkBlockNode,
 
     [AstNodeName.TupleExpression]: checkTupleNode(true),
     [AstNodeName.TupleType]: checkTupleNode(true),
 
-    [AstNodeName.Record]: checkRecordNode,
-    [AstNodeName.RecordEntryAccess]: checkRecordEntryAccessNode,
+    [AstNodeName.RecordExpression]: checkRecordExpressionNode,
+    [AstNodeName.RecordType]: checkRecordTypeNode,
 
-    [AstNodeName.FunctionDeclaration]: checkFunctionDeclaration,
-    [AstNodeName.FunctionCall]: checkFunctionCall,
-    [AstNodeName.Parameter]: checkParameter,
+    [AstNodeName.RecordEntryAccessExpression]: checkRecordEntryAccessNode,
+    [AstNodeName.RecordEntryAccessType]: checkRecordEntryAccessNode,
+
+    [AstNodeName.FunctionDeclarationExpression]:
+      checkFunctionDeclarationExpression,
+    [AstNodeName.FunctionDeclarationType]: checkFunctionDeclarationType,
+
+    [AstNodeName.FunctionCallExpression]: checkFunctionCall,
 
     [AstNodeName.VariableAssignment]: checkVariableAssignmentNode,
 

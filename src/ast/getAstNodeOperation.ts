@@ -108,7 +108,7 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
     FunctionCallExpression: (callee, argumentsNode) =>
       createAstNode({
         name: AstNodeName.FunctionCallExpression,
-        arguments: argumentsNode.getAstNode() as TupleExpressionAstNode,
+        arguments: (argumentsNode.getAstNode() as TupleExpressionAstNode).items,
         callee: callee.getAstNode() as ExpressionAstNode,
       }),
 
@@ -173,7 +173,7 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
     FunctionCallType: (callee, argumentsNode) =>
       createAstNode({
         name: AstNodeName.FunctionCallType,
-        arguments: argumentsNode.getAstNode() as TupleTypeAstNode,
+        arguments: (argumentsNode.getAstNode() as TupleTypeAstNode).items,
         callee: callee.getAstNode() as TypeAstNode,
       }),
 

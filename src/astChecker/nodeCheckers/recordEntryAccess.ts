@@ -8,7 +8,7 @@ import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 import { ignoreAstCheckerNode } from './helpers/ignoreAstCheckerNode';
 
 export const checkRecordEntryAccessNode: CheckAstNode<
-  AstNodeName.RecordEntryAccess
+  AstNodeName.RecordEntryAccessExpression | AstNodeName.RecordEntryAccessType
 > = (context, recordEntryAccess) => {
   const accessingContext = checkAstNode(context, recordEntryAccess.accessing);
   const accessingType = accessingContext.nodeType;

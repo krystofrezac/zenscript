@@ -30,7 +30,7 @@ type FunctionDeclarationTypeAstNode =
   };
 type FunctionCallTypeAstNode = AstBaseNode<AstNodeName.FunctionCallType> & {
   callee: TypeAstNode;
-  arguments: TupleTypeAstNode;
+  arguments: TypeAstNode[];
 };
 
 export type TypeAstNode =
