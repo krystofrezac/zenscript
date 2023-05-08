@@ -1,0 +1,15 @@
+{
+  "name": "@sphere-script/helpers",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint . --ext .js,.ts",
+    "lint:fix": "npm run lint -- --fix",
+    "check:type": "tsc --noEmit",
+    "check:code": "pnpm check:type && pnpm lint"
+  },
+  "devDependencies": {
+    "@sphere-script/tsconfig": "workspace:*"
+  }
+}

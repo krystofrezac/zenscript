@@ -1,4 +1,4 @@
-# Boring lang (name will probably change :smile:) 
+# SphereScript - simple yet magical
 
 Strictly typed, minimalistic language compiled to JS.
 
