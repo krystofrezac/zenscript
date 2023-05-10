@@ -2,6 +2,9 @@
   "name": "zen-script",
   "version": "0.0.0",
   "author": "Kryštof Řezáč",
+  "engines": {
+    "node": "18.15.0"
+  },
   "scripts": {
     "build": "turbo build",
     "dev": "pnpm build && turbo dev --parallel",
