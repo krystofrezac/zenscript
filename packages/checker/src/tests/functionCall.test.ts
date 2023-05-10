@@ -1,9 +1,10 @@
 import { describe, expect, test } from 'vitest';
-import { CheckAstReturn, checkAst } from '..';
+import type { CheckAstReturn } from '..';
+import { checkAst } from '..';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
-import { getAst } from '@sphere-script/ast';
-import { VariableScope } from '../types';
+import { getAst } from '@zen-script/ast';
+import type { VariableScope } from '../types';
 
 describe('without parameters', () => {
   test('value assignment', () => {

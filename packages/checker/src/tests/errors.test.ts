@@ -1,12 +1,13 @@
 import { describe, expect, test } from 'vitest';
-import { CheckAstReturn, checkAst } from '..';
-import { VariableScope } from '../types';
+import type { CheckAstReturn } from '..';
+import { checkAst } from '..';
+import type { VariableScope } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
-import { getAst } from '@sphere-script/ast';
+import { getAst } from '@zen-script/ast';
 
 describe('chained errors', () => {
-  test(AstCheckerErrorName.UnknownIdentifier, () => {
+  test('UnknownIdentifier', () => {
     const input = getAst(`
       b = a
       c = b
@@ -25,7 +26,7 @@ describe('chained errors', () => {
     const result = checkAst(input);
     expect(result).toEqual(expected);
   });
-  test(AstCheckerErrorName.ExpressionWithoutValueUsedAsValue, () => {
+  test('ExpressionWithoutValueUsedAsValue', () => {
     const input = getAst(`
       a: string
       b = a
@@ -47,7 +48,7 @@ describe('chained errors', () => {
     const result = checkAst(input);
     expect(result).toEqual(expected);
   });
-  test(AstCheckerErrorName.VariableTypeMismatch, () => {
+  test('VariableTypeMismatch', () => {
     const input = getAst(`
       a: string = 1
       b: string = a
@@ -76,7 +77,7 @@ describe('chained errors', () => {
     const result = checkAst(input);
     expect(result).toEqual(expected);
   });
-  test(AstCheckerErrorName.FunctionParametersMismatch, () => {
+  test('FunctionParametersMismatch', () => {
     const input = getAst(`
       a = stringFunction() 
       b = a
@@ -120,7 +121,7 @@ describe('chained errors', () => {
     const result = checkAst(input, defaultVariables);
     expect(result).toEqual(expected);
   });
-  test(AstCheckerErrorName.EmptyBlock, () => {
+  test('EmptyBlock', () => {
     const input = getAst(`
       a = {}  
       b = a
@@ -137,7 +138,7 @@ describe('chained errors', () => {
     const result = checkAst(input);
     expect(result).toEqual(expected);
   });
-  test(AstCheckerErrorName.CallingNonCallableExpression, () => {
+  test('CallingNonCallableExpression', () => {
     const input = getAst(`
       a = 1
       b = a()

@@ -1,7 +1,7 @@
 import grammar from './grammar.ohm-bundle';
 import { getAstNodeOperation } from './getAstNodeOperation';
 import { createGetNameOperation } from './getNameOperation';
-import { AstNode } from './types';
+import type { AstNode } from './types';
 import { getAstNodesOperations } from './getAstNodesOperation';
 import { parse } from './parser';
 

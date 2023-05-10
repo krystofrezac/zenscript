@@ -1,5 +1,5 @@
-import { CheckAstNodeReturn, AstCheckerContext } from '../../types';
-import { AstCheckerType } from '../../types/types';
+import type { CheckAstNodeReturn, AstCheckerContext } from '../../types';
+import type { AstCheckerType } from '../../types/types';
 
 export const getCheckNodeReturn = <
   TAstCheckerType extends AstCheckerType = AstCheckerType,

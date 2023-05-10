@@ -1,12 +1,13 @@
 {
-  "name": "@sphere-script/ast",
+  "name": "@zen-script/ast",
   "version": "0.0.0",
   "main": "./dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "pnpm gen:bundle && tsc",
+    "dev": "tsc --watch",
     "lint": "eslint . --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
-    "test": "vitest",
+    "test": "vitest run",
     "check:type": "tsc --noEmit",
     "check:code": "pnpm check:type && pnpm lint && pnpm test",
     "gen:bundle": "ohm generateBundles --withTypes src/*.ohm && rm -rf dist && mkdir dist && cp src/grammar.ohm-bundle.* dist/"
@@ -18,7 +19,7 @@
     "@ohm-js/cli": "^2.0.0",
     "typescript": "^5.0.4",
     "vitest": "^0.30.1", 
-    "@sphere-script/tsconfig": "workspace:*",
-    "@sphere-script/eslint-config": "workspace:*"
+    "@zen-script/tsconfig": "workspace:*",
+    "@zen-script/eslint-config": "workspace:*"
   }
 }

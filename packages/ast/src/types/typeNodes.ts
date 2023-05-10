@@ -1,4 +1,4 @@
-import { AstBaseNode, AstNodeName } from '.';
+import type { AstBaseNode, AstNodeName } from '.';
 
 export type IdentifierTypeAstNode = AstBaseNode<AstNodeName.IdentifierType> & {
   identifierName: string;

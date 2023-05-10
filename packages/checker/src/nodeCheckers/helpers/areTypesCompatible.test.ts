@@ -1,5 +1,6 @@
 import { expect, describe, test } from 'vitest';
-import { AstCheckerType, AstCheckerTypeNames } from '../../types/types';
+import type { AstCheckerType } from '../../types/types';
+import { AstCheckerTypeNames } from '../../types/types';
 import { areTypesCompatible } from './areTypesCompatible';
 
 describe('string', () => {
@@ -15,7 +16,7 @@ describe('string', () => {
 
     expect(areTypesCompatible(typeA, typeB)).toBe(true);
   });
-  test('compatible', () => {
+  test('incompatible', () => {
     const typeA: AstCheckerType = {
       name: AstCheckerTypeNames.String,
       hasValue: true,

@@ -1,7 +1,12 @@
-import { AstNodeName, AstNode } from '@sphere-script/ast';
+import type { AstNodeName, AstNode } from '@zen-script/ast';
 import { checkAstNode } from '.';
-import { AstCheckerContext, CheckAstNode, CheckAstNodeReturn } from '../types';
-import { AstCheckerTupleType, AstCheckerTypeNames } from '../types/types';
+import type {
+  AstCheckerContext,
+  CheckAstNode,
+  CheckAstNodeReturn,
+} from '../types';
+import type { AstCheckerTupleType } from '../types/types';
+import { AstCheckerTypeNames } from '../types/types';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 
 export const checkTupleNode =

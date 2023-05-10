@@ -1,4 +1,4 @@
-import type { AstNodeName } from '@sphere-script/ast';
+import type { AstNodeName } from '@zen-script/ast';
 import type { CheckAstNode } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
 import { addError } from './helpers/addError';

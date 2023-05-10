@@ -1,4 +1,4 @@
-import { AstCheckerContext } from '../../types';
+import type { AstCheckerContext } from '../../types';
 
 export const addVariableScope = (
   context: AstCheckerContext,

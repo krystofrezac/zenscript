@@ -1,7 +1,7 @@
 import type { AstCheckerType } from '../../types/types';
 import { AstCheckerTypeNames } from '../../types/types';
-import { pipe } from '@sphere-script/helpers';
-import type { MaybeArray } from '@sphere-script/helpers';
+import { pipe } from '@zen-script/helpers';
+import type { MaybeArray } from '@zen-script/helpers';
 
 type AreTypesCompatibleOptions = { figureOutEnabled?: boolean };
 

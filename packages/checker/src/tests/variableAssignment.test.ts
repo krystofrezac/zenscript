@@ -1,8 +1,9 @@
 import { describe, test, expect } from 'vitest';
-import { CheckAstReturn, checkAst } from '..';
+import type { CheckAstReturn } from '..';
+import { checkAst } from '..';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
-import { getAst } from '@sphere-script/ast';
+import { getAst } from '@zen-script/ast';
 
 describe('non type checks', () => {
   test('assigning expression', () => {

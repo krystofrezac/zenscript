@@ -1,8 +1,8 @@
-import { NonterminalNode } from 'ohm-js';
-import { AstNode, AstNodeName } from '../types';
-import { IdentifierTypeAstNode } from '../types/typeNodes';
+import type { NonterminalNode } from 'ohm-js';
+import type { AstNode, AstNodeName } from '../types';
+import type { IdentifierTypeAstNode } from '../types/typeNodes';
 import { createInvalidAstNode, createAstNode } from './createAstNode';
-import { IdentifierExpressionAstNode } from '../types/expressionNodes';
+import type { IdentifierExpressionAstNode } from '../types/expressionNodes';
 
 type IdentifierNode = IdentifierExpressionAstNode | IdentifierTypeAstNode;
 

@@ -1,8 +1,9 @@
 import { test, describe, expect } from 'vitest';
-import { checkAst, CheckAstReturn } from '..';
+import type { CheckAstReturn } from '..';
+import { checkAst } from '..';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
-import { getAst } from '@sphere-script/ast';
+import { getAst } from '@zen-script/ast';
 
 describe('string', () => {
   test('assigning only value', () => {

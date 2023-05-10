@@ -1,2 +1,2 @@
-export {pipe } from './pipe'
-export type {MaybeArray, Entries} from './typeUtils'
+export { pipe } from './pipe';
+export type { MaybeArray, Entries } from './typeUtils';

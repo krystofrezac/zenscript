@@ -1,22 +1,16 @@
 {
-  "name": "sphere-script",
+  "name": "zen-script",
   "version": "0.0.0",
   "author": "Kryštof Řezáč",
   "scripts": {
-    "build": "tsc",
-    "dev": "npm run gen:bundle && tsc --watch",
-    "start": "node dist/index.js",
-    "test": "vitest",
-    "gen:bundle": "ohm generateBundles --withTypes src/*.ohm && rm -rf dist && mkdir dist && cp src/grammar.ohm-bundle.* dist/",
-    "lint": "eslint src --ext .js,.ts",
-    "lint:fix": "npm run lint -- --fix",
-    "check:type": "tsc --noEmit"
-  },
-  "dependencies": {
+    "build": "turbo build",
+    "dev": "pnpm build && turbo dev --parallel",
+    "check:code": "turbo check:code"
   },
   "devDependencies": {
     "@ohm-js/cli": "^2.0.0",
     "@types/node": "^18.15.11",
+    "turbo": "^1.9.3",
     "typescript": "^5.0.4",
     "vitest": "^0.30.1"
   }

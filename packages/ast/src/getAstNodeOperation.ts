@@ -1,14 +1,15 @@
-import ohm from 'ohm-js';
-import { BoringLangSemantics } from './grammar.ohm-bundle';
+import type ohm from 'ohm-js';
+import type { BoringLangSemantics } from './grammar.ohm-bundle';
 import { createAstNode } from './helpers/createAstNode';
-import { CommonAstNode, AstNodeName } from './types';
-import {
+import type { CommonAstNode } from './types';
+import { AstNodeName } from './types';
+import type {
   ExpressionAstNode,
   IdentifierExpressionAstNode,
   RecordEntryExpressionAstNode,
   TupleExpressionAstNode,
 } from './types/expressionNodes';
-import {
+import type {
   RecordEntryTypeAstNode,
   TupleTypeAstNode,
   TypeAstNode,

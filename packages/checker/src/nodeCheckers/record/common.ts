@@ -2,7 +2,7 @@ import type {
   AstNodeName,
   RecordEntryExpressionAstNode,
   RecordEntryTypeAstNode,
-} from '@sphere-script/ast';
+} from '@zen-script/ast';
 import { checkAstNode } from '..';
 import type { CheckAstNode, AstCheckerContext } from '../../types';
 import type { AstCheckerType } from '../../types/types';

@@ -1,5 +1,5 @@
 {
-  "name": "@sphere-script/eslint-config",
+  "name": "@zen-script/eslint-config",
   "version": "0.0.0",
   "scripts": {
     "lint": "eslint . --ext .js,.ts",

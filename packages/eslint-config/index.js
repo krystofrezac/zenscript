@@ -1,4 +1,7 @@
 module.exports = {
+  env: {
+    node: true,
+  },
   plugins: [
     'vitest',
     '@typescript-eslint',

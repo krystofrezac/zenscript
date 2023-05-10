@@ -1,4 +1,4 @@
-import { AstBaseNode, AstNodeName, BlockAstNode } from '.';
+import type { AstBaseNode, AstNodeName, BlockAstNode } from '.';
 
 export type IdentifierExpressionAstNode =
   AstBaseNode<AstNodeName.IdentifierExpression> & {

@@ -13,7 +13,7 @@ import { checkFunctionDeclarationType } from './functionDeclaration/type';
 import { checkRecordEntryAccessNode } from './recordEntryAccess';
 import { checkRecordExpressionNode } from './record/expression';
 import { checkRecordTypeNode } from './record/type';
-import { AstNodeName } from '@sphere-script/ast';
+import { AstNodeName } from '@zen-script/ast';
 
 export const checkAstNode: CheckAstNode = (context, astNode) => {
   const actionMap: Partial<{

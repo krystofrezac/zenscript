@@ -1,4 +1,4 @@
-import { AstCheckerContext } from '../../types';
+import type { AstCheckerContext } from '../../types';
 import { AstCheckerErrorName } from '../../types/errors';
 import { addError } from './addError';
 import { findVariableInCurrentScope } from './findVariableInCurrentScope';

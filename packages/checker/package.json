@@ -1,19 +1,21 @@
 {
-  "name": "@sphere-script/checker",
+  "name": "@zen-script/checker",
   "version": "0.0.0",
   "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
     "lint": "eslint . --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
-    "test": "vitest",
+    "test": "vitest run",
     "check:type": "tsc --noEmit",
     "check:code": "pnpm check:type && pnpm lint && pnpm test"
   }, 
   "dependencies": {
-    "@sphere-script/ast": "workspace:*"
+    "@zen-script/ast": "workspace:*"
   },
   "devDependencies": {
-    "@sphere-script/tsconfig": "workspace:*",
-    "@sphere-script/eslint-config": "workspace:*",
-    "@sphere-script/helpers": "workspace:*"
+    "@zen-script/tsconfig": "workspace:*",
+    "@zen-script/eslint-config": "workspace:*",
+    "@zen-script/helpers": "workspace:*"
   }
 }

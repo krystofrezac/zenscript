@@ -1,6 +1,6 @@
-import { AstNode, AstNodeName } from '@sphere-script/ast';
-import { AstCheckerError } from './errors';
-import { AstCheckerType } from './types';
+import type { AstNode, AstNodeName } from '@zen-script/ast';
+import type { AstCheckerError } from './errors';
+import type { AstCheckerType } from './types';
 
 export type Variable = {
   variableName: string;

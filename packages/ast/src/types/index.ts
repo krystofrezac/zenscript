@@ -1,5 +1,5 @@
-import { ExpressionAstNode } from './expressionNodes';
-import { TypeAstNode } from './typeNodes';
+import type { ExpressionAstNode } from './expressionNodes';
+import type { TypeAstNode } from './typeNodes';
 
 export enum AstNodeName {
   IdentifierExpression = 'VariableReferenceExpression',

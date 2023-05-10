@@ -1,4 +1,4 @@
-import type { AstNodeName } from '@sphere-script/ast';
+import type { AstNodeName } from '@zen-script/ast';
 import { checkAstNode } from '.';
 import type {
   CheckAstNode,
@@ -14,7 +14,7 @@ import { checkIfVariableWithNameIsAlreadyDeclared } from './helpers/checkIfVaria
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 import { getNewErrors } from './helpers/getNewErrors';
 import { ignoreAstCheckerNode } from './helpers/ignoreAstCheckerNode';
-import { pipe } from '@sphere-script/helpers';
+import { pipe } from '@zen-script/helpers';
 
 export const checkVariableAssignmentNode: CheckAstNode<
   AstNodeName.VariableAssignment

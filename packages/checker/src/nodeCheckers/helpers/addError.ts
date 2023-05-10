@@ -1,5 +1,5 @@
-import { AstCheckerContext } from '../../types';
-import { AstCheckerError } from '../../types/errors';
+import type { AstCheckerContext } from '../../types';
+import type { AstCheckerError } from '../../types/errors';
 
 export const addError = (
   context: AstCheckerContext,

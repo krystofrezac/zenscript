@@ -1,5 +1,5 @@
 {
-  "extends": "@sphere-script/tsconfig/tsconfig.json",
+  "extends": "@zen-script/tsconfig/tsconfig.json",
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",

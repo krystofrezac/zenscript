@@ -1,5 +1,6 @@
-import { AstCheckerContext } from '../../types';
-import { AstCheckerType, AstCheckerTypeNames } from '../../types/types';
+import type { AstCheckerContext } from '../../types';
+import type { AstCheckerType } from '../../types/types';
+import { AstCheckerTypeNames } from '../../types/types';
 
 type UpdateFigureOutTypeParams = {
   figureOutId: number;
