@@ -4,21 +4,9 @@ importers:
 
   .:
     devDependencies:
-      '@ohm-js/cli':
-        specifier: ^2.0.0
-        version: 2.0.0(ohm-js@17.0.4)
-      '@types/node':
-        specifier: ^18.15.11
-        version: 18.15.11
       turbo:
         specifier: ^1.9.3
         version: 1.9.3
-      typescript:
-        specifier: ^5.0.4
-        version: 5.0.4
-      vitest:
-        specifier: ^0.30.1
-        version: 0.30.1
 
   packages/ast:
     dependencies:
@@ -47,16 +35,22 @@ importers:
       '@zen-script/ast':
         specifier: workspace:*
         version: link:../ast
+      '@zen-script/helpers':
+        specifier: workspace:*
+        version: link:../helpers
     devDependencies:
       '@zen-script/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@zen-script/helpers':
-        specifier: workspace:*
-        version: link:../helpers
       '@zen-script/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
+      typescript:
+        specifier: ^5.0.4
+        version: 5.0.4
+      vitest:
+        specifier: ^0.30.1
+        version: 0.30.1
 
   packages/eslint-config:
     dependencies:
@@ -90,6 +84,9 @@ importers:
       '@zen-script/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
+      typescript:
+        specifier: ^5.0.4
+        version: 5.0.4
 
   packages/tsconfig:
     devDependencies:

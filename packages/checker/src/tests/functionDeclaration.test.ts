@@ -90,7 +90,7 @@ describe('without parameters', () => {
 });
 
 describe('with simple parameters', () => {
-  test.only('single parameter', () => {
+  test('single parameter', () => {
     const input = getAst(`
           a: (string) string = (param) stringFunction(param)
         `);

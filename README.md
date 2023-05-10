@@ -1,4 +1,4 @@
-# ZenScript 
+# ZenScript (name may change)
 
 Strictly typed, minimalistic language compiled to JS.
 

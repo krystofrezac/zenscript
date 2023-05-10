@@ -9,13 +9,15 @@
     "test": "vitest run",
     "check:type": "tsc --noEmit",
     "check:code": "pnpm check:type && pnpm lint && pnpm test"
-  }, 
+  },
   "dependencies": {
-    "@zen-script/ast": "workspace:*"
+    "@zen-script/ast": "workspace:*",
+    "@zen-script/helpers": "workspace:*"
   },
   "devDependencies": {
-    "@zen-script/tsconfig": "workspace:*",
     "@zen-script/eslint-config": "workspace:*",
-    "@zen-script/helpers": "workspace:*"
+    "@zen-script/tsconfig": "workspace:*",
+    "typescript": "^5.0.4",
+    "vitest": "^0.30.1"
   }
 }
