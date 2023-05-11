@@ -1,0 +1,23 @@
+{
+  "name": "@zen-script/checker",
+  "version": "0.0.0",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint . --ext .js,.ts",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "vitest run",
+    "check:type": "tsc --noEmit",
+    "check:code": "pnpm check:type && pnpm lint && pnpm test"
+  },
+  "dependencies": {
+    "@zen-script/ast": "workspace:*",
+    "@zen-script/helpers": "workspace:*"
+  },
+  "devDependencies": {
+    "@zen-script/eslint-config": "workspace:*",
+    "@zen-script/tsconfig": "workspace:*",
+    "typescript": "^5.0.4",
+    "vitest": "^0.30.1"
+  }
+}
