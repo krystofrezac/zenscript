@@ -36,6 +36,12 @@ export const getVariableAssignmentInfo = (
     variableAssignment.expression &&
     checkAstNode(context, variableAssignment.expression);
 
+  const hasValue = expressionContext?.nodeType.hasValue ?? false;
+  const ignoreVariable: Variable = {
+    variableName: variableAssignment.identifierName,
+    variableType: { name: AstCheckerTypeNames.Ignore, hasValue },
+  };
+
   // Errors that originated from type and expression nodes
   const nodeErrors = [
     ...getNewErrors(expressionContext?.errors ?? [], context.errors),
@@ -47,7 +53,7 @@ export const getVariableAssignmentInfo = (
       c => addIgnoreVariable(c, variableAssignment.identifierName),
     )(context);
 
-    return { context: returnContext };
+    return { context: returnContext, variable: ignoreVariable };
   }
 
   // Ignore when explicit or implicit type is ignored
@@ -59,7 +65,7 @@ export const getVariableAssignmentInfo = (
       context,
       variableAssignment.identifierName,
     );
-    return { context: returnContext };
+    return { context: returnContext, variable: ignoreVariable };
   }
 
   // Error when trying to use variable without value as value
@@ -72,7 +78,7 @@ export const getVariableAssignmentInfo = (
       contextWithWithoutValueError,
       variableAssignment.identifierName,
     );
-    return { context: returnContext };
+    return { context: returnContext, variable: ignoreVariable };
   }
 
   const valueContext = typeContext ?? expressionContext;
@@ -91,7 +97,7 @@ export const getVariableAssignmentInfo = (
     variableName: variableAssignment.identifierName,
     variableType: {
       ...valueContext.nodeType,
-      hasValue: expressionContext?.nodeType.hasValue ?? false,
+      hasValue,
     },
   };
   const contextWithVariable = addVariableToContext(

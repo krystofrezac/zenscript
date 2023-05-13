@@ -229,7 +229,7 @@ describe('exporting', () => {
         {
           variableName: 'b',
           variableType: {
-            name: AstCheckerTypeNames.String,
+            name: AstCheckerTypeNames.Ignore,
             hasValue: true,
           },
         },
