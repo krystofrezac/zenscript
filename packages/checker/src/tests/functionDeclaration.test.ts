@@ -11,6 +11,7 @@ describe('without parameters', () => {
     const input = getAst('a = () 1');
     const expected: CheckAstReturn = {
       errors: [],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(expected).toEqual(result);
@@ -19,6 +20,7 @@ describe('without parameters', () => {
     const input = getAst('a : () number');
     const expected: CheckAstReturn = {
       errors: [],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(expected).toEqual(result);
@@ -27,6 +29,7 @@ describe('without parameters', () => {
     const input = getAst('a : () number = () 1');
     const expected: CheckAstReturn = {
       errors: [],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(expected).toEqual(result);
@@ -60,6 +63,7 @@ describe('without parameters', () => {
           },
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(expected).toEqual(result);
@@ -75,6 +79,7 @@ describe('without parameters', () => {
           },
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -83,6 +88,7 @@ describe('without parameters', () => {
     const input = getAst('a: ()()()number = ()()()1');
     const expected: CheckAstReturn = {
       errors: [],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -108,7 +114,7 @@ describe('with simple parameters', () => {
         },
       },
     ];
-    const expected: CheckAstReturn = { errors: [] };
+    const expected: CheckAstReturn = { errors: [], exportedVariables: [] };
     const result = checkAst(input, defaultVariables);
     console.log(JSON.stringify(result.errors, null, 2));
     expect(result).toEqual(expected);
@@ -135,7 +141,7 @@ describe('with simple parameters', () => {
         },
       },
     ];
-    const expected: CheckAstReturn = { errors: [] };
+    const expected: CheckAstReturn = { errors: [], exportedVariables: [] };
     const result = checkAst(input, defaultVariables);
     expect(result).toEqual(expected);
   });
@@ -162,7 +168,7 @@ describe('with simple parameters', () => {
         },
       },
     ];
-    const expected: CheckAstReturn = { errors: [] };
+    const expected: CheckAstReturn = { errors: [], exportedVariables: [] };
     const result = checkAst(input, defaultVariables);
     expect(expected).toEqual(result);
   });
@@ -231,6 +237,7 @@ describe('with simple parameters', () => {
           },
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input, defaultVariables);
     expect(expected).toEqual(result);
@@ -266,6 +273,7 @@ describe('with simple parameters', () => {
           },
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input, defaultVariables);
     expect(result).toEqual(expected);

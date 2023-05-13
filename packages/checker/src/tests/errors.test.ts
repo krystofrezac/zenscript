@@ -22,6 +22,7 @@ describe('chained errors', () => {
           },
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -44,6 +45,7 @@ describe('chained errors', () => {
           },
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -73,6 +75,7 @@ describe('chained errors', () => {
           },
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -117,6 +120,7 @@ describe('chained errors', () => {
           },
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input, defaultVariables);
     expect(result).toEqual(expected);
@@ -134,6 +138,7 @@ describe('chained errors', () => {
           data: {},
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -157,6 +162,7 @@ describe('chained errors', () => {
           },
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
