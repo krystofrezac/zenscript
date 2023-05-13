@@ -4,7 +4,7 @@ BoringLang {
   Program = ListOf<Statement, #(newLine)>
 
   Statement = | VariableDeclaration
-              | ExportVariable
+              | ExportedVariable
               | Expression
 
   newLine = " "*"\n"" "*
@@ -19,7 +19,7 @@ BoringLang {
   ExpressionAssignment = expressionAssignmentOperator Expression
   TypeAssignment = typeAssignmentOperator TypeExpression 
 
-  ExportVariable = "export" VariableDeclaration
+  ExportedVariable = "export" VariableDeclaration
 
   Expression = | FunctionCallExpression
                | FunctionDeclarationExpression

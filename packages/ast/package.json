@@ -8,6 +8,7 @@
     "lint": "eslint . --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
     "test": "vitest run",
+    "test:watch": "vitest",
     "check:type": "tsc --noEmit",
     "check:code": "pnpm check:type && pnpm lint && pnpm test",
     "gen:bundle": "ohm generateBundles --withTypes src/*.ohm && rm -rf dist && mkdir dist && cp src/grammar.ohm-bundle.* dist/"
