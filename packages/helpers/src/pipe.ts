@@ -1,10 +1,4 @@
-export const pipe =
-  <TFirstParams extends any[], TFirstReturn>(
-    firstFun: (...params: TFirstParams) => TFirstReturn,
-    ...otherFunctions: ((param: TFirstReturn) => TFirstReturn)[]
-  ) =>
-  (...params: TFirstParams): TFirstReturn =>
-    otherFunctions.reduce(
-      (result, currentFunction) => currentFunction(result),
-      firstFun(...params),
-    );
+export const pipe = <TValue>(value: TValue) => {
+  const to = <TReturn>(fun: (param: TValue) => TReturn) => pipe(fun(value));
+  return { to, result: () => value };
+};

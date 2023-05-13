@@ -42,8 +42,14 @@ export const areTypesCompatible = (
     typeA.name === AstCheckerTypeNames.Record &&
     typeB.name === AstCheckerTypeNames.Record
   ) {
-    const entriesA = pipe(Object.entries, sortEntries)(typeA.entries);
-    const entriesB = pipe(Object.entries, sortEntries)(typeB.entries);
+    const entriesA = pipe(typeA.entries)
+      .to(Object.entries)
+      .to(sortEntries)
+      .result();
+    const entriesB = pipe(typeB.entries)
+      .to(Object.entries)
+      .to(sortEntries)
+      .result();
 
     const haveSameLength = entriesA.length === entriesB.length;
     return (

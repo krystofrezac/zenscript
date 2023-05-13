@@ -48,10 +48,10 @@ export const getVariableAssignmentInfo = (
     ...getNewErrors(typeContext?.errors ?? [], context.errors),
   ];
   if (nodeErrors.length > 0) {
-    const returnContext = pipe(
-      c => addErrors(c, nodeErrors),
-      c => addIgnoreVariable(c, variableAssignment.identifierName),
-    )(context);
+    const returnContext = pipe(context)
+      .to(c => addErrors(c, nodeErrors))
+      .to(c => addIgnoreVariable(c, variableAssignment.identifierName))
+      .result();
 
     return { context: returnContext, variable: ignoreVariable };
   }
