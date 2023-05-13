@@ -4,7 +4,7 @@ import type { AstCheckerType } from '../../../types/types';
 import { AstCheckerTypeNames } from '../../../types/types';
 import { addVariableToContext } from '../../helpers/addVariableToContext';
 import { checkAstNodes } from '../../helpers/checkAstNodes';
-import { checkIfVariableWithNameIsAlreadyDeclared } from '../../helpers/checkIfVariableWithNameIsAlreadyDeclared';
+import { getErrorContextWhenVariableAlreadyDeclared } from '../../helpers/getErrorContextWhenVariableAlreadyDeclared';
 import { getCheckNodeReturn } from '../../helpers/getCheckNodeReturn';
 
 export const checkFunctionDeclarationExpressionParameters = (
@@ -23,7 +23,7 @@ const checkFunctionDeclarationExpressionParameter = (
   context: AstCheckerContext,
   parameter: IdentifierExpressionAstNode,
 ) => {
-  const alreadyDeclaredError = checkIfVariableWithNameIsAlreadyDeclared(
+  const alreadyDeclaredError = getErrorContextWhenVariableAlreadyDeclared(
     context,
     parameter.identifierName,
   );

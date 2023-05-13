@@ -11,7 +11,7 @@ import { AstCheckerTypeNames } from '../../types/types';
 import { addErrors, addError } from '../helpers/addError';
 import { addVariableToContext } from '../helpers/addVariableToContext';
 import { areTypesCompatible } from '../helpers/areTypesCompatible';
-import { checkIfVariableWithNameIsAlreadyDeclared } from '../helpers/checkIfVariableWithNameIsAlreadyDeclared';
+import { getErrorContextWhenVariableAlreadyDeclared } from '../helpers/getErrorContextWhenVariableAlreadyDeclared';
 import { getNewErrors } from '../helpers/getNewErrors';
 import { ignoreAstCheckerNode } from '../helpers/ignoreAstCheckerNode';
 
@@ -24,11 +24,13 @@ export const getVariableAssignmentInfo = (
   context: AstCheckerContext,
   variableAssignment: VariableAssignmentAstNode,
 ): GetVariableAssignmentInfoReturn => {
-  const alreadyDeclaredError = checkIfVariableWithNameIsAlreadyDeclared(
-    context,
-    variableAssignment.identifierName,
-  );
-  if (alreadyDeclaredError) return { context: alreadyDeclaredError };
+  const errorContextWhenVariableAlreadyDeclared =
+    getErrorContextWhenVariableAlreadyDeclared(
+      context,
+      variableAssignment.identifierName,
+    );
+  if (errorContextWhenVariableAlreadyDeclared)
+    return { context: errorContextWhenVariableAlreadyDeclared };
 
   const typeContext =
     variableAssignment.type && checkAstNode(context, variableAssignment.type);
@@ -36,123 +38,181 @@ export const getVariableAssignmentInfo = (
     variableAssignment.expression &&
     checkAstNode(context, variableAssignment.expression);
 
-  const hasValue = expressionContext?.nodeType.hasValue ?? false;
-  const ignoreVariable: Variable = {
-    variableName: variableAssignment.identifierName,
-    variableType: { name: AstCheckerTypeNames.Ignore, hasValue },
-  };
-
-  // Errors that originated from type and expression nodes
-  const nodeErrors = [
-    ...getNewErrors(expressionContext?.errors ?? [], context.errors),
-    ...getNewErrors(typeContext?.errors ?? [], context.errors),
-  ];
-  if (nodeErrors.length > 0) {
-    const returnContext = pipe(context)
-      .to(c => addErrors(c, nodeErrors))
-      .to(c => addIgnoreVariable(c, variableAssignment.identifierName))
-      .result();
-
-    return { context: returnContext, variable: ignoreVariable };
-  }
-
-  // Ignore when explicit or implicit type is ignored
-  if (
-    expressionContext?.nodeType.name === AstCheckerTypeNames.Ignore ||
-    typeContext?.nodeType.name === AstCheckerTypeNames.Ignore
-  ) {
-    const returnContext = addIgnoreVariable(
-      context,
-      variableAssignment.identifierName,
-    );
-    return { context: returnContext, variable: ignoreVariable };
-  }
-
-  // Error when trying to use variable without value as value
-  const contextWithWithoutValueError = checkWithoutValueError(
+  const errorResultWhenNodesHaveErrors = getErrorResultWhenNodesHaveErrors({
     context,
+    variableAssignment,
+    typeContext,
     expressionContext,
-  );
-  if (contextWithWithoutValueError) {
-    const returnContext = addIgnoreVariable(
-      contextWithWithoutValueError,
-      variableAssignment.identifierName,
-    );
-    return { context: returnContext, variable: ignoreVariable };
-  }
+  });
+  if (errorResultWhenNodesHaveErrors) return errorResultWhenNodesHaveErrors;
+
+  const ignoredResultWhenSomeNodeIgnored = getIgnoredResultWhenSomeNodeIgnored({
+    context,
+    variableAssignment,
+    typeContext,
+    expressionContext,
+  });
+  if (ignoredResultWhenSomeNodeIgnored) return ignoredResultWhenSomeNodeIgnored;
+
+  const errorResultWhenExpressionDoesNotHaveValue =
+    getErrorResultWhenExpressionDoesNotHaveValue({
+      context,
+      variableAssignment,
+      expressionContext,
+    });
+  if (errorResultWhenExpressionDoesNotHaveValue)
+    return errorResultWhenExpressionDoesNotHaveValue;
 
   const valueContext = typeContext ?? expressionContext;
   // When explicit and implicit nodes are missing - should not happen, it's just for TS
   if (!valueContext) return { context };
 
-  // Error when explicit and implicit types are not compatible
-  const contextWithTypeMismatchError = maybeAddTypeMismatchError(context, {
-    explicitNodeContext: typeContext,
-    implicitNodeContext: expressionContext,
-    variableName: variableAssignment.identifierName,
-  });
+  const contextWithErrorWhenNodesHaveIncompatibleTypes =
+    addErrorWhenNodesHaveIncompatibleTypes({
+      context,
+      explicitNodeContext: typeContext,
+      implicitNodeContext: expressionContext,
+      variableName: variableAssignment.identifierName,
+    });
 
-  // Add variable to context
   const variable: Variable = {
     variableName: variableAssignment.identifierName,
     variableType: {
       ...valueContext.nodeType,
-      hasValue,
+      hasValue: expressionContext?.nodeType.hasValue ?? false,
     },
   };
   const contextWithVariable = addVariableToContext(
-    contextWithTypeMismatchError,
+    contextWithErrorWhenNodesHaveIncompatibleTypes,
     variable,
   );
   return { context: contextWithVariable, variable };
 };
 
-const checkWithoutValueError = (
+const getIgnoredVariable = ({
+  variableAssignment,
+}: {
+  variableAssignment: VariableAssignmentAstNode;
+}): Variable => ({
+  variableName: variableAssignment.identifierName,
+  variableType: ignoreAstCheckerNode,
+});
+const addIgnoreVariableToContext = (
   context: AstCheckerContext,
-  implicitNodeContext?: CheckAstNodeReturn,
-) => {
-  if (implicitNodeContext && !implicitNodeContext.nodeType.hasValue) {
-    return addError(context, {
-      name: AstCheckerErrorName.ExpressionWithoutValueUsedAsValue,
-      data: { expressionType: implicitNodeContext.nodeType },
-    });
-  }
-  return undefined;
-};
-
-const maybeAddTypeMismatchError = (
-  context: AstCheckerContext,
-  {
-    explicitNodeContext,
-    implicitNodeContext,
-    variableName,
-  }: {
-    explicitNodeContext?: CheckAstNodeReturn;
-    implicitNodeContext?: CheckAstNodeReturn;
-    variableName: string;
-  },
-) => {
-  if (!explicitNodeContext || !implicitNodeContext) return context;
-  if (
-    !areTypesCompatible(
-      explicitNodeContext.nodeType,
-      implicitNodeContext?.nodeType,
-    )
-  ) {
-    return addError(context, {
-      name: AstCheckerErrorName.VariableTypeMismatch,
-      data: {
-        expected: explicitNodeContext.nodeType,
-        received: implicitNodeContext.nodeType,
-        variableName,
-      },
-    });
-  }
-  return context;
-};
-
-const addIgnoreVariable = (context: AstCheckerContext, variableName: string) =>
+  variableName: string,
+) =>
   addVariableToContext(context, {
     variableName,
     variableType: ignoreAstCheckerNode,
   });
+
+const getErrorResultWhenNodesHaveErrors = ({
+  context,
+  variableAssignment,
+  typeContext,
+  expressionContext,
+}: {
+  context: AstCheckerContext;
+  variableAssignment: VariableAssignmentAstNode;
+  typeContext: CheckAstNodeReturn | undefined;
+  expressionContext: CheckAstNodeReturn | undefined;
+}) => {
+  const nodeErrors = [
+    ...getNewErrors(expressionContext?.errors ?? [], context.errors),
+    ...getNewErrors(typeContext?.errors ?? [], context.errors),
+  ];
+  if (nodeErrors.length === 0) return undefined;
+
+  const returnContext = pipe(context)
+    .to(c => addErrors(c, nodeErrors))
+    .to(c => addIgnoreVariableToContext(c, variableAssignment.identifierName))
+    .result();
+
+  return {
+    context: returnContext,
+    variable: getIgnoredVariable({ variableAssignment }),
+  };
+};
+const getIgnoredResultWhenSomeNodeIgnored = ({
+  context,
+  variableAssignment,
+  typeContext,
+  expressionContext,
+}: {
+  context: AstCheckerContext;
+  variableAssignment: VariableAssignmentAstNode;
+  typeContext: CheckAstNodeReturn | undefined;
+  expressionContext: CheckAstNodeReturn | undefined;
+}) => {
+  if (
+    expressionContext?.nodeType.name !== AstCheckerTypeNames.Ignore &&
+    typeContext?.nodeType.name !== AstCheckerTypeNames.Ignore
+  )
+    return undefined;
+
+  const returnContext = addIgnoreVariableToContext(
+    context,
+    variableAssignment.identifierName,
+  );
+  return {
+    context: returnContext,
+    variable: getIgnoredVariable({ variableAssignment }),
+  };
+};
+
+const getErrorResultWhenExpressionDoesNotHaveValue = ({
+  context,
+  variableAssignment,
+  expressionContext,
+}: {
+  context: AstCheckerContext;
+  variableAssignment: VariableAssignmentAstNode;
+  expressionContext: CheckAstNodeReturn | undefined;
+}) => {
+  if (!expressionContext || expressionContext?.nodeType.hasValue)
+    return undefined;
+
+  const contextWithWithoutValueError = addError(context, {
+    name: AstCheckerErrorName.ExpressionWithoutValueUsedAsValue,
+    data: { expressionType: expressionContext.nodeType },
+  });
+  const returnContext = addIgnoreVariableToContext(
+    contextWithWithoutValueError,
+    variableAssignment.identifierName,
+  );
+  return {
+    context: returnContext,
+    variable: getIgnoredVariable({ variableAssignment }),
+  };
+};
+
+const addErrorWhenNodesHaveIncompatibleTypes = ({
+  context,
+  explicitNodeContext,
+  implicitNodeContext,
+  variableName,
+}: {
+  context: AstCheckerContext;
+  explicitNodeContext?: CheckAstNodeReturn;
+  implicitNodeContext?: CheckAstNodeReturn;
+  variableName: string;
+}) => {
+  if (
+    !explicitNodeContext ||
+    !implicitNodeContext ||
+    areTypesCompatible(
+      explicitNodeContext.nodeType,
+      implicitNodeContext?.nodeType,
+    )
+  )
+    return context;
+
+  return addError(context, {
+    name: AstCheckerErrorName.VariableTypeMismatch,
+    data: {
+      expected: explicitNodeContext.nodeType,
+      received: implicitNodeContext.nodeType,
+      variableName,
+    },
+  });
+};

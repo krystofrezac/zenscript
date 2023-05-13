@@ -4,6 +4,7 @@ import { checkAst } from '..';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
 import { getAst } from '@zen-script/ast';
+import { ignoreAstCheckerNode } from '../nodeCheckers/helpers/ignoreAstCheckerNode';
 
 describe('non type checks', () => {
   test('assigning expression', () => {
@@ -228,10 +229,7 @@ describe('exports', () => {
         },
         {
           variableName: 'b',
-          variableType: {
-            name: AstCheckerTypeNames.Ignore,
-            hasValue: true,
-          },
+          variableType: ignoreAstCheckerNode,
         },
       ],
     };
