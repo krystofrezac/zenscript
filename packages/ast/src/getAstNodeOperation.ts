@@ -72,6 +72,11 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
       }),
     TypeAssignment: (_operator, typeNode) => typeNode.getAstNode(),
     ExpressionAssignment: (_operator, typeNode) => typeNode.getAstNode(),
+    ExportedVariable: (_exportKeyword, variableNode) =>
+      createAstNode({
+        name: AstNodeName.ExportedVariableAssignment,
+        variableAssignment: variableNode.getAstNode(),
+      }),
 
     // expressions
     identifierExpression: name =>

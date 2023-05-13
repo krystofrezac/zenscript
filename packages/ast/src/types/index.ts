@@ -31,6 +31,7 @@ export enum AstNodeName {
 
   Block = 'Block',
   VariableAssignment = 'VariableAssignment',
+  ExportedVariableAssignment = 'ExportedVariableAssignment',
   Invalid = 'Invalid',
 }
 
@@ -46,11 +47,16 @@ type VariableAssignmentAstNode = AstBaseNode<AstNodeName.VariableAssignment> & {
   type?: TypeAstNode;
   expression?: ExpressionAstNode | BlockAstNode;
 };
+type ExportedVariableAssignmentAstNode =
+  AstBaseNode<AstNodeName.ExportedVariableAssignment> & {
+    variableAssignment: VariableAssignmentAstNode;
+  };
 type InvalidAstNode = AstBaseNode<AstNodeName.Invalid>;
 
 export type CommonAstNode =
   | BlockAstNode
   | VariableAssignmentAstNode
+  | ExportedVariableAssignmentAstNode
   | InvalidAstNode;
 
 export type AstNode = CommonAstNode | ExpressionAstNode | TypeAstNode;
