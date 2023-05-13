@@ -10,6 +10,7 @@ export type VariableScope = Variable[];
 
 export type AstCheckerContext = {
   errors: AstCheckerError[];
+  exportedVariables: Variable[];
   variableScopes: VariableScope[];
   figureOutId: number;
 };

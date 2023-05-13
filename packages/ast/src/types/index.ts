@@ -46,11 +46,12 @@ export type FileAstNode = AstBaseNode<AstNodeName.File> & {
 export type BlockAstNode = AstBaseNode<AstNodeName.Block> & {
   children: (CommonAstNode | ExpressionAstNode)[];
 };
-type VariableAssignmentAstNode = AstBaseNode<AstNodeName.VariableAssignment> & {
-  identifierName: string;
-  type?: TypeAstNode;
-  expression?: ExpressionAstNode | BlockAstNode;
-};
+export type VariableAssignmentAstNode =
+  AstBaseNode<AstNodeName.VariableAssignment> & {
+    identifierName: string;
+    type?: TypeAstNode;
+    expression?: ExpressionAstNode | BlockAstNode;
+  };
 type ExportedVariableAssignmentAstNode =
   AstBaseNode<AstNodeName.ExportedVariableAssignment> & {
     variableAssignment: VariableAssignmentAstNode;

@@ -10,7 +10,7 @@ describe('declaration', () => {
     const input = getAst(`
     a : %{} = %{} 
   `);
-    const expected: CheckAstReturn = { errors: [] };
+    const expected: CheckAstReturn = { errors: [], exportedVariables: [] };
     const result = checkAst(input);
     expect(result).toEqual(expected);
   });
@@ -39,6 +39,7 @@ describe('declaration', () => {
           },
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -48,7 +49,7 @@ describe('declaration', () => {
     a : %{a: string, b: number, c: %{a: number}} 
       = %{a: "", b: 1, c: %{a: 1}} 
   `);
-    const expected: CheckAstReturn = { errors: [] };
+    const expected: CheckAstReturn = { errors: [], exportedVariables: [] };
     const result = checkAst(input);
     expect(result).toEqual(expected);
   });
@@ -96,6 +97,7 @@ describe('declaration', () => {
           },
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -129,6 +131,7 @@ describe('accessing', () => {
           },
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -160,6 +163,7 @@ describe('accessing', () => {
           },
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -185,6 +189,7 @@ describe('accessing', () => {
           },
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -203,6 +208,7 @@ describe('accessing', () => {
           },
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);

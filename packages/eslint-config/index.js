@@ -20,6 +20,7 @@ module.exports = {
   },
   rules: {
     'spaced-comment': ['error', 'always'],
+    'object-shorthand': 'error',
 
     'prettier/prettier': [
       'error',

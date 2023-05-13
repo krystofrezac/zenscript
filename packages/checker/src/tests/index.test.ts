@@ -10,6 +10,7 @@ describe('string', () => {
     const input = getAst('a = ""');
     const expected: CheckAstReturn = {
       errors: [],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -18,6 +19,7 @@ describe('string', () => {
     const input = getAst('a: string');
     const expected: CheckAstReturn = {
       errors: [],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -26,6 +28,7 @@ describe('string', () => {
     const input = getAst('a: string = ""');
     const expected: CheckAstReturn = {
       errors: [],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -36,6 +39,7 @@ describe('number', () => {
     const input = getAst('a = 1');
     const expected: CheckAstReturn = {
       errors: [],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -44,6 +48,7 @@ describe('number', () => {
     const input = getAst('a: number');
     const expected: CheckAstReturn = {
       errors: [],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -52,6 +57,7 @@ describe('number', () => {
     const input = getAst('a: number = 1');
     const expected: CheckAstReturn = {
       errors: [],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -62,7 +68,7 @@ describe('block', () => {
     const input = getAst(`
       a = { 1 } 
     `);
-    const expected: CheckAstReturn = { errors: [] };
+    const expected: CheckAstReturn = { errors: [], exportedVariables: [] };
     const result = checkAst(input);
     expect(result).toEqual(expected);
   });
@@ -74,7 +80,7 @@ describe('block', () => {
         c
       } 
     `);
-    const expected: CheckAstReturn = { errors: [] };
+    const expected: CheckAstReturn = { errors: [], exportedVariables: [] };
     const result = checkAst(input);
     expect(result).toEqual(expected);
   });
@@ -86,7 +92,7 @@ describe('block', () => {
         c
       } 
     `);
-    const expected: CheckAstReturn = { errors: [] };
+    const expected: CheckAstReturn = { errors: [], exportedVariables: [] };
     const result = checkAst(input);
     expect(result).toEqual(expected);
   });
@@ -115,6 +121,7 @@ describe('block', () => {
           },
         },
       ],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);
@@ -125,6 +132,7 @@ describe('block', () => {
     `);
     const expected: CheckAstReturn = {
       errors: [{ name: AstCheckerErrorName.EmptyBlock, data: {} }],
+      exportedVariables: [],
     };
     const result = checkAst(input);
     expect(result).toEqual(expected);

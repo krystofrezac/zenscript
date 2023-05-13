@@ -5,7 +5,7 @@ import { checkFunctionDeclarationExpression } from './functionDeclaration/expres
 import { checkNumberExpressionNode } from './numberExpression';
 import { checkStringExpressionNode } from './stringExpression';
 import { checkTupleNode } from './tuple';
-import { checkVariableAssignmentNode } from './variableAssignment';
+import { checkVariableAssignmentNode } from './variableAssignment/variableAssignment';
 import { checkIdentifierNode } from './identifier';
 import { checkStringTypeNode } from './stringType';
 import { checkNumberTypeNode } from './numberType';
@@ -14,6 +14,7 @@ import { checkRecordEntryAccessNode } from './recordEntryAccess';
 import { checkRecordExpressionNode } from './record/expression';
 import { checkRecordTypeNode } from './record/type';
 import { AstNodeName } from '@zen-script/ast';
+import { checkExportedVariableAssignmentNode } from './variableAssignment/exportedVariableAssignment';
 
 export const checkAstNode: CheckAstNode = (context, astNode) => {
   const actionMap: Partial<{
@@ -44,6 +45,8 @@ export const checkAstNode: CheckAstNode = (context, astNode) => {
     [AstNodeName.FunctionCallExpression]: checkFunctionCall,
 
     [AstNodeName.VariableAssignment]: checkVariableAssignmentNode,
+    [AstNodeName.ExportedVariableAssignment]:
+      checkExportedVariableAssignmentNode,
 
     [AstNodeName.IdentifierExpression]: checkIdentifierNode,
     [AstNodeName.IdentifierType]: checkIdentifierNode,

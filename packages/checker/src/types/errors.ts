@@ -14,6 +14,7 @@ export enum AstCheckerErrorName {
   CallingNonCallableExpression = 'CallingNonCallableExpression',
   EntryDoesNotExistOnRecord = 'FieldDoesNotExistOnRecord',
   AccessingNonRecord = 'AccessingNonRecord',
+  NestedExport = 'NestedExport',
 }
 type AstCheckerErrorBase<
   TName extends AstCheckerErrorName,
@@ -71,4 +72,5 @@ export type AstCheckerError =
       {
         accessing: AstCheckerTypeNames;
       }
-    >;
+    >
+  | AstCheckerErrorBase<AstCheckerErrorName.NestedExport>;
