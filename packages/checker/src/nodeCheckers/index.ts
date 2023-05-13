@@ -19,13 +19,14 @@ export const checkAstNode: CheckAstNode = (context, astNode) => {
   const actionMap: Partial<{
     [Name in AstNodeName]: CheckAstNode<Name>;
   }> = {
+    [AstNodeName.File]: checkBlockNode,
+    [AstNodeName.Block]: checkBlockNode,
+
     [AstNodeName.NumberExpression]: checkNumberExpressionNode,
     [AstNodeName.NumberType]: checkNumberTypeNode,
 
     [AstNodeName.StringExpression]: checkStringExpressionNode,
     [AstNodeName.StringType]: checkStringTypeNode,
-
-    [AstNodeName.Block]: checkBlockNode,
 
     [AstNodeName.TupleExpression]: checkTupleNode(true),
     [AstNodeName.TupleType]: checkTupleNode(true),

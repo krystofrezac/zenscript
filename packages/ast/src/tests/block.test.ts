@@ -6,7 +6,7 @@ import { getAst } from '../getAst';
 test('empty block', () => {
   const input = '{}';
   const expected = createAstNode({
-    name: AstNodeName.Block,
+    name: AstNodeName.File,
     children: [{ name: AstNodeName.Block, children: [] }],
   });
   const result = getAst(input);
@@ -15,7 +15,7 @@ test('empty block', () => {
 test('block with string value', () => {
   const input = '{""}';
   const expected = createAstNode({
-    name: AstNodeName.Block,
+    name: AstNodeName.File,
     children: [
       {
         name: AstNodeName.Block,
@@ -29,7 +29,7 @@ test('block with string value', () => {
 test('block with number value', () => {
   const input = '{1}';
   const expected = createAstNode({
-    name: AstNodeName.Block,
+    name: AstNodeName.File,
     children: [
       {
         name: AstNodeName.Block,
@@ -47,7 +47,7 @@ test('block with variable assignments', () => {
       b
     }`;
   const expected = createAstNode({
-    name: AstNodeName.Block,
+    name: AstNodeName.File,
     children: [
       {
         name: AstNodeName.Block,
@@ -82,7 +82,7 @@ test('block with variable assignments', () => {
 test('block assigned to variable', () => {
   const input = 'a = {1}';
   const expected = createAstNode({
-    name: AstNodeName.Block,
+    name: AstNodeName.File,
     children: [
       {
         name: AstNodeName.VariableAssignment,
@@ -107,7 +107,7 @@ test('nested blocks', () => {
       }
     `;
   const expected = createAstNode({
-    name: AstNodeName.Block,
+    name: AstNodeName.File,
     children: [
       {
         name: AstNodeName.Block,

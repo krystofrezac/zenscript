@@ -14,10 +14,9 @@ import {
   removeVariableScope,
 } from './helpers/variableScopes';
 
-export const checkBlockNode: CheckAstNode<AstNodeName.Block> = (
-  context,
-  block,
-) => {
+export const checkBlockNode: CheckAstNode<
+  AstNodeName.Block | AstNodeName.File
+> = (context, block) => {
   const contextWithAddedVariableScope: AstCheckerContext =
     addVariableScope(context);
 

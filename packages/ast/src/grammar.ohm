@@ -1,7 +1,7 @@
 BoringLang {
   space := " " | "\t" | newLine | oneLineComment | multiLineComment
 
-  Program = ListOf<Statement, #(newLine)>
+  File = ListOf<Statement, #(newLine)>
 
   Statement = | VariableDeclaration
               | ExportedVariable

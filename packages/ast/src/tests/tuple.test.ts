@@ -6,7 +6,7 @@ import { getAst } from '../getAst';
 test('empty tuple', () => {
   const input = '()';
   const expected = createAstNode({
-    name: AstNodeName.Block,
+    name: AstNodeName.File,
     children: [{ name: AstNodeName.TupleExpression, items: [] }],
   });
   const result = getAst(input);
@@ -15,7 +15,7 @@ test('empty tuple', () => {
 test('one item tuple', () => {
   const input = '(1)';
   const expected = createAstNode({
-    name: AstNodeName.Block,
+    name: AstNodeName.File,
     children: [
       {
         name: AstNodeName.TupleExpression,
@@ -29,7 +29,7 @@ test('one item tuple', () => {
 test('multiple items tuple', () => {
   const input = '(1, "", (1))';
   const expected = createAstNode({
-    name: AstNodeName.Block,
+    name: AstNodeName.File,
     children: [
       {
         name: AstNodeName.TupleExpression,
@@ -50,7 +50,7 @@ test('multiple items tuple', () => {
 test('tuple assigned to variable', () => {
   const input = 'a = (1)';
   const expected = createAstNode({
-    name: AstNodeName.Block,
+    name: AstNodeName.File,
     children: [
       {
         name: AstNodeName.VariableAssignment,
@@ -68,7 +68,7 @@ test('tuple assigned to variable', () => {
 test('tuple assigned to variable with same explicit type', () => {
   const input = 'a: (number) = (1)';
   const expected = createAstNode({
-    name: AstNodeName.Block,
+    name: AstNodeName.File,
     children: [
       {
         name: AstNodeName.VariableAssignment,
@@ -90,7 +90,7 @@ test('tuple assigned to variable with same explicit type', () => {
 test('tuple assigned to variable with different explicit type', () => {
   const input = 'a: number = (1)';
   const expected = createAstNode({
-    name: AstNodeName.Block,
+    name: AstNodeName.File,
     children: [
       {
         name: AstNodeName.VariableAssignment,
