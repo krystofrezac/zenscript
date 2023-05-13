@@ -29,6 +29,7 @@ export enum AstNodeName {
   FunctionCallExpression = 'FunctionCallExpression ',
   FunctionCallType = 'FunctionCallType ',
 
+  File = 'File',
   Block = 'Block',
   VariableAssignment = 'VariableAssignment',
   ExportedVariableAssignment = 'ExportedVariableAssignment',
@@ -39,6 +40,9 @@ export type AstBaseNode<TName extends AstNodeName> = {
   name: TName;
 };
 
+export type FileAstNode = AstBaseNode<AstNodeName.File> & {
+  children: (CommonAstNode | ExpressionAstNode)[];
+};
 export type BlockAstNode = AstBaseNode<AstNodeName.Block> & {
   children: (CommonAstNode | ExpressionAstNode)[];
 };
@@ -54,6 +58,7 @@ type ExportedVariableAssignmentAstNode =
 type InvalidAstNode = AstBaseNode<AstNodeName.Invalid>;
 
 export type CommonAstNode =
+  | FileAstNode
   | BlockAstNode
   | VariableAssignmentAstNode
   | ExportedVariableAssignmentAstNode

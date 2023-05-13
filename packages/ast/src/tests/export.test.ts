@@ -9,7 +9,7 @@ test('export', () => {
     export myFun = () 1
   `;
   const expected = createAstNode({
-    name: AstNodeName.Block,
+    name: AstNodeName.File,
     children: [
       {
         name: AstNodeName.ExportedVariableAssignment,

@@ -7,7 +7,7 @@ describe('value', () => {
   test('without parameters', () => {
     const input = 'a()';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.FunctionCallExpression,
@@ -25,7 +25,7 @@ describe('value', () => {
   test('with parameters', () => {
     const input = 'a(1)';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.FunctionCallExpression,
@@ -48,7 +48,7 @@ describe('value', () => {
   test('chained', () => {
     const input = 'a()()';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.FunctionCallExpression,
@@ -73,7 +73,7 @@ describe('type', () => {
   test('without parameters', () => {
     const input = 'a: b()';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -95,7 +95,7 @@ describe('type', () => {
   test('with parameters', () => {
     const input = 'a: b(number)';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -121,7 +121,7 @@ describe('type', () => {
   test('chained', () => {
     const input = 'a: b()()';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,

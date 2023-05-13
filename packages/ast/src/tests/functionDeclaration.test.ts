@@ -7,7 +7,7 @@ describe('value', () => {
   test('without parameters', () => {
     const input = '() 1';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.FunctionDeclarationExpression,
@@ -22,7 +22,7 @@ describe('value', () => {
   test('with parameters', () => {
     const input = '(a, b) b';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.FunctionDeclarationExpression,
@@ -54,7 +54,7 @@ describe('value', () => {
       }
     `;
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.FunctionDeclarationExpression,
@@ -97,7 +97,7 @@ describe('type', () => {
   test('without parameters', () => {
     const input = 'a: () number';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -116,7 +116,7 @@ describe('type', () => {
   test('with simple parameters', () => {
     const input = 'a: (number) number';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,

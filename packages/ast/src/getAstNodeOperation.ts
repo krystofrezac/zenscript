@@ -38,6 +38,11 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
         children: [],
       }),
 
+    File: content =>
+      createAstNode({
+        name: AstNodeName.File,
+        children: content.getAstNodes(),
+      }),
     Block: (_startCurly, content, _endCurly) =>
       createAstNode({
         name: AstNodeName.Block,

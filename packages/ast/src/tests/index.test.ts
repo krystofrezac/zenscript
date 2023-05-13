@@ -5,7 +5,7 @@ import { getAst } from '../getAst';
 
 describe('empty', () => {
   const expected = createAstNode({
-    name: AstNodeName.Block,
+    name: AstNodeName.File,
     children: [],
   });
   test('empty string', () => {
@@ -23,7 +23,7 @@ describe('string', () => {
   test('only string', () => {
     const input = '"Hello, World!"';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         { name: AstNodeName.StringExpression, value: 'Hello, World!' },
       ],
@@ -34,7 +34,7 @@ describe('string', () => {
   test('string assigned to variable', () => {
     const input = 'a = "Hello, World!"';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -52,7 +52,7 @@ describe('string', () => {
   test('string assigned to variable with same explicit type', () => {
     const input = 'a: string = "Hello, World!"';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -71,7 +71,7 @@ describe('string', () => {
   test('string assigned to variable with different explicit type', () => {
     const input = 'a: number = "Hello, World!"';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -90,7 +90,7 @@ describe('string', () => {
   test('string type assigned to variable', () => {
     const input = 'a: string';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -108,7 +108,7 @@ describe('number', () => {
   test('only number', () => {
     const input = '1';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [{ name: AstNodeName.NumberExpression, value: 1 }],
     });
     const result = getAst(input);
@@ -117,7 +117,7 @@ describe('number', () => {
   test('number assigned to variable', () => {
     const input = 'a = 1';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -132,7 +132,7 @@ describe('number', () => {
   test('number assigned to variable with same explicit type', () => {
     const input = 'a: number = 1';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -148,7 +148,7 @@ describe('number', () => {
   test('number assigned to variable with different explicit type', () => {
     const input = 'a: string = 1';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -164,7 +164,7 @@ describe('number', () => {
   test('number type assigned to variable', () => {
     const input = 'a: number';
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -185,7 +185,7 @@ describe('variable reference', () => {
       b = a
     `;
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -211,7 +211,7 @@ describe('variable reference', () => {
       b: a 
     `;
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -238,7 +238,7 @@ describe('variable reference', () => {
       c: b = a
     `;
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,

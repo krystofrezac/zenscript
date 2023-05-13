@@ -9,7 +9,7 @@ describe('declaration', () => {
      a = %{}
   `;
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -29,7 +29,7 @@ describe('declaration', () => {
      a: %{}
   `;
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -55,7 +55,7 @@ describe('declaration', () => {
      }
   `;
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -115,7 +115,7 @@ describe('declaration', () => {
      }
   `;
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
@@ -167,7 +167,7 @@ describe('accessing', () => {
       a: record.entryA.entryB.entryC = record.entryA.entryB.entrySameAsC
     `;
     const expected = createAstNode({
-      name: AstNodeName.Block,
+      name: AstNodeName.File,
       children: [
         {
           name: AstNodeName.VariableAssignment,
