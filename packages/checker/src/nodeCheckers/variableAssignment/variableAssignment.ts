@@ -7,12 +7,10 @@ import { emptyAstCheckerNode } from '../helpers/emptyAstCheckerNode';
 export const checkVariableAssignmentNode: CheckAstNode<
   AstNodeName.VariableAssignment
 > = (context, variableAssignment) => {
-  const { context: variableAssignmentContext, variable } =
-    getVariableAssignmentInfo(context, variableAssignment);
-
-  if (!variable) {
-    return getCheckNodeReturn(variableAssignmentContext, emptyAstCheckerNode);
-  }
+  const { context: variableAssignmentContext } = getVariableAssignmentInfo(
+    context,
+    variableAssignment,
+  );
 
   return getCheckNodeReturn(variableAssignmentContext, emptyAstCheckerNode);
 };

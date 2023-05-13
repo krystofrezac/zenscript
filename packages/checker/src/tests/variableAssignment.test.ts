@@ -150,7 +150,7 @@ describe('basic type checks', () => {
   });
 });
 
-describe('exporting', () => {
+describe('exports', () => {
   test('single top level export', () => {
     const input = getAst('export myVar = 1');
     const expected: CheckAstReturn = {
