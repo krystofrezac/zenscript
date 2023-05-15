@@ -2,15 +2,23 @@ import type { AstNode } from '@zen-script/ast';
 import { checkAstNode } from './nodeCheckers';
 import type { AstCheckerContext, VariableScope } from './types';
 
-export type CheckAstReturn = Pick<
+export type CheckAstResult = Pick<
   AstCheckerContext,
   'errors' | 'exportedVariables'
 >;
 
-export const checkAst = (
-  ast: AstNode,
-  defaultVariables?: VariableScope,
-): CheckAstReturn => {
+export type CheckAstParams = {
+  ast: AstNode;
+  getAstCheckCachedResult: (fileName: string) => CheckAstResult | undefined;
+  saveAstCheckResultToCache: (fileName: string, result: CheckAstResult) => void;
+  getFileAst: (fileName: string) => AstNode | undefined;
+  defaultVariables?: VariableScope;
+};
+
+export const checkAstInternal = ({
+  ast,
+  defaultVariables,
+}: CheckAstParams): CheckAstResult => {
   const variableScopes = defaultVariables ? [defaultVariables] : [];
   const defaultContext: AstCheckerContext = {
     errors: [],
@@ -25,3 +33,6 @@ export const checkAst = (
     exportedVariables,
   };
 };
+
+export const checkAst = (params: Omit<CheckAstParams, 'defaultContext'>) =>
+  checkAstInternal(params);

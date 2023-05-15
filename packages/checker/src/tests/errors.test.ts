@@ -1,19 +1,18 @@
 import { describe, expect, test } from 'vitest';
-import type { CheckAstReturn } from '..';
-import { checkAst } from '..';
+import type { CheckAstResult } from '..';
 import type { VariableScope } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
-import { getAst } from '@zen-script/ast';
+import { testCheckAst } from './helpers';
 
 describe('chained errors', () => {
   test('UnknownIdentifier', () => {
-    const input = getAst(`
+    const input = `
       b = a
       c = b
       d = c
-    `);
-    const expected: CheckAstReturn = {
+    `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.UnknownIdentifier,
@@ -24,16 +23,16 @@ describe('chained errors', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('ExpressionWithoutValueUsedAsValue', () => {
-    const input = getAst(`
+    const input = `
       a: string
       b = a
       c = b
-    `);
-    const expected: CheckAstReturn = {
+    `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.ExpressionWithoutValueUsedAsValue,
@@ -47,16 +46,16 @@ describe('chained errors', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('VariableTypeMismatch', () => {
-    const input = getAst(`
+    const input = `
       a: string = 1
       b: string = a
       c: number = a
-    `);
-    const expected: CheckAstReturn = {
+    `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.VariableTypeMismatch,
@@ -77,15 +76,15 @@ describe('chained errors', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('FunctionParametersMismatch', () => {
-    const input = getAst(`
+    const input = `
       a = stringFunction() 
       b = a
       c = b
-    `);
+    `;
     const defaultVariables: VariableScope = [
       {
         variableName: 'stringFunction',
@@ -105,7 +104,7 @@ describe('chained errors', () => {
         },
       },
     ];
-    const expected: CheckAstReturn = {
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.FunctionParametersMismatch,
@@ -122,16 +121,16 @@ describe('chained errors', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input, defaultVariables);
+    const result = testCheckAst({ entryFile: input, defaultVariables });
     expect(result).toEqual(expected);
   });
   test('EmptyBlock', () => {
-    const input = getAst(`
+    const input = `
       a = {}  
       b = a
       c = b
-    `);
-    const expected: CheckAstReturn = {
+    `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.EmptyBlock,
@@ -140,17 +139,17 @@ describe('chained errors', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('CallingNonCallableExpression', () => {
-    const input = getAst(`
+    const input = `
       a = 1
       b = a()
       c = b
       d = c
-    `);
-    const expected: CheckAstReturn = {
+    `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.CallingNonCallableExpression,
@@ -164,7 +163,7 @@ describe('chained errors', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
 });

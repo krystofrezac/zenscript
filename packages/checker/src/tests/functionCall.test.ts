@@ -1,42 +1,41 @@
 import { describe, expect, test } from 'vitest';
-import type { CheckAstReturn } from '..';
-import { checkAst } from '..';
+import type { CheckAstResult } from '..';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
-import { getAst } from '@zen-script/ast';
 import type { VariableScope } from '../types';
+import { testCheckAst } from './helpers';
 
 describe('without parameters', () => {
   test('value assignment', () => {
-    const input = getAst(`
+    const input = `
           a = ()1
           b = a() 
-        `);
-    const expected: CheckAstReturn = {
+        `;
+    const expected: CheckAstResult = {
       errors: [],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('value assignment with correct explicit type', () => {
-    const input = getAst(`
+    const input = `
           a = ()1
           b: number = a() 
-        `);
-    const expected: CheckAstReturn = {
+        `;
+    const expected: CheckAstResult = {
       errors: [],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('value assignment with incorrect explicit type', () => {
-    const input = getAst(`
+    const input = `
           a = ()1
           b: string = a() 
-        `);
-    const expected: CheckAstReturn = {
+        `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.VariableTypeMismatch,
@@ -55,39 +54,39 @@ describe('without parameters', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('calling higher order function', () => {
-    const input = getAst(`
+    const input = `
           a = ()()()1
           b: number = a()()()
-        `);
-    const expected: CheckAstReturn = {
+        `;
+    const expected: CheckAstResult = {
       errors: [],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('partially calling higher order function', () => {
-    const input = getAst(`
+    const input = `
           a = ()()()1
           b: ()number = a()()
-        `);
-    const expected: CheckAstReturn = {
+        `;
+    const expected: CheckAstResult = {
       errors: [],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('calling non callable expression', () => {
-    const input = getAst(`
+    const input = `
           a = 1
           b = a()
-        `);
-    const expected: CheckAstReturn = {
+        `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.CallingNonCallableExpression,
@@ -101,15 +100,15 @@ describe('without parameters', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('calling expression without value', () => {
-    const input = getAst(`
+    const input = `
           a: number
           b = a()
-        `);
-    const expected: CheckAstReturn = {
+        `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.ExpressionWithoutValueUsedAsValue,
@@ -123,13 +122,13 @@ describe('without parameters', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
 });
 describe('with simple parameters', () => {
   test('single parameter', () => {
-    const input = getAst('a: string = stringFunction("")');
+    const input = 'a: string = stringFunction("")';
     const defaultVariables: VariableScope = [
       {
         variableName: 'stringFunction',
@@ -149,15 +148,15 @@ describe('with simple parameters', () => {
         },
       },
     ];
-    const expected: CheckAstReturn = {
+    const expected: CheckAstResult = {
       errors: [],
       exportedVariables: [],
     };
-    const result = checkAst(input, defaultVariables);
+    const result = testCheckAst({ entryFile: input, defaultVariables });
     expect(result).toEqual(expected);
   });
   test('multiple parameters', () => {
-    const input = getAst('a: string = stringNumberNumberFunction("", 1, 2)');
+    const input = 'a: string = stringNumberNumberFunction("", 1, 2)';
     const defaultVariables: VariableScope = [
       {
         variableName: 'stringNumberNumberFunction',
@@ -182,15 +181,15 @@ describe('with simple parameters', () => {
         },
       },
     ];
-    const expected: CheckAstReturn = {
+    const expected: CheckAstResult = {
       errors: [],
       exportedVariables: [],
     };
-    const result = checkAst(input, defaultVariables);
+    const result = testCheckAst({ entryFile: input, defaultVariables });
     expect(result).toEqual(expected);
   });
   test('explicit implicit mismatch - missing parameter', () => {
-    const input = getAst('a: string = stringFunction()');
+    const input = 'a: string = stringFunction()';
     const defaultVariables: VariableScope = [
       {
         variableName: 'stringFunction',
@@ -207,7 +206,7 @@ describe('with simple parameters', () => {
         },
       },
     ];
-    const expected: CheckAstReturn = {
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.FunctionParametersMismatch,
@@ -219,7 +218,7 @@ describe('with simple parameters', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input, defaultVariables);
+    const result = testCheckAst({ entryFile: input, defaultVariables });
     expect(result).toEqual(expected);
   });
 });

@@ -1,24 +1,23 @@
 import { expect, test, describe } from 'vitest';
-import type { CheckAstReturn } from '..';
-import { checkAst } from '..';
+import type { CheckAstResult } from '..';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
-import { getAst } from '@zen-script/ast';
+import { testCheckAst } from './helpers';
 
 describe('declaration', () => {
   test('empty record with correct explicit type', () => {
-    const input = getAst(`
+    const input = `
     a : %{} = %{} 
-  `);
-    const expected: CheckAstReturn = { errors: [], exportedVariables: [] };
-    const result = checkAst(input);
+  `;
+    const expected: CheckAstResult = { errors: [], exportedVariables: [] };
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('empty record with incorrect explicit type', () => {
-    const input = getAst(`
+    const input = `
     a : %{a: string} = %{} 
-  `);
-    const expected: CheckAstReturn = {
+  `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.VariableTypeMismatch,
@@ -41,24 +40,24 @@ describe('declaration', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('non empty record with correct explicit type', () => {
-    const input = getAst(`
+    const input = `
     a : %{a: string, b: number, c: %{a: number}} 
       = %{a: "", b: 1, c: %{a: 1}} 
-  `);
-    const expected: CheckAstReturn = { errors: [], exportedVariables: [] };
-    const result = checkAst(input);
+  `;
+    const expected: CheckAstResult = { errors: [], exportedVariables: [] };
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('non empty record with incorrect explicit type', () => {
-    const input = getAst(`
+    const input = `
     a : %{a: string, b: number, c: %{a: number}} 
       = %{a: "", b: 1, c: %{a: ""}} 
-  `);
-    const expected: CheckAstReturn = {
+  `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.VariableTypeMismatch,
@@ -99,13 +98,13 @@ describe('declaration', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
 });
 describe('accessing', () => {
   test('one level access', () => {
-    const input = getAst(`
+    const input = `
       record = %{a: "", b: 1} 
       a: string = record.a
       aa: record.a = record.a
@@ -113,8 +112,8 @@ describe('accessing', () => {
       bb: record.b = record.b
 
       incorrect: number = record.a
-    `);
-    const expected: CheckAstReturn = {
+    `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.VariableTypeMismatch,
@@ -133,11 +132,11 @@ describe('accessing', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('two level access', () => {
-    const input = getAst(`
+    const input = `
       record = %{a: "", b: 1, c: %{a: 1, b: ""}} 
       a: number = record.c.a
       aa: record.c.a = record.c.a
@@ -145,8 +144,8 @@ describe('accessing', () => {
       bb: record.c.b = record.c.b
 
       incorrect: string = record.c.a
-    `);
-    const expected: CheckAstReturn = {
+    `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.VariableTypeMismatch,
@@ -165,15 +164,15 @@ describe('accessing', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('accessing non existing entry', () => {
-    const input = getAst(`
+    const input = `
       record = %{a: 1}
       entry = record.b
-    `);
-    const expected: CheckAstReturn = {
+    `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.EntryDoesNotExistOnRecord,
@@ -191,15 +190,15 @@ describe('accessing', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('accessing non record', () => {
-    const input = getAst(`
+    const input = `
       nonRecord = 1 
       entry = nonRecord.someField
-    `);
-    const expected: CheckAstReturn = {
+    `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.AccessingNonRecord,
@@ -210,7 +209,7 @@ describe('accessing', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
 });
