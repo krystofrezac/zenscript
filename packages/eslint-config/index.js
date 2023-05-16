@@ -21,6 +21,13 @@ module.exports = {
   rules: {
     'spaced-comment': ['error', 'always'],
     'object-shorthand': 'error',
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector: 'ImportDeclaration[specifiers.length = 0]',
+        message: 'Empty imports are not allowed',
+      },
+    ],
 
     'prettier/prettier': [
       'error',

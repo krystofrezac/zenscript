@@ -1,30 +1,29 @@
 import { describe, test, expect } from 'vitest';
-import type { CheckAstReturn } from '..';
-import { checkAst } from '..';
+import type { CheckAstResult } from '..';
 import { AstCheckerErrorName } from '../types/errors';
 import { AstCheckerTypeNames } from '../types/types';
-import { getAst } from '@zen-script/ast';
 import { ignoreAstCheckerNode } from '../nodeCheckers/helpers/ignoreAstCheckerNode';
+import { testCheckAst } from './helpers';
 
 describe('non type checks', () => {
   test('assigning expression', () => {
-    const input = getAst('a = 1');
-    const expected: CheckAstReturn = { errors: [], exportedVariables: [] };
-    const result = checkAst(input);
+    const input = 'a = 1';
+    const expected: CheckAstResult = { errors: [], exportedVariables: [] };
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('assigning existing variable', () => {
-    const input = getAst(`
+    const input = `
       a = 1
       b = a
-    `);
-    const expected: CheckAstReturn = { errors: [], exportedVariables: [] };
-    const result = checkAst(input);
+    `;
+    const expected: CheckAstResult = { errors: [], exportedVariables: [] };
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('assigning non-existing variable', () => {
-    const input = getAst('b = a');
-    const expected: CheckAstReturn = {
+    const input = 'b = a';
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.UnknownIdentifier,
@@ -33,15 +32,15 @@ describe('non type checks', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('redeclaring variable in the same scope', () => {
-    const input = getAst(`
+    const input = `
       a = 1
       a = 2
-    `);
-    const expected: CheckAstReturn = {
+    `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.IdentifierAlreadyDeclaredInThisScope,
@@ -50,26 +49,26 @@ describe('non type checks', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('redeclaring variable in different scope', () => {
-    const input = getAst(`
+    const input = `
       a = 1
       {
         a = 2
       }
-    `);
-    const expected: CheckAstReturn = { errors: [], exportedVariables: [] };
-    const result = checkAst(input);
+    `;
+    const expected: CheckAstResult = { errors: [], exportedVariables: [] };
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('assigning variable without value', () => {
-    const input = getAst(`
+    const input = `
       a: number 
       b = a
-    `);
-    const expected: CheckAstReturn = {
+    `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.ExpressionWithoutValueUsedAsValue,
@@ -83,36 +82,36 @@ describe('non type checks', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('assigning variable with value', () => {
-    const input = getAst(`
+    const input = `
       a: number = 1
       b = a
-    `);
-    const expected: CheckAstReturn = {
+    `;
+    const expected: CheckAstResult = {
       errors: [],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
 });
 
 describe('basic type checks', () => {
   test('assigning same value and type', () => {
-    const input = getAst('a: number = 1');
-    const expected: CheckAstReturn = {
+    const input = 'a: number = 1';
+    const expected: CheckAstResult = {
       errors: [],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('assigning different value and type', () => {
-    const input = getAst('a: string = 1');
-    const expected: CheckAstReturn = {
+    const input = 'a: string = 1';
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.VariableTypeMismatch,
@@ -125,15 +124,15 @@ describe('basic type checks', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('assigning different value and type and then assigning again', () => {
-    const input = getAst(`
+    const input = `
       a: string = 1
       b: string = a 
-      `);
-    const expected: CheckAstReturn = {
+      `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.VariableTypeMismatch,
@@ -146,15 +145,15 @@ describe('basic type checks', () => {
       ],
       exportedVariables: [],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
 });
 
 describe('exports', () => {
   test('single top level export', () => {
-    const input = getAst('export myVar = 1');
-    const expected: CheckAstReturn = {
+    const input = 'export myVar = 1';
+    const expected: CheckAstResult = {
       errors: [],
       exportedVariables: [
         {
@@ -166,16 +165,16 @@ describe('exports', () => {
         },
       ],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('multiple top level exports', () => {
-    const input = getAst(`
+    const input = `
       export a = 1
       export b = ""
       export c = b
-    `);
-    const expected: CheckAstReturn = {
+    `;
+    const expected: CheckAstResult = {
       errors: [],
       exportedVariables: [
         {
@@ -201,18 +200,18 @@ describe('exports', () => {
         },
       ],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
   test('nested export', () => {
-    const input = getAst(`
+    const input = `
       export a = 1
       export b = {
         export c = ""
         c
       }
-    `);
-    const expected: CheckAstReturn = {
+    `;
+    const expected: CheckAstResult = {
       errors: [
         {
           name: AstCheckerErrorName.NestedExport,
@@ -233,7 +232,7 @@ describe('exports', () => {
         },
       ],
     };
-    const result = checkAst(input);
+    const result = testCheckAst({ entryFile: input });
     expect(result).toEqual(expected);
   });
 });
