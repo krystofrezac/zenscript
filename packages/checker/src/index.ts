@@ -9,6 +9,7 @@ export type CheckAstResult = Pick<
 
 export type CheckAstParams = {
   ast: AstNode;
+  filePath: string;
   getAstCheckCachedResult: (fileName: string) => CheckAstResult | undefined;
   saveAstCheckResultToCache: (fileName: string, result: CheckAstResult) => void;
   getFileAst: (fileName: string) => AstNode | undefined;

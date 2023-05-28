@@ -4,11 +4,13 @@ import { checkAstInternal } from '..';
 
 type CheckAstInTestParams = Pick<CheckAstParams, 'defaultVariables'> & {
   entryFile: string;
+  entryPathFile?: string;
   files?: Record<string, string>;
 };
 
 export const testCheckAst = ({
   entryFile,
+  entryPathFile,
   files = {},
   defaultVariables,
 }: CheckAstInTestParams) => {
@@ -16,6 +18,7 @@ export const testCheckAst = ({
 
   const params: CheckAstParams = {
     ast: getAst(entryFile),
+    filePath: entryPathFile ?? '',
     getFileAst: fileName => {
       const fileSource = files[fileName];
       if (!fileSource) return;

@@ -15,6 +15,7 @@ export enum AstCheckerErrorName {
   EntryDoesNotExistOnRecord = 'FieldDoesNotExistOnRecord',
   AccessingNonRecord = 'AccessingNonRecord',
   NestedExport = 'NestedExport',
+  FileNotFound = 'FileNotFound'
 }
 type AstCheckerErrorBase<
   TName extends AstCheckerErrorName,
@@ -73,4 +74,5 @@ export type AstCheckerError =
         accessing: AstCheckerTypeNames;
       }
     >
-  | AstCheckerErrorBase<AstCheckerErrorName.NestedExport>;
+  | AstCheckerErrorBase<AstCheckerErrorName.NestedExport>
+  | AstCheckerErrorBase<AstCheckerErrorName.FileNotFound>;
