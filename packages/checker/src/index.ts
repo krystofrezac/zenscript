@@ -1,6 +1,7 @@
 import type { AstNode } from '@zen-script/ast';
 import { checkAstNode } from './nodeCheckers';
 import type { AstCheckerContext, VariableScope } from './types';
+import { getFilePath } from './helpers/getFilePath';
 
 export type CheckAstResult = Pick<
   AstCheckerContext,
@@ -16,7 +17,7 @@ export type CheckAstParams = {
   defaultVariables?: VariableScope;
 };
 
-export const checkAstInternal = ({
+export const checkAst = ({
   ast,
   filePath,
   defaultVariables,
@@ -30,18 +31,17 @@ export const checkAstInternal = ({
     exportedVariables: [],
     variableScopes,
     figureOutId: 0,
-    filePath: '',
+    filePath,
     importFile: (currentFilePath, requestedFilePath) => {
-      const filePath = requestedFilePath;
+      const filePath = getFilePath(currentFilePath, requestedFilePath);
 
       const cachedResult = getAstCheckCachedResult(filePath);
       if (cachedResult) return cachedResult;
 
       const newAst = getFileAst(filePath);
-      console.log(newAst, filePath);
-      if (!newAst) throw new Error('error');
+      if (!newAst) return undefined;
 
-      const checkedAst = checkAstInternal({
+      const checkedAst = checkAst({
         ast: newAst,
         filePath,
         defaultVariables,
@@ -60,6 +60,3 @@ export const checkAstInternal = ({
     exportedVariables,
   };
 };
-
-export const checkAst = (params: Omit<CheckAstParams, 'defaultContext'>) =>
-  checkAstInternal(params);

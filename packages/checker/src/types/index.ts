@@ -18,7 +18,7 @@ export type AstCheckerContext = {
   importFile: (
     currentFilePath: string,
     requestedFilePath: string,
-  ) => CheckAstResult;
+  ) => CheckAstResult | undefined;
 };
 export type CheckAstNodeReturn<
   TNodeType extends AstCheckerType = AstCheckerType,

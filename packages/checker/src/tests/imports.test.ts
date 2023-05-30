@@ -4,11 +4,14 @@ import { testCheckAst } from './helpers';
 import { AstCheckerErrorName } from '../types/errors';
 
 test('import empty file', () => {
-  const fileA = `imported: %{} = import("fileB")`;
+  const fileA = `imported: %{} = import("./fileB")`;
   const fileB = ``;
 
   const expected: CheckAstResult = { errors: [], exportedVariables: [] };
-  const result = testCheckAst({ entryFile: fileA, files: { fileB } });
+  const result = testCheckAst({
+    entryFile: fileA,
+    files: { 'fileB.zs': fileB },
+  });
   expect(result).toEqual(expected);
 });
 
@@ -20,7 +23,7 @@ test('import non empty file', () => {
       a: number, 
       b: string
     }
-  } = import("fileB")`;
+  } = import("./fileB")`;
   const fileB = `
     export exportedNumber = 1 
     export exportedString = ""
@@ -31,12 +34,15 @@ test('import non empty file', () => {
   `;
 
   const expected: CheckAstResult = { errors: [], exportedVariables: [] };
-  const result = testCheckAst({ entryFile: fileA, files: { fileB } });
+  const result = testCheckAst({
+    entryFile: fileA,
+    files: { 'fileB.zs': fileB },
+  });
   expect(result).toEqual(expected);
 });
 
 test('import non existing file', () => {
-  const fileA = `imported: %{} = import("fileB")`;
+  const fileA = `imported = import("./fileB")`;
 
   const expected: CheckAstResult = {
     errors: [{ name: AstCheckerErrorName.FileNotFound, data: {} }],
@@ -47,8 +53,8 @@ test('import non existing file', () => {
 });
 
 test('import with ..', () => {
-  const fileA = `imported: %{} = import("../fileB")`;
-  const fileB = ``;
+  const fileA = `imported: %{exportedVar: number} = import("../fileB")`;
+  const fileB = `export exportedVar = 1`;
 
   const expected: CheckAstResult = {
     errors: [{ name: AstCheckerErrorName.FileNotFound, data: {} }],
@@ -56,8 +62,25 @@ test('import with ..', () => {
   };
   const result = testCheckAst({
     entryFile: fileA,
-    entryPathFile: 'a/fileA',
-    files: { fileB },
+    entryPathFile: 'a/fileA.zs',
+    files: { 'fileB.zs': fileB },
+  });
+  expect(result).toEqual(expected);
+});
+
+test('import with invalid path', () => {
+  const fileA = `imported = import("fileB")`;
+  const fileB = ``;
+
+  const expected: CheckAstResult = {
+    errors: [
+      { name: AstCheckerErrorName.InvalidImportPath, data: { path: 'fileB' } },
+    ],
+    exportedVariables: [],
+  };
+  const result = testCheckAst({
+    entryFile: fileA,
+    files: { 'fileB.zs': fileB },
   });
   expect(result).toEqual(expected);
 });
