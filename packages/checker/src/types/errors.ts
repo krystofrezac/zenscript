@@ -15,6 +15,8 @@ export enum AstCheckerErrorName {
   EntryDoesNotExistOnRecord = 'FieldDoesNotExistOnRecord',
   AccessingNonRecord = 'AccessingNonRecord',
   NestedExport = 'NestedExport',
+  FileNotFound = 'FileNotFound',
+  InvalidImportPath = 'InvalidImportPath',
 }
 type AstCheckerErrorBase<
   TName extends AstCheckerErrorName,
@@ -73,4 +75,9 @@ export type AstCheckerError =
         accessing: AstCheckerTypeNames;
       }
     >
-  | AstCheckerErrorBase<AstCheckerErrorName.NestedExport>;
+  | AstCheckerErrorBase<AstCheckerErrorName.NestedExport>
+  | AstCheckerErrorBase<AstCheckerErrorName.FileNotFound>
+  | AstCheckerErrorBase<
+      AstCheckerErrorName.InvalidImportPath,
+      { path: string }
+    >;

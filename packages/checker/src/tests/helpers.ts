@@ -1,14 +1,16 @@
 import { getAst } from '@zen-script/ast';
 import type { CheckAstParams, CheckAstResult } from '..';
-import { checkAstInternal } from '..';
+import { checkAst } from '..';
 
 type CheckAstInTestParams = Pick<CheckAstParams, 'defaultVariables'> & {
   entryFile: string;
+  entryPathFile?: string;
   files?: Record<string, string>;
 };
 
 export const testCheckAst = ({
   entryFile,
+  entryPathFile,
   files = {},
   defaultVariables,
 }: CheckAstInTestParams) => {
@@ -16,9 +18,10 @@ export const testCheckAst = ({
 
   const params: CheckAstParams = {
     ast: getAst(entryFile),
+    filePath: entryPathFile ?? 'main.zs',
     getFileAst: fileName => {
       const fileSource = files[fileName];
-      if (!fileSource) return;
+      if (fileSource === undefined) return;
       return getAst(fileSource);
     },
     saveAstCheckResultToCache: (fileName, ast) =>
@@ -26,5 +29,5 @@ export const testCheckAst = ({
     getAstCheckCachedResult: fileName => checkAstResults[fileName],
     defaultVariables,
   };
-  return checkAstInternal(params);
+  return checkAst(params);
 };

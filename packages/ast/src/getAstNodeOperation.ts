@@ -89,6 +89,16 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
         name: AstNodeName.IdentifierExpression,
         identifierName: name.getName(),
       }),
+    ImportStatementExpression: (
+      _import,
+      _startBracket,
+      fileName,
+      _endBracket,
+    ) =>
+      createAstNode({
+        name: AstNodeName.ImportExpression,
+        filePath: fileName.getName(),
+      }),
     stringExpression: (_startQuotes, content, _endQuotes) =>
       createAstNode({
         name: AstNodeName.StringExpression,

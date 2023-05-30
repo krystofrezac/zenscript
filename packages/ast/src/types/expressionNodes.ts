@@ -4,6 +4,10 @@ export type IdentifierExpressionAstNode =
   AstBaseNode<AstNodeName.IdentifierExpression> & {
     identifierName: string;
   };
+export type ImportExpressionAstNode =
+  AstBaseNode<AstNodeName.ImportExpression> & {
+    filePath: string;
+  };
 type StringExpressionAstNode = AstBaseNode<AstNodeName.StringExpression> & {
   value: string;
 };
@@ -41,6 +45,7 @@ type FunctionCallExpressionAstNode =
   };
 
 export type ExpressionAstNode =
+  | ImportExpressionAstNode
   | IdentifierExpressionAstNode
   | StringExpressionAstNode
   | NumberExpressionAstNode

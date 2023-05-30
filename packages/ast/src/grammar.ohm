@@ -21,7 +21,8 @@ BoringLang {
 
   ExportedVariable = "export" VariableDeclaration
 
-  Expression = | FunctionCallExpression
+  Expression = | ImportStatementExpression
+               | FunctionCallExpression
                | FunctionDeclarationExpression
                | numberExpression
                | stringExpression
@@ -31,7 +32,6 @@ BoringLang {
                | identifierExpression
                | Block
                | TupleExpression
-               | compilerHookExpression
 
   TypeExpression = | FunctionDeclarationType
                    | stringType
@@ -43,15 +43,12 @@ BoringLang {
                    | RecordEntryAccessType
                    | identifierType
                    | Block
-                   | compilerHookType
 
   identifier = letter+
   identifierExpression = identifier
   identifierType = identifier
 
-  compilerHookExpression = "@"identifier
-  compilerHookType = "@"identifier
-
+  ImportStatementExpression = "import" "(" stringExpression ")"
 
   numberExpression = digit+
   numberType = "number"
