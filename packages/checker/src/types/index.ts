@@ -1,6 +1,7 @@
 import type { AstNode, AstNodeName } from '@zen-script/ast';
 import type { AstCheckerError } from './errors';
 import type { AstCheckerType } from './types';
+import type { CheckAstResult } from '..';
 
 export type Variable = {
   variableName: string;
@@ -13,6 +14,11 @@ export type AstCheckerContext = {
   exportedVariables: Variable[];
   variableScopes: VariableScope[];
   figureOutId: number;
+  filePath: string;
+  importFile: (
+    currentFilePath: string,
+    requestedFilePath: string,
+  ) => CheckAstResult;
 };
 export type CheckAstNodeReturn<
   TNodeType extends AstCheckerType = AstCheckerType,

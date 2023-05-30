@@ -89,10 +89,15 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
         name: AstNodeName.IdentifierExpression,
         identifierName: name.getName(),
       }),
-    ImportStatementExpression: (_import, parameters) =>
+    ImportStatementExpression: (
+      _import,
+      _startBracket,
+      fileName,
+      _endBracket,
+    ) =>
       createAstNode({
         name: AstNodeName.ImportExpression,
-        parameters: (parameters.getAstNode() as TupleExpressionAstNode).items,
+        filePath: fileName.getName(),
       }),
     stringExpression: (_startQuotes, content, _endQuotes) =>
       createAstNode({
@@ -151,11 +156,6 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
       createAstNode({
         name: AstNodeName.IdentifierType,
         identifierName: name.getName(),
-      }),
-    ImportStatementType: (_import, parameters) =>
-      createAstNode({
-        name: AstNodeName.ImportType,
-        parameters: (parameters.getAstNode() as TupleTypeAstNode).items,
       }),
     stringType: _string => createAstNode({ name: AstNodeName.StringType }),
     numberType: _string => createAstNode({ name: AstNodeName.NumberType }),

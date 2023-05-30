@@ -15,6 +15,7 @@ import { checkRecordExpressionNode } from './record/expression';
 import { checkRecordTypeNode } from './record/type';
 import { AstNodeName } from '@zen-script/ast';
 import { checkExportedVariableAssignmentNode } from './variableAssignment/exportedVariableAssignment';
+import { checkImportExpressionNode } from './importExpression';
 
 export const checkAstNode: CheckAstNode = (context, astNode) => {
   const actionMap: Partial<{
@@ -22,6 +23,8 @@ export const checkAstNode: CheckAstNode = (context, astNode) => {
   }> = {
     [AstNodeName.File]: checkBlockNode,
     [AstNodeName.Block]: checkBlockNode,
+
+    [AstNodeName.ImportExpression]: checkImportExpressionNode,
 
     [AstNodeName.NumberExpression]: checkNumberExpressionNode,
     [AstNodeName.NumberType]: checkNumberTypeNode,

@@ -3,9 +3,6 @@ import type { AstBaseNode, AstNodeName } from '.';
 export type IdentifierTypeAstNode = AstBaseNode<AstNodeName.IdentifierType> & {
   identifierName: string;
 };
-export type ImportTypeAstNode = AstBaseNode<AstNodeName.ImportType> & {
-  parameters: TypeAstNode[];
-};
 type StringTypeAstNode = AstBaseNode<AstNodeName.StringType>;
 type NumberTypeAstNode = AstBaseNode<AstNodeName.NumberType>;
 export type TupleTypeAstNode = AstBaseNode<AstNodeName.TupleType> & {
@@ -38,7 +35,6 @@ type FunctionCallTypeAstNode = AstBaseNode<AstNodeName.FunctionCallType> & {
 
 export type TypeAstNode =
   | IdentifierTypeAstNode
-  | ImportTypeAstNode
   | StringTypeAstNode
   | NumberTypeAstNode
   | TupleTypeAstNode

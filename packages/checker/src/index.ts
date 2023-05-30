@@ -18,7 +18,11 @@ export type CheckAstParams = {
 
 export const checkAstInternal = ({
   ast,
+  filePath,
   defaultVariables,
+  getAstCheckCachedResult,
+  saveAstCheckResultToCache,
+  getFileAst,
 }: CheckAstParams): CheckAstResult => {
   const variableScopes = defaultVariables ? [defaultVariables] : [];
   const defaultContext: AstCheckerContext = {
@@ -26,6 +30,28 @@ export const checkAstInternal = ({
     exportedVariables: [],
     variableScopes,
     figureOutId: 0,
+    filePath: '',
+    importFile: (currentFilePath, requestedFilePath) => {
+      const filePath = requestedFilePath;
+
+      const cachedResult = getAstCheckCachedResult(filePath);
+      if (cachedResult) return cachedResult;
+
+      const newAst = getFileAst(filePath);
+      console.log(newAst, filePath);
+      if (!newAst) throw new Error('error');
+
+      const checkedAst = checkAstInternal({
+        ast: newAst,
+        filePath,
+        defaultVariables,
+        getAstCheckCachedResult,
+        saveAstCheckResultToCache,
+        getFileAst,
+      });
+      saveAstCheckResultToCache(filePath, checkedAst);
+      return checkedAst;
+    },
   };
 
   const { errors, exportedVariables } = checkAstNode(defaultContext, ast);

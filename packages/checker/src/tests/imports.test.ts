@@ -4,7 +4,7 @@ import { testCheckAst } from './helpers';
 import { AstCheckerErrorName } from '../types/errors';
 
 test('import empty file', () => {
-  const fileA = `imported: %{} = import("./fileB")`;
+  const fileA = `imported: %{} = import("fileB")`;
   const fileB = ``;
 
   const expected: CheckAstResult = { errors: [], exportedVariables: [] };
@@ -20,13 +20,13 @@ test('import non empty file', () => {
       a: number, 
       b: string
     }
-  } = import("./fileB")`;
+  } = import("fileB")`;
   const fileB = `
     export exportedNumber = 1 
-    export exportedString = ''
+    export exportedString = ""
     export exportedRecord = %{
       a: 1,
-      b: '2'
+      b: "2"
     }
   `;
 
@@ -36,7 +36,7 @@ test('import non empty file', () => {
 });
 
 test('import non existing file', () => {
-  const fileA = `imported: %{} = import("./fileB")`;
+  const fileA = `imported: %{} = import("fileB")`;
 
   const expected: CheckAstResult = {
     errors: [{ name: AstCheckerErrorName.FileNotFound, data: {} }],

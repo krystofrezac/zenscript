@@ -6,7 +6,7 @@ export type IdentifierExpressionAstNode =
   };
 export type ImportExpressionAstNode =
   AstBaseNode<AstNodeName.ImportExpression> & {
-    parameters: ExpressionAstNode[];
+    filePath: string;
   };
 type StringExpressionAstNode = AstBaseNode<AstNodeName.StringExpression> & {
   value: string;

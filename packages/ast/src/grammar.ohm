@@ -33,8 +33,7 @@ BoringLang {
                | Block
                | TupleExpression
 
-  TypeExpression = | ImportStatementType
-                   | FunctionDeclarationType
+  TypeExpression = | FunctionDeclarationType
                    | stringType
                    | numberType
                    | booleanType
@@ -49,8 +48,7 @@ BoringLang {
   identifierExpression = identifier
   identifierType = identifier
 
-  ImportStatementExpression = "import" TupleExpression
-  ImportStatementType = "import" TupleType
+  ImportStatementExpression = "import" "(" stringExpression ")"
 
   numberExpression = digit+
   numberType = "number"

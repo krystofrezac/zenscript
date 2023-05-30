@@ -21,7 +21,7 @@ export const testCheckAst = ({
     filePath: entryPathFile ?? '',
     getFileAst: fileName => {
       const fileSource = files[fileName];
-      if (!fileSource) return;
+      if (fileSource === undefined) return;
       return getAst(fileSource);
     },
     saveAstCheckResultToCache: (fileName, ast) =>
