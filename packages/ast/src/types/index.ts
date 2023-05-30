@@ -5,6 +5,9 @@ export enum AstNodeName {
   IdentifierExpression = 'VariableReferenceExpression',
   IdentifierType = 'VariableReferenceType',
 
+  ImportExpression = 'ImportExpression',
+  ImportType = 'ImportType',
+
   StringExpression = 'StringExpression',
   StringType = 'StringType',
 
