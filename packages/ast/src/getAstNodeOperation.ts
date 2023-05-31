@@ -89,6 +89,16 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
         name: AstNodeName.IdentifierExpression,
         identifierName: name.getName(),
       }),
+    AtomExpression(name, args) {
+      const argsNodes = args.getAstNodes() as TupleExpressionAstNode[];
+      const argsResult = argsNodes[0]?.items ?? [];
+
+      return createAstNode({
+        name: AstNodeName.AtomExpression,
+        atomName: name.getName(),
+        arguments: argsResult,
+      });
+    },
     ImportStatementExpression: (
       _import,
       _startBracket,
@@ -157,6 +167,16 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
         name: AstNodeName.IdentifierType,
         identifierName: name.getName(),
       }),
+    AtomType(name, args) {
+      const argsNodes = args.getAstNodes() as TupleTypeAstNode[];
+      const argsResult = argsNodes[0]?.items ?? [];
+
+      return createAstNode({
+        name: AstNodeName.AtomType,
+        atomName: name.getName(),
+        arguments: argsResult,
+      });
+    },
     stringType: _string => createAstNode({ name: AstNodeName.StringType }),
     numberType: _string => createAstNode({ name: AstNodeName.NumberType }),
     TupleType: (_startBracket, items, _endBracket) =>

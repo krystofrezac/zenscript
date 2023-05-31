@@ -3,6 +3,9 @@ import type { BoringLangSemantics } from './grammar.ohm-bundle';
 
 export const createGetNameOperation = (semantics: BoringLangSemantics) =>
   semantics.addOperation<ReturnType<ohm.Node['getName']>>('getName', {
-    identifier: name => name.sourceString,
+    identifier: (smallLetter, rest) =>
+      `${smallLetter.sourceString}${rest.sourceString}`,
     stringExpression: (_startQuote, content, _endQuote) => content.sourceString,
+    atomIdentifier: (firstLetter, rest) =>
+      `${firstLetter.sourceString}${rest.sourceString}`,
   });

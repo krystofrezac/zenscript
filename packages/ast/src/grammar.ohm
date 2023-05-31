@@ -12,6 +12,8 @@ BoringLang {
   typeAssignmentOperator = ":"
   oneLineComment = "//" (~newLine any)* 
   multiLineComment = "/*" (~"*/" any)* "*/"
+  capitalLetter = "A".."Z"
+  smallLetter = "a".."z"
 
   VariableDeclaration = | identifierExpression ExpressionAssignment                            -- onlyExpression
                         | identifierExpression TypeAssignment ExpressionAssignment             -- expressionAndType
@@ -30,6 +32,7 @@ BoringLang {
                | RecordExpression
                | RecordEntryAccessExpression
                | identifierExpression
+               | AtomExpression
                | Block
                | TupleExpression
 
@@ -42,11 +45,16 @@ BoringLang {
                    | RecordType
                    | RecordEntryAccessType
                    | identifierType
+                   | AtomType
                    | Block
 
-  identifier = letter+
+  identifier = smallLetter letter*
   identifierExpression = identifier
   identifierType = identifier
+
+  atomIdentifier = capitalLetter letter*
+  AtomExpression = atomIdentifier TupleExpression?
+  AtomType = atomIdentifier TupleType?
 
   ImportStatementExpression = "import" "(" stringExpression ")"
 
