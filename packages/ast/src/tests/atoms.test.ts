@@ -145,3 +145,46 @@ test('non empty atom type', () => {
   const result = getAst(input);
   expect(result).toEqual(expected);
 });
+test('atom union type', () => {
+  const input = 'myVar: A | B(%{a: number}) | C(string)';
+  const expected = createAstNode({
+    name: AstNodeName.File,
+    children: [
+      {
+        name: AstNodeName.VariableAssignment,
+        identifierName: 'myVar',
+        type: {
+          name: AstNodeName.AtomUnionType,
+          atoms: [
+            { name: AstNodeName.AtomType, atomName: 'A', arguments: [] },
+            {
+              name: AstNodeName.AtomType,
+              atomName: 'B',
+              arguments: [
+                {
+                  name: AstNodeName.RecordType,
+                  entries: [
+                    {
+                      name: AstNodeName.RecordEntryType,
+                      key: 'a',
+                      value: {
+                        name: AstNodeName.NumberType,
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: AstNodeName.AtomType,
+              atomName: 'C',
+              arguments: [{ name: AstNodeName.StringType }],
+            },
+          ],
+        },
+      },
+    ],
+  });
+  const result = getAst(input);
+  expect(result).toEqual(expected);
+});
