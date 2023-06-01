@@ -1,7 +1,7 @@
 import { expect, test, describe } from 'vitest';
 import type { CheckAstResult } from '..';
 import { AstCheckerErrorName } from '../types/errors';
-import { AstCheckerTypeNames } from '../types/types';
+import { AstCheckerTypeName } from '../types/types';
 import { testCheckAst } from './helpers';
 
 describe('declaration', () => {
@@ -24,14 +24,14 @@ describe('declaration', () => {
           data: {
             variableName: 'a',
             expected: {
-              name: AstCheckerTypeNames.Record,
+              name: AstCheckerTypeName.Record,
               entries: {
-                a: { name: AstCheckerTypeNames.String, hasValue: false },
+                a: { name: AstCheckerTypeName.String, hasValue: false },
               },
               hasValue: false,
             },
             received: {
-              name: AstCheckerTypeNames.Record,
+              name: AstCheckerTypeName.Record,
               entries: {},
               hasValue: true,
             },
@@ -64,14 +64,14 @@ describe('declaration', () => {
           data: {
             variableName: 'a',
             expected: {
-              name: AstCheckerTypeNames.Record,
+              name: AstCheckerTypeName.Record,
               entries: {
-                a: { name: AstCheckerTypeNames.String, hasValue: false },
-                b: { name: AstCheckerTypeNames.Number, hasValue: false },
+                a: { name: AstCheckerTypeName.String, hasValue: false },
+                b: { name: AstCheckerTypeName.Number, hasValue: false },
                 c: {
-                  name: AstCheckerTypeNames.Record,
+                  name: AstCheckerTypeName.Record,
                   entries: {
-                    a: { name: AstCheckerTypeNames.Number, hasValue: false },
+                    a: { name: AstCheckerTypeName.Number, hasValue: false },
                   },
                   hasValue: false,
                 },
@@ -79,14 +79,14 @@ describe('declaration', () => {
               hasValue: false,
             },
             received: {
-              name: AstCheckerTypeNames.Record,
+              name: AstCheckerTypeName.Record,
               entries: {
-                a: { name: AstCheckerTypeNames.String, hasValue: true },
-                b: { name: AstCheckerTypeNames.Number, hasValue: true },
+                a: { name: AstCheckerTypeName.String, hasValue: true },
+                b: { name: AstCheckerTypeName.Number, hasValue: true },
                 c: {
-                  name: AstCheckerTypeNames.Record,
+                  name: AstCheckerTypeName.Record,
                   entries: {
-                    a: { name: AstCheckerTypeNames.String, hasValue: true },
+                    a: { name: AstCheckerTypeName.String, hasValue: true },
                   },
                   hasValue: true,
                 },
@@ -120,11 +120,11 @@ describe('accessing', () => {
           data: {
             variableName: 'incorrect',
             expected: {
-              name: AstCheckerTypeNames.Number,
+              name: AstCheckerTypeName.Number,
               hasValue: false,
             },
             received: {
-              name: AstCheckerTypeNames.String,
+              name: AstCheckerTypeName.String,
               hasValue: true,
             },
           },
@@ -152,11 +152,11 @@ describe('accessing', () => {
           data: {
             variableName: 'incorrect',
             expected: {
-              name: AstCheckerTypeNames.String,
+              name: AstCheckerTypeName.String,
               hasValue: false,
             },
             received: {
-              name: AstCheckerTypeNames.Number,
+              name: AstCheckerTypeName.Number,
               hasValue: true,
             },
           },
@@ -178,9 +178,9 @@ describe('accessing', () => {
           name: AstCheckerErrorName.EntryDoesNotExistOnRecord,
           data: {
             record: {
-              name: AstCheckerTypeNames.Record,
+              name: AstCheckerTypeName.Record,
               entries: {
-                a: { name: AstCheckerTypeNames.Number, hasValue: true },
+                a: { name: AstCheckerTypeName.Number, hasValue: true },
               },
               hasValue: true,
             },
@@ -203,7 +203,7 @@ describe('accessing', () => {
         {
           name: AstCheckerErrorName.AccessingNonRecord,
           data: {
-            accessing: AstCheckerTypeNames.Number,
+            accessing: AstCheckerTypeName.Number,
           },
         },
       ],

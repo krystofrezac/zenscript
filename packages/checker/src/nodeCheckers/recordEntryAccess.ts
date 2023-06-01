@@ -2,7 +2,7 @@ import type { AstNodeName } from '@zen-script/ast';
 import { checkAstNode } from '.';
 import type { CheckAstNode } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
-import { AstCheckerTypeNames } from '../types/types';
+import { AstCheckerTypeName } from '../types/types';
 import { addError } from './helpers/addError';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 import { ignoreAstCheckerNode } from './helpers/ignoreAstCheckerNode';
@@ -13,7 +13,7 @@ export const checkRecordEntryAccessNode: CheckAstNode<
   const accessingContext = checkAstNode(context, recordEntryAccess.accessing);
   const accessingType = accessingContext.nodeType;
 
-  if (accessingType.name !== AstCheckerTypeNames.Record) {
+  if (accessingType.name !== AstCheckerTypeName.Record) {
     const contextWithError = addError(accessingContext, {
       name: AstCheckerErrorName.AccessingNonRecord,
       data: {

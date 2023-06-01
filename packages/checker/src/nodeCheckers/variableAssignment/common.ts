@@ -7,10 +7,10 @@ import type {
 import { pipe } from '@zen-script/helpers';
 import { checkAstNode } from '..';
 import { AstCheckerErrorName } from '../../types/errors';
-import { AstCheckerTypeNames } from '../../types/types';
+import { AstCheckerTypeName } from '../../types/types';
 import { addErrors, addError } from '../helpers/addError';
 import { addVariableToContext } from '../helpers/addVariableToContext';
-import { areTypesCompatible } from '../helpers/areTypesCompatible';
+import { isSubtypeOf } from '../helpers/isSubtypeOf';
 import { getErrorContextWhenVariableAlreadyDeclared } from '../helpers/getErrorContextWhenVariableAlreadyDeclared';
 import { getNewErrors } from '../helpers/getNewErrors';
 import { ignoreAstCheckerNode } from '../helpers/ignoreAstCheckerNode';
@@ -145,8 +145,8 @@ const getIgnoredResultWhenSomeNodeIgnored = ({
   expressionContext: CheckAstNodeReturn | undefined;
 }) => {
   if (
-    expressionContext?.nodeType.name !== AstCheckerTypeNames.Ignore &&
-    typeContext?.nodeType.name !== AstCheckerTypeNames.Ignore
+    expressionContext?.nodeType.name !== AstCheckerTypeName.Ignore &&
+    typeContext?.nodeType.name !== AstCheckerTypeName.Ignore
   )
     return undefined;
 
@@ -200,10 +200,7 @@ const addErrorWhenNodesHaveIncompatibleTypes = ({
   if (
     !explicitNodeContext ||
     !implicitNodeContext ||
-    areTypesCompatible(
-      explicitNodeContext.nodeType,
-      implicitNodeContext?.nodeType,
-    )
+    isSubtypeOf(implicitNodeContext?.nodeType, explicitNodeContext.nodeType)
   )
     return context;
 

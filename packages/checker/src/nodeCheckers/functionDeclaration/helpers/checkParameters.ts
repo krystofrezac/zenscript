@@ -1,7 +1,7 @@
 import type { IdentifierExpressionAstNode } from '@zen-script/ast';
 import type { AstCheckerContext } from '../../../types';
 import type { AstCheckerType } from '../../../types/types';
-import { AstCheckerTypeNames } from '../../../types/types';
+import { AstCheckerTypeName } from '../../../types/types';
 import { addVariableToContext } from '../../helpers/addVariableToContext';
 import { checkAstNodes } from '../../helpers/checkAstNodes';
 import { getErrorContextWhenVariableAlreadyDeclared } from '../../helpers/getErrorContextWhenVariableAlreadyDeclared';
@@ -33,7 +33,7 @@ const checkFunctionDeclarationExpressionParameter = (
 
   const figureOutId = context.figureOutId + 1;
   const variableType: AstCheckerType = {
-    name: AstCheckerTypeNames.FigureOut,
+    name: AstCheckerTypeName.FigureOut,
     id: figureOutId,
     hasValue: true,
   };

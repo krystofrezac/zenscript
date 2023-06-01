@@ -1,4 +1,6 @@
-export enum AstCheckerTypeNames {
+export enum AstCheckerTypeName {
+  Atom = 'Atom',
+  AtomUnion = 'AtomUnion',
   Number = 'number',
   String = 'string',
   Tuple = 'tuple',
@@ -10,38 +12,49 @@ export enum AstCheckerTypeNames {
   Ignore = 'Ignore',
 }
 
-type AstCheckerTypeBase<TName extends AstCheckerTypeNames> = {
+type AstCheckerTypeBase<TName extends AstCheckerTypeName> = {
   name: TName;
   hasValue: boolean;
 };
 
-type AstCheckerNumberType = AstCheckerTypeBase<AstCheckerTypeNames.Number>;
-type AstCheckerStringType = AstCheckerTypeBase<AstCheckerTypeNames.String>;
+export type AstCheckerAtomType = AstCheckerTypeBase<AstCheckerTypeName.Atom> & {
+  atomName: string;
+  arguments: AstCheckerType[];
+};
+type AstCheckerAtomUnionType =
+  AstCheckerTypeBase<AstCheckerTypeName.AtomUnion> & {
+    atoms: AstCheckerAtomType[];
+  };
+
+type AstCheckerNumberType = AstCheckerTypeBase<AstCheckerTypeName.Number>;
+type AstCheckerStringType = AstCheckerTypeBase<AstCheckerTypeName.String>;
 
 export type AstCheckerTupleType =
-  AstCheckerTypeBase<AstCheckerTypeNames.Tuple> & {
+  AstCheckerTypeBase<AstCheckerTypeName.Tuple> & {
     items: AstCheckerType[];
   };
 export type AstCheckerRecordType =
-  AstCheckerTypeBase<AstCheckerTypeNames.Record> & {
+  AstCheckerTypeBase<AstCheckerTypeName.Record> & {
     entries: Record<string, AstCheckerType>;
   };
 
 export type AstCheckerFunctionType =
-  AstCheckerTypeBase<AstCheckerTypeNames.Function> & {
+  AstCheckerTypeBase<AstCheckerTypeName.Function> & {
     parameters: AstCheckerType[];
     return: AstCheckerType;
   };
 
-type AstCheckerEmptyType = AstCheckerTypeBase<AstCheckerTypeNames.Empty>;
+type AstCheckerEmptyType = AstCheckerTypeBase<AstCheckerTypeName.Empty>;
 
 type AstCheckerFigureOutType =
-  AstCheckerTypeBase<AstCheckerTypeNames.FigureOut> & {
+  AstCheckerTypeBase<AstCheckerTypeName.FigureOut> & {
     id: number;
   };
-type AstCheckerIgnoreType = AstCheckerTypeBase<AstCheckerTypeNames.Ignore>;
+type AstCheckerIgnoreType = AstCheckerTypeBase<AstCheckerTypeName.Ignore>;
 
 export type AstCheckerType =
+  | AstCheckerAtomType
+  | AstCheckerAtomUnionType
   | AstCheckerNumberType
   | AstCheckerStringType
   | AstCheckerTupleType
