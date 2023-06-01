@@ -1,4 +1,6 @@
 export enum AstCheckerTypeNames {
+  Atom = 'Atom',
+  AtomUnion = 'AtomUnion',
   Number = 'number',
   String = 'string',
   Tuple = 'tuple',
@@ -14,6 +16,15 @@ type AstCheckerTypeBase<TName extends AstCheckerTypeNames> = {
   name: TName;
   hasValue: boolean;
 };
+
+type AstCheckerAtomType = AstCheckerTypeBase<AstCheckerTypeNames.Atom> & {
+  atomName: string;
+  arguments: AstCheckerType[];
+};
+type AstCheckerAtomUnionType =
+  AstCheckerTypeBase<AstCheckerTypeNames.AtomUnion> & {
+    atoms: AstCheckerAtomType[];
+  };
 
 type AstCheckerNumberType = AstCheckerTypeBase<AstCheckerTypeNames.Number>;
 type AstCheckerStringType = AstCheckerTypeBase<AstCheckerTypeNames.String>;
@@ -42,6 +53,8 @@ type AstCheckerFigureOutType =
 type AstCheckerIgnoreType = AstCheckerTypeBase<AstCheckerTypeNames.Ignore>;
 
 export type AstCheckerType =
+  | AstCheckerAtomType
+  | AstCheckerAtomUnionType
   | AstCheckerNumberType
   | AstCheckerStringType
   | AstCheckerTupleType
