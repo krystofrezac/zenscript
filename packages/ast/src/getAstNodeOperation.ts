@@ -177,6 +177,10 @@ export const getAstNodeOperation = (semantics: BoringLangSemantics) =>
         arguments: argsResult,
       });
     },
+    AtomUnionType: atomList => {
+      const atoms = atomList.getAstNodes();
+      return createAstNode({ name: AstNodeName.AtomUnionType, atoms });
+    },
     stringType: _string => createAstNode({ name: AstNodeName.StringType }),
     numberType: _string => createAstNode({ name: AstNodeName.NumberType }),
     TupleType: (_startBracket, items, _endBracket) =>

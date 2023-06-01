@@ -7,6 +7,9 @@ type AtomTypeAstNode = AstBaseNode<AstNodeName.AtomType> & {
   atomName: string;
   arguments: TypeAstNode[];
 };
+type AtomUnionTypeAstNode = AstBaseNode<AstNodeName.AtomUnionType> & {
+  atoms: AtomTypeAstNode[];
+};
 type StringTypeAstNode = AstBaseNode<AstNodeName.StringType>;
 type NumberTypeAstNode = AstBaseNode<AstNodeName.NumberType>;
 export type TupleTypeAstNode = AstBaseNode<AstNodeName.TupleType> & {
@@ -40,6 +43,7 @@ type FunctionCallTypeAstNode = AstBaseNode<AstNodeName.FunctionCallType> & {
 export type TypeAstNode =
   | IdentifierTypeAstNode
   | AtomTypeAstNode
+  | AtomUnionTypeAstNode
   | StringTypeAstNode
   | NumberTypeAstNode
   | TupleTypeAstNode

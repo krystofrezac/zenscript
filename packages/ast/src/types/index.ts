@@ -7,6 +7,7 @@ export enum AstNodeName {
 
   AtomExpression = 'AtomExpression',
   AtomType = 'AtomType',
+  AtomUnionType = 'AtomUnionType',
 
   ImportExpression = 'ImportExpression',
 
