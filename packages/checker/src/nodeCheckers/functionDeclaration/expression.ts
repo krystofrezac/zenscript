@@ -2,7 +2,7 @@ import type { AstNodeName, IdentifierExpressionAstNode } from '@zen-script/ast';
 import { checkAstNode } from '..';
 import type { AstCheckerContext, CheckAstNode } from '../../types';
 import type { AstCheckerType } from '../../types/types';
-import { AstCheckerTypeNames } from '../../types/types';
+import { AstCheckerTypeName } from '../../types/types';
 import { findVariableFromCurrentScope } from '../helpers/findVariableFromCurrentScope';
 import { getCheckNodeReturn } from '../helpers/getCheckNodeReturn';
 import {
@@ -39,7 +39,7 @@ export const checkFunctionDeclarationExpression: CheckAstNode<
   const contextWithRemovedVariableScope = removeVariableScope(returnContext);
 
   return getCheckNodeReturn(contextWithRemovedVariableScope, {
-    name: AstCheckerTypeNames.Function,
+    name: AstCheckerTypeName.Function,
     parameters: figuredOutParameters,
     return: returnType,
     hasValue: returnType.hasValue,
@@ -52,7 +52,7 @@ const getFiguredOutParameters = (
   parametersAst: IdentifierExpressionAstNode[],
 ) => {
   const figuredOutItems = parametersType.map((parameter, index) => {
-    if (parameter.name !== AstCheckerTypeNames.FigureOut) return parameter;
+    if (parameter.name !== AstCheckerTypeName.FigureOut) return parameter;
 
     const parameterAst = parametersAst[index];
     if (!parameterAst) return parameter;

@@ -1,4 +1,4 @@
-export enum AstCheckerTypeNames {
+export enum AstCheckerTypeName {
   Atom = 'Atom',
   AtomUnion = 'AtomUnion',
   Number = 'number',
@@ -12,45 +12,45 @@ export enum AstCheckerTypeNames {
   Ignore = 'Ignore',
 }
 
-type AstCheckerTypeBase<TName extends AstCheckerTypeNames> = {
+type AstCheckerTypeBase<TName extends AstCheckerTypeName> = {
   name: TName;
   hasValue: boolean;
 };
 
-type AstCheckerAtomType = AstCheckerTypeBase<AstCheckerTypeNames.Atom> & {
+export type AstCheckerAtomType = AstCheckerTypeBase<AstCheckerTypeName.Atom> & {
   atomName: string;
   arguments: AstCheckerType[];
 };
 type AstCheckerAtomUnionType =
-  AstCheckerTypeBase<AstCheckerTypeNames.AtomUnion> & {
+  AstCheckerTypeBase<AstCheckerTypeName.AtomUnion> & {
     atoms: AstCheckerAtomType[];
   };
 
-type AstCheckerNumberType = AstCheckerTypeBase<AstCheckerTypeNames.Number>;
-type AstCheckerStringType = AstCheckerTypeBase<AstCheckerTypeNames.String>;
+type AstCheckerNumberType = AstCheckerTypeBase<AstCheckerTypeName.Number>;
+type AstCheckerStringType = AstCheckerTypeBase<AstCheckerTypeName.String>;
 
 export type AstCheckerTupleType =
-  AstCheckerTypeBase<AstCheckerTypeNames.Tuple> & {
+  AstCheckerTypeBase<AstCheckerTypeName.Tuple> & {
     items: AstCheckerType[];
   };
 export type AstCheckerRecordType =
-  AstCheckerTypeBase<AstCheckerTypeNames.Record> & {
+  AstCheckerTypeBase<AstCheckerTypeName.Record> & {
     entries: Record<string, AstCheckerType>;
   };
 
 export type AstCheckerFunctionType =
-  AstCheckerTypeBase<AstCheckerTypeNames.Function> & {
+  AstCheckerTypeBase<AstCheckerTypeName.Function> & {
     parameters: AstCheckerType[];
     return: AstCheckerType;
   };
 
-type AstCheckerEmptyType = AstCheckerTypeBase<AstCheckerTypeNames.Empty>;
+type AstCheckerEmptyType = AstCheckerTypeBase<AstCheckerTypeName.Empty>;
 
 type AstCheckerFigureOutType =
-  AstCheckerTypeBase<AstCheckerTypeNames.FigureOut> & {
+  AstCheckerTypeBase<AstCheckerTypeName.FigureOut> & {
     id: number;
   };
-type AstCheckerIgnoreType = AstCheckerTypeBase<AstCheckerTypeNames.Ignore>;
+type AstCheckerIgnoreType = AstCheckerTypeBase<AstCheckerTypeName.Ignore>;
 
 export type AstCheckerType =
   | AstCheckerAtomType

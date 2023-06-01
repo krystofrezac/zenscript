@@ -1,7 +1,7 @@
 import type {
   AstCheckerRecordType,
   AstCheckerType,
-  AstCheckerTypeNames,
+  AstCheckerTypeName,
 } from './types';
 
 export enum AstCheckerErrorName {
@@ -72,7 +72,7 @@ export type AstCheckerError =
   | AstCheckerErrorBase<
       AstCheckerErrorName.AccessingNonRecord,
       {
-        accessing: AstCheckerTypeNames;
+        accessing: AstCheckerTypeName;
       }
     >
   | AstCheckerErrorBase<AstCheckerErrorName.NestedExport>

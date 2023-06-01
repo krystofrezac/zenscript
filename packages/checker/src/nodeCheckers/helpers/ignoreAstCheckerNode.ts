@@ -1,7 +1,7 @@
 import type { AstCheckerType } from '../../types/types';
-import { AstCheckerTypeNames } from '../../types/types';
+import { AstCheckerTypeName } from '../../types/types';
 
 export const ignoreAstCheckerNode: AstCheckerType = {
-  name: AstCheckerTypeNames.Ignore,
+  name: AstCheckerTypeName.Ignore,
   hasValue: false,
 };

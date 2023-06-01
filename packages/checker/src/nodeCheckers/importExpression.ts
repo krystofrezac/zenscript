@@ -1,6 +1,6 @@
 import type { AstNodeName } from '@zen-script/ast';
 import type { CheckAstNode } from '../types';
-import { AstCheckerTypeNames } from '../types/types';
+import { AstCheckerTypeName } from '../types/types';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 import { addError } from './helpers/addError';
 import { AstCheckerErrorName } from '../types/errors';
@@ -39,7 +39,7 @@ export const checkImportExpressionNode: CheckAstNode<
     );
 
   return getCheckNodeReturn(context, {
-    name: AstCheckerTypeNames.Record,
+    name: AstCheckerTypeName.Record,
     entries: recordEntries,
     hasValue: true,
   });

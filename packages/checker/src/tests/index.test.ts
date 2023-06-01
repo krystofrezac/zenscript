@@ -1,7 +1,7 @@
 import { test, describe, expect } from 'vitest';
 import type { CheckAstResult } from '..';
 import { AstCheckerErrorName } from '../types/errors';
-import { AstCheckerTypeNames } from '../types/types';
+import { AstCheckerTypeName } from '../types/types';
 import { testCheckAst } from './helpers';
 
 describe('string', () => {
@@ -109,11 +109,11 @@ describe('block', () => {
           name: AstCheckerErrorName.VariableTypeMismatch,
           data: {
             expected: {
-              name: AstCheckerTypeNames.String,
+              name: AstCheckerTypeName.String,
               hasValue: false,
             },
             received: {
-              name: AstCheckerTypeNames.Number,
+              name: AstCheckerTypeName.Number,
               hasValue: true,
             },
             variableName: 'a',

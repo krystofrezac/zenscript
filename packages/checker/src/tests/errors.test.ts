@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import type { CheckAstResult } from '..';
 import type { VariableScope } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
-import { AstCheckerTypeNames } from '../types/types';
+import { AstCheckerTypeName } from '../types/types';
 import { testCheckAst } from './helpers';
 
 describe('chained errors', () => {
@@ -38,7 +38,7 @@ describe('chained errors', () => {
           name: AstCheckerErrorName.ExpressionWithoutValueUsedAsValue,
           data: {
             expressionType: {
-              name: AstCheckerTypeNames.String,
+              name: AstCheckerTypeName.String,
               hasValue: false,
             },
           },
@@ -61,16 +61,16 @@ describe('chained errors', () => {
           name: AstCheckerErrorName.VariableTypeMismatch,
           data: {
             variableName: 'a',
-            expected: { name: AstCheckerTypeNames.String, hasValue: false },
-            received: { name: AstCheckerTypeNames.Number, hasValue: true },
+            expected: { name: AstCheckerTypeName.String, hasValue: false },
+            received: { name: AstCheckerTypeName.Number, hasValue: true },
           },
         },
         {
           name: AstCheckerErrorName.VariableTypeMismatch,
           data: {
             variableName: 'c',
-            expected: { name: AstCheckerTypeNames.Number, hasValue: false },
-            received: { name: AstCheckerTypeNames.String, hasValue: true },
+            expected: { name: AstCheckerTypeName.Number, hasValue: false },
+            received: { name: AstCheckerTypeName.String, hasValue: true },
           },
         },
       ],
@@ -89,15 +89,15 @@ describe('chained errors', () => {
       {
         variableName: 'stringFunction',
         variableType: {
-          name: AstCheckerTypeNames.Function,
+          name: AstCheckerTypeName.Function,
           parameters: [
             {
-              name: AstCheckerTypeNames.String,
+              name: AstCheckerTypeName.String,
               hasValue: true,
             },
           ],
           return: {
-            name: AstCheckerTypeNames.String,
+            name: AstCheckerTypeName.String,
             hasValue: true,
           },
           hasValue: true,
@@ -111,7 +111,7 @@ describe('chained errors', () => {
           data: {
             expected: [
               {
-                name: AstCheckerTypeNames.String,
+                name: AstCheckerTypeName.String,
                 hasValue: true,
               },
             ],
@@ -155,7 +155,7 @@ describe('chained errors', () => {
           name: AstCheckerErrorName.CallingNonCallableExpression,
           data: {
             callee: {
-              name: AstCheckerTypeNames.Number,
+              name: AstCheckerTypeName.Number,
               hasValue: true,
             },
           },

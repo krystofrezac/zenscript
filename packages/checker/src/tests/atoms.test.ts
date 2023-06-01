@@ -1,14 +1,8 @@
-/**
- * - Assigning s
- *
- *
- */
-
 import { expect, test } from 'vitest';
 import type { CheckAstResult } from '..';
 import { testCheckAst } from './helpers';
 import { AstCheckerErrorName } from '../types/errors';
-import { AstCheckerTypeNames } from '../types/types';
+import { AstCheckerTypeName } from '../types/types';
 
 test('correct assigning single simple atom', () => {
   const input = 'myVar: Atom = Atom';
@@ -25,13 +19,13 @@ test('incorrect assigning single simple atom', () => {
         data: {
           variableName: 'myVar',
           expected: {
-            name: AstCheckerTypeNames.Atom,
+            name: AstCheckerTypeName.Atom,
             atomName: 'Atom',
             arguments: [],
             hasValue: false,
           },
           received: {
-            name: AstCheckerTypeNames.Atom,
+            name: AstCheckerTypeName.Atom,
             atomName: 'OtherAtom',
             arguments: [],
             hasValue: true,
@@ -59,22 +53,22 @@ test('incorrect assigning simple atom to union', () => {
         data: {
           variableName: 'myVar',
           expected: {
-            name: AstCheckerTypeNames.AtomUnion,
+            name: AstCheckerTypeName.AtomUnion,
             atoms: [
               {
-                name: AstCheckerTypeNames.Atom,
+                name: AstCheckerTypeName.Atom,
                 atomName: 'Atom',
                 arguments: [],
                 hasValue: false,
               },
               {
-                name: AstCheckerTypeNames.Atom,
+                name: AstCheckerTypeName.Atom,
                 atomName: 'AtomTwo',
                 arguments: [],
                 hasValue: false,
               },
               {
-                name: AstCheckerTypeNames.Atom,
+                name: AstCheckerTypeName.Atom,
                 atomName: 'AtomThree',
                 arguments: [],
                 hasValue: false,
@@ -83,7 +77,7 @@ test('incorrect assigning simple atom to union', () => {
             hasValue: false,
           },
           received: {
-            name: AstCheckerTypeNames.Atom,
+            name: AstCheckerTypeName.Atom,
             atomName: 'AtomFour',
             arguments: [],
             hasValue: true,
@@ -111,14 +105,14 @@ test('incorrect assigning single complex atom', () => {
         data: {
           variableName: 'myVar',
           expected: {
-            name: AstCheckerTypeNames.Atom,
+            name: AstCheckerTypeName.Atom,
             atomName: 'Atom',
             arguments: [
-              { name: AstCheckerTypeNames.String, hasValue: false },
+              { name: AstCheckerTypeName.String, hasValue: false },
               {
-                name: AstCheckerTypeNames.Record,
+                name: AstCheckerTypeName.Record,
                 entries: {
-                  a: { name: AstCheckerTypeNames.Number, hasValue: false },
+                  a: { name: AstCheckerTypeName.Number, hasValue: false },
                 },
                 hasValue: false,
               },
@@ -126,14 +120,14 @@ test('incorrect assigning single complex atom', () => {
             hasValue: false,
           },
           received: {
-            name: AstCheckerTypeNames.Atom,
+            name: AstCheckerTypeName.Atom,
             atomName: 'Atom',
             arguments: [
-              { name: AstCheckerTypeNames.Number, hasValue: true },
+              { name: AstCheckerTypeName.Number, hasValue: true },
               {
-                name: AstCheckerTypeNames.Record,
+                name: AstCheckerTypeName.Record,
                 entries: {
-                  a: { name: AstCheckerTypeNames.Number, hasValue: true },
+                  a: { name: AstCheckerTypeName.Number, hasValue: true },
                 },
                 hasValue: true,
               },
@@ -156,8 +150,10 @@ test('correct assigning complex atom to union', () => {
   expect(result).toEqual(expected);
 });
 test('incorrect assigning complex atom to union', () => {
-  const input =
-    'myVar: Atom(string, %{a: number}) | AtomTwo(number) | AtomTwo(%{}) = AtomTwo("")';
+  const input = `
+      expectedType : Atom(string, %{a: number}) | AtomTwo(number) | AtomTwo(%{})
+      myVar : expectedType = AtomTwo("")
+    `;
   const expected: CheckAstResult = {
     errors: [
       {
@@ -165,17 +161,17 @@ test('incorrect assigning complex atom to union', () => {
         data: {
           variableName: 'myVar',
           expected: {
-            name: AstCheckerTypeNames.AtomUnion,
+            name: AstCheckerTypeName.AtomUnion,
             atoms: [
               {
-                name: AstCheckerTypeNames.Atom,
+                name: AstCheckerTypeName.Atom,
                 atomName: 'Atom',
                 arguments: [
-                  { name: AstCheckerTypeNames.String, hasValue: false },
+                  { name: AstCheckerTypeName.String, hasValue: false },
                   {
-                    name: AstCheckerTypeNames.Record,
+                    name: AstCheckerTypeName.Record,
                     entries: {
-                      a: { name: AstCheckerTypeNames.Number, hasValue: false },
+                      a: { name: AstCheckerTypeName.Number, hasValue: false },
                     },
                     hasValue: false,
                   },
@@ -183,19 +179,19 @@ test('incorrect assigning complex atom to union', () => {
                 hasValue: false,
               },
               {
-                name: AstCheckerTypeNames.Atom,
+                name: AstCheckerTypeName.Atom,
                 atomName: 'AtomTwo',
                 arguments: [
-                  { name: AstCheckerTypeNames.Number, hasValue: false },
+                  { name: AstCheckerTypeName.Number, hasValue: false },
                 ],
                 hasValue: false,
               },
               {
-                name: AstCheckerTypeNames.Atom,
+                name: AstCheckerTypeName.Atom,
                 atomName: 'AtomTwo',
                 arguments: [
                   {
-                    name: AstCheckerTypeNames.Record,
+                    name: AstCheckerTypeName.Record,
                     entries: {},
                     hasValue: false,
                   },
@@ -206,9 +202,9 @@ test('incorrect assigning complex atom to union', () => {
             hasValue: false,
           },
           received: {
-            name: AstCheckerTypeNames.Atom,
+            name: AstCheckerTypeName.Atom,
             atomName: 'AtomTwo',
-            arguments: [{ name: AstCheckerTypeNames.String, hasValue: true }],
+            arguments: [{ name: AstCheckerTypeName.String, hasValue: true }],
             hasValue: true,
           },
         },

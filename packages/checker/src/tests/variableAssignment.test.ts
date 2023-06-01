@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import type { CheckAstResult } from '..';
 import { AstCheckerErrorName } from '../types/errors';
-import { AstCheckerTypeNames } from '../types/types';
+import { AstCheckerTypeName } from '../types/types';
 import { ignoreAstCheckerNode } from '../nodeCheckers/helpers/ignoreAstCheckerNode';
 import { testCheckAst } from './helpers';
 
@@ -74,7 +74,7 @@ describe('non type checks', () => {
           name: AstCheckerErrorName.ExpressionWithoutValueUsedAsValue,
           data: {
             expressionType: {
-              name: AstCheckerTypeNames.Number,
+              name: AstCheckerTypeName.Number,
               hasValue: false,
             },
           },
@@ -117,8 +117,8 @@ describe('basic type checks', () => {
           name: AstCheckerErrorName.VariableTypeMismatch,
           data: {
             variableName: 'a',
-            expected: { name: AstCheckerTypeNames.String, hasValue: false },
-            received: { name: AstCheckerTypeNames.Number, hasValue: true },
+            expected: { name: AstCheckerTypeName.String, hasValue: false },
+            received: { name: AstCheckerTypeName.Number, hasValue: true },
           },
         },
       ],
@@ -138,8 +138,8 @@ describe('basic type checks', () => {
           name: AstCheckerErrorName.VariableTypeMismatch,
           data: {
             variableName: 'a',
-            expected: { name: AstCheckerTypeNames.String, hasValue: false },
-            received: { name: AstCheckerTypeNames.Number, hasValue: true },
+            expected: { name: AstCheckerTypeName.String, hasValue: false },
+            received: { name: AstCheckerTypeName.Number, hasValue: true },
           },
         },
       ],
@@ -159,7 +159,7 @@ describe('exports', () => {
         {
           variableName: 'myVar',
           variableType: {
-            name: AstCheckerTypeNames.Number,
+            name: AstCheckerTypeName.Number,
             hasValue: true,
           },
         },
@@ -180,21 +180,21 @@ describe('exports', () => {
         {
           variableName: 'a',
           variableType: {
-            name: AstCheckerTypeNames.Number,
+            name: AstCheckerTypeName.Number,
             hasValue: true,
           },
         },
         {
           variableName: 'b',
           variableType: {
-            name: AstCheckerTypeNames.String,
+            name: AstCheckerTypeName.String,
             hasValue: true,
           },
         },
         {
           variableName: 'c',
           variableType: {
-            name: AstCheckerTypeNames.String,
+            name: AstCheckerTypeName.String,
             hasValue: true,
           },
         },
@@ -222,7 +222,7 @@ describe('exports', () => {
         {
           variableName: 'a',
           variableType: {
-            name: AstCheckerTypeNames.Number,
+            name: AstCheckerTypeName.Number,
             hasValue: true,
           },
         },

@@ -16,6 +16,8 @@ import { checkRecordTypeNode } from './record/type';
 import { AstNodeName } from '@zen-script/ast';
 import { checkExportedVariableAssignmentNode } from './variableAssignment/exportedVariableAssignment';
 import { checkImportExpressionNode } from './importExpression';
+import { checkAtomExpressionNode, checkAtomTypeNode } from './atom';
+import { checkAtomUnionNode } from './atomUnion';
 
 export const checkAstNode: CheckAstNode = (context, astNode) => {
   const actionMap: Partial<{
@@ -25,6 +27,11 @@ export const checkAstNode: CheckAstNode = (context, astNode) => {
     [AstNodeName.Block]: checkBlockNode,
 
     [AstNodeName.ImportExpression]: checkImportExpressionNode,
+
+    [AstNodeName.AtomExpression]: checkAtomExpressionNode,
+    [AstNodeName.AtomType]: checkAtomTypeNode,
+
+    [AstNodeName.AtomUnionType]: checkAtomUnionNode,
 
     [AstNodeName.NumberExpression]: checkNumberExpressionNode,
     [AstNodeName.NumberType]: checkNumberTypeNode,

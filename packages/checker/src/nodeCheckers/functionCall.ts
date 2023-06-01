@@ -3,9 +3,9 @@ import { checkAstNode } from '.';
 import type { AstCheckerContext, CheckAstNode } from '../types';
 import { AstCheckerErrorName } from '../types/errors';
 import type { AstCheckerType } from '../types/types';
-import { AstCheckerTypeNames } from '../types/types';
+import { AstCheckerTypeName } from '../types/types';
 import { addError } from './helpers/addError';
-import { areTypesCompatible } from './helpers/areTypesCompatible';
+import { isSubtypeOf } from './helpers/isSubtypeOf';
 import { checkAstNodes } from './helpers/checkAstNodes';
 import { getCheckNodeReturn } from './helpers/getCheckNodeReturn';
 import { ignoreAstCheckerNode } from './helpers/ignoreAstCheckerNode';
@@ -28,7 +28,7 @@ export const checkFunctionCall: CheckAstNode<
   }
 
   // callee is not callable
-  if (calleeContext.nodeType.name !== AstCheckerTypeNames.Function) {
+  if (calleeContext.nodeType.name !== AstCheckerTypeName.Function) {
     const contextWithError = addError(calleeContext, {
       name: AstCheckerErrorName.CallingNonCallableExpression,
       data: {
@@ -39,12 +39,12 @@ export const checkFunctionCall: CheckAstNode<
   }
 
   const { context: argumentsContext, nodeTypes: argumentsType } =
-    checkAstNodes<AstNode>(calleeContext, functionCall.arguments);
+    checkAstNodes<AstNode>(calleeContext, functionCall.arguments, checkAstNode);
   const parametersType = calleeContext.nodeType.parameters;
 
   // arguments and parameters are not compatible
   if (
-    !areTypesCompatible(parametersType, argumentsType, {
+    !isSubtypeOf(parametersType, argumentsType, {
       figureOutEnabled: true,
     })
   ) {
@@ -74,7 +74,7 @@ const figureOutArguments = (
   parametersType: AstCheckerType[],
 ): AstCheckerContext => {
   const newContext = argumentsType.reduce((context, argument, index) => {
-    if (argument.name !== AstCheckerTypeNames.FigureOut) return context;
+    if (argument.name !== AstCheckerTypeName.FigureOut) return context;
 
     const parameterType = parametersType[index];
     if (!parameterType) return context;

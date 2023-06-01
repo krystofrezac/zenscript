@@ -25,7 +25,10 @@ export type CheckAstNodeReturn<
 > = AstCheckerContext & {
   nodeType: TNodeType;
 };
-export type CheckAstNode<TNodeName extends AstNodeName = AstNodeName> = (
+export type CheckAstNode<
+  TNodeName extends AstNodeName = AstNodeName,
+  TReturnNodeType extends AstCheckerType = AstCheckerType,
+> = (
   context: AstCheckerContext,
   astNode: AstNode & { name: TNodeName },
-) => CheckAstNodeReturn;
+) => CheckAstNodeReturn<TReturnNodeType>;
