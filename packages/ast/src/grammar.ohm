@@ -28,7 +28,6 @@ BoringLang {
                | FunctionDeclarationExpression
                | numberExpression
                | stringExpression
-               | booleanExpression 
                | RecordExpression
                | RecordEntryAccessExpression
                | identifierExpression
@@ -39,7 +38,6 @@ BoringLang {
   TypeExpression = | FunctionDeclarationType
                    | stringType
                    | numberType
-                   | booleanType
                    | TupleType
                    | FunctionCallType
                    | RecordType
@@ -68,11 +66,6 @@ BoringLang {
   stringType = "string"
 
   Block = "{" ListOf<Statement, #(newLine)> "}"
-
-  trueExpression = "true"
-  falseExpression = "false"
-  booleanExpression = trueExpression | falseExpression
-  booleanType = "boolean"
 
   TupleExpression = "(" ListOf<Expression, ","> ")"
   TupleType = "(" ListOf<TypeExpression, ","> ")"
