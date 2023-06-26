@@ -7,7 +7,7 @@
     "check:code": "pnpm lint"
   },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.59.2",
+    "@typescript-eslint/eslint-plugin": "^5.60.0",
     "@typescript-eslint/parser": "^5.59.2",
     "eslint": "^8.40.0",
     "eslint-plugin-prefer-arrow-functions": "^3.1.4",
